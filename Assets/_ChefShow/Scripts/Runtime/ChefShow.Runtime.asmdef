@@ -1,0 +1,6 @@
+{
+  "name": "ChefShow.Runtime",
+  "rootNamespace": "ChefShow",
+  "references": ["Unity.InputSystem", "UnityEngine.UI"],
+  "autoReferenced": true
+}

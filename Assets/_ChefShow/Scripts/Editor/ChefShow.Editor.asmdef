@@ -1,0 +1,7 @@
+{
+  "name": "ChefShow.Editor",
+  "rootNamespace": "ChefShow.Editor",
+  "references": ["ChefShow.Runtime", "Unity.InputSystem", "UnityEngine.UI"],
+  "includePlatforms": ["Editor"],
+  "autoReferenced": true
+}

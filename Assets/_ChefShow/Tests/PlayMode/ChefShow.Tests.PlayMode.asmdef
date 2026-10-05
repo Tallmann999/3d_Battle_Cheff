@@ -1,0 +1,5 @@
+{
+  "name": "ChefShow.Tests.PlayMode",
+  "references": ["ChefShow.Runtime", "Unity.InputSystem", "UnityEngine.UI"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

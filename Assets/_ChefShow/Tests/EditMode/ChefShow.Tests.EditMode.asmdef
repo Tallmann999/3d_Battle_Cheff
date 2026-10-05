@@ -1,0 +1,6 @@
+{
+  "name": "ChefShow.Tests.EditMode",
+  "references": ["ChefShow.Runtime", "ChefShow.Editor"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

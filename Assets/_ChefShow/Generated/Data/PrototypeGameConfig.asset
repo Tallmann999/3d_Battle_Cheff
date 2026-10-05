@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 058762e48d76228449d90a7452e0ee60, type: 3}
+  m_Name: PrototypeGameConfig
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Data.PrototypeGameConfig
+  RoundDurationSeconds: 240
+  PlayerTeam: 0
+  RunSeed: 1005
+  PrototypeDebugEnabled: 1
+  WalkSpeed: 3
+  RunSpeed: 5
+  LookSensitivity: 0.09
+  InteractionDistance: 2.5
+  ArenaWidth: 30
+  ArenaDepth: 22
