@@ -13,6 +13,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 namespace ChefShow.Editor
@@ -66,11 +67,11 @@ namespace ChefShow.Editor
                 foreach (int side in new[] { -1, 1 })
                     Box("Side Wall", arena, new Vector3(side * config.ArenaWidth / 2, 2.5f, 0), new Vector3(0.3f, 5, config.ArenaDepth), floor);
                 Box("Front Wall", arena, new Vector3(0, 2.5f, -config.ArenaDepth / 2), new Vector3(config.ArenaWidth, 5, 0.3f), floor);
-                var pantry = Box("Pantry", arena, new Vector3(0, 0.8f, 8), new Vector3(9, 1.6f, 1.5f), neutral);
+                var pantry = Box("Pantry", arena, new Vector3(0, TableHeightUpdate.Height / 2, 12), new Vector3(9, TableHeightUpdate.Height, 1.5f), neutral);
                 var pantryTarget = pantry.AddComponent<PrototypeInteractable>();
                 pantryTarget.DisplayName = "Общая кладовая";
                 pantryTarget.Description = "Подбор продуктов появится на следующем этапе.";
-                Label("ОБЩАЯ КЛАДОВАЯ", pantry.transform, new Vector3(0, 1.35f, -0.8f), Quaternion.identity, 0.035f);
+                Label("ОБЩАЯ КЛАДОВАЯ", pantry.transform, new Vector3(0, TableHeightUpdate.LabelLocalY, -0.8f), Quaternion.identity, 0.035f);
                 var actors = new GameObject("Contestants").transform;
                 for (int teamIndex = 0; teamIndex < 2; teamIndex++)
                 {
@@ -82,37 +83,38 @@ namespace ChefShow.Editor
                     {
                         string id = $"{team}{i + 1}";
                         float z = -6.25f + i * 2.5f;
-                        var station = Box("Station_" + id, stations, new Vector3(sign * 8, 0.75f, z), new Vector3(3, 1.5f, 2), surfaces);
-                        Box("Team Marker", station.transform, new Vector3(sign * 6.45f, 0.85f, z), new Vector3(0.1f, 0.9f, 1.8f), team == TeamId.A ? a : b);
+                        var station = Box("Station_" + id, stations, new Vector3(sign * 8, TableHeightUpdate.Height / 2, z), new Vector3(2.3f, TableHeightUpdate.Height, 2.3f), surfaces);
+                        Box("Team Marker", station.transform, new Vector3(sign * 9.2f, TableHeightUpdate.MarkerCenterY, z), new Vector3(0.1f, TableHeightUpdate.MarkerHeight, 1.8f), team == TeamId.A ? a : b);
                         bool own = team == config.PlayerTeam && i == 0;
                         var target = station.AddComponent<PrototypeInteractable>();
                         target.DisplayName = "Станция " + id;
                         target.IsPlayerStation = own;
                         target.Team = team;
                         target.Description = own ? "E — фокус станции" : "Станция другого участника. Только осмотр.";
-                        Label(id + (own ? " · ВЫ" : ""), station.transform, new Vector3(-sign * 0.1f, 0.7f, 0), Quaternion.Euler(0, sign * 90, 0), 0.025f);
+                        Label(id + (own ? " · ВЫ" : ""), station.transform, new Vector3(sign * 0.1f, TableHeightUpdate.LabelLocalY, 0), Quaternion.Euler(0, -sign * 90, 0), 0.025f);
                         if (own) continue;
                         var npc = GameObject.CreatePrimitive(PrimitiveType.Capsule);
                         npc.name = "NPC_" + id;
                         npc.transform.SetParent(actors);
-                        npc.transform.position = new Vector3(sign * 6, 1, z);
+                        npc.transform.position = new Vector3(sign * 10, 1, z);
+                        npc.transform.rotation = Quaternion.Euler(0, -sign * 90, 0);
                         npc.GetComponent<Renderer>().sharedMaterial = team == TeamId.A ? a : b;
-                        npc.GetComponent<Collider>().enabled = false;
+                        npc.GetComponent<Collider>().enabled = true;
                         var actor = npc.AddComponent<PrototypeActor>();
                         actor.StableId = id;
                         actor.Team = team;
                         actor.Kind = PrototypeActorKind.Npc;
                     }
                 }
-                var judging = Box("Judging Table", arena, new Vector3(0, 0.7f, -8.5f), new Vector3(12, 1.4f, 1.5f), neutral);
-                Label("ДЕГУСТАЦИЯ", judging.transform, new Vector3(0, 1.25f, 0.8f), Quaternion.Euler(0, 180, 0), 0.035f);
+                var judging = Box("Judging Table", arena, new Vector3(0, TableHeightUpdate.Height / 2, -12), new Vector3(12, TableHeightUpdate.Height, 1.5f), neutral);
+                Label("ДЕГУСТАЦИЯ", judging.transform, new Vector3(0, TableHeightUpdate.LabelLocalY, 0.8f), Quaternion.Euler(0, 180, 0), 0.035f);
                 var teamSlots = new GameObject("TeamDishSlots").transform;
                 teamSlots.SetParent(arena);
                 for (int i = 0; i < 12; i++)
                 {
                     var slot = new GameObject("DishSlot_" + (i < 6 ? "A" : "B") + (i % 6 + 1)).transform;
                     slot.SetParent(teamSlots);
-                    slot.position = new Vector3(-5.5f + i, 1.45f, -8.5f);
+                    slot.position = new Vector3(-5.5f + i, TableHeightUpdate.Height + 0.05f, -12);
                 }
                 var finalSlots = new GameObject("FinalDishSlots").transform;
                 finalSlots.SetParent(arena);
@@ -120,7 +122,7 @@ namespace ChefShow.Editor
                 {
                     var slot = new GameObject("FinalSlot_" + (i + 1)).transform;
                     slot.SetParent(finalSlots);
-                    slot.position = new Vector3(-2.25f + i * 1.5f, 1.45f, -7.8f);
+                    slot.position = new Vector3(-2.25f + i * 1.5f, TableHeightUpdate.Height + 0.05f, -11.3f);
                 }
                 var chefs = new GameObject("Chefs").transform;
                 for (int i = 0; i < 2; i++)
@@ -128,7 +130,7 @@ namespace ChefShow.Editor
                     var chef = GameObject.CreatePrimitive(PrimitiveType.Capsule);
                     chef.name = i == 0 ? "CHEF_SAVORY" : "CHEF_PASTRY";
                     chef.transform.SetParent(chefs);
-                    chef.transform.position = new Vector3(i == 0 ? -2 : 2, 1, -6.5f);
+                    chef.transform.position = new Vector3(i == 0 ? -2 : 2, 1, -10);
                     chef.transform.localScale = i == 0 ? new Vector3(0.9f, 1.15f, 0.9f) : new Vector3(1.1f, 1, 1.1f);
                     chef.GetComponent<Renderer>().sharedMaterial = neutral;
                     chef.GetComponent<Collider>().enabled = false;
@@ -161,11 +163,13 @@ namespace ChefShow.Editor
                 bootstrap.Player = player;
                 bootstrap.Hud = hud;
                 bootstrap.UiInput = uiModule;
+                InventorySceneInstaller.AddToScene(scene);
                 PrototypeValidator.ValidateScene(scene);
+                Undo.FlushUndoRecordObjects();
                 EnsureFolder(Path.GetDirectoryName(GeneratedScene));
                 if (!EditorSceneManager.SaveScene(scene, GeneratedScene)) throw new IOException("Не удалось сохранить generated-сцену.");
                 AssetDatabase.SaveAssets();
-                Debug.Log("Chef Show: создана " + GeneratedScene + "; этап 1: арена/управление, готовка ещё не реализована.");
+                Debug.Log("Chef Show: создана " + GeneratedScene + "; арена, продукты и перенос; готовка ещё не реализована.");
             }
             catch
             {
@@ -179,13 +183,13 @@ namespace ChefShow.Editor
         {
             var player = new GameObject("Player");
             float sign = config.PlayerTeam == TeamId.A ? -1 : 1;
-            player.transform.position = new Vector3(sign * 6, 0.05f, -6.25f);
-            player.transform.rotation = Quaternion.Euler(0, sign * 90, 0);
+            player.transform.position = new Vector3(sign * 10, 0.05f, -6.25f);
+            player.transform.rotation = Quaternion.Euler(0, -sign * 90, 0);
             var controller = player.AddComponent<CharacterController>();
             controller.height = 1.8f;
             controller.radius = 0.3f;
             controller.center = Vector3.up * 0.9f;
-            var cameraObject = new GameObject("MainCamera", typeof(Camera), typeof(AudioListener));
+            var cameraObject = new GameObject("MainCamera", typeof(Camera), typeof(AudioListener), typeof(UniversalAdditionalCameraData));
             cameraObject.tag = "MainCamera";
             cameraObject.transform.SetParent(player.transform);
             cameraObject.transform.localPosition = Vector3.up * 1.65f;

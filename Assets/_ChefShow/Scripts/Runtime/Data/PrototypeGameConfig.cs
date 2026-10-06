@@ -21,8 +21,12 @@ namespace ChefShow.Data
         [Range(1, 4)] public float InteractionDistance = 2.5f;
 
         [Header("Арена; изменения применяются явной генерацией")]
-        [Min(24)] public float ArenaWidth = 30;
-        [Min(20)] public float ArenaDepth = 22;
+        [Min(24)] public float ArenaWidth = 60;
+        [Min(20)] public float ArenaDepth = 44;
+
+        [Header("Корзина и лоток")]
+        [Range(1, 10)] public int BasketCapacity = 10;
+        [Range(1, 24)] public int TrayCapacity = 24;
 
         public string Validate()
         {
@@ -35,6 +39,8 @@ namespace ChefShow.Data
                 return "Арена должна быть не меньше 24 × 20 м для текущей расстановки.";
             if (PlayerTeam != TeamId.A && PlayerTeam != TeamId.B)
                 return "Неизвестная команда игрока.";
+            if (BasketCapacity < 1 || BasketCapacity > 10 || TrayCapacity < 1 || TrayCapacity > 24)
+                return "Корзина: 1–10 предметов; лоток: 1–24 предмета.";
             return null;
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ChefShow.Data;
 using ChefShow.Contestants;
 using ChefShow.Player;
+using ChefShow.Inventory;
 using ChefShow.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -17,6 +18,7 @@ namespace ChefShow.Core
         public InputActionAsset InputDefinition;
         public FirstPersonRig Player;
         public PrototypeHud Hud;
+        public InventoryController Inventory;
         public InputSystemUIInputModule UiInput;
         private InputActionAsset input;
         private readonly List<InputActionReference> uiReferences = new List<InputActionReference>();
@@ -62,6 +64,13 @@ namespace ChefShow.Core
             UiInput.trackedDeviceOrientation = null;
             sensitivity = Config.LookSensitivity;
             Player.Initialize(Config, input);
+            if (Inventory != null)
+            {
+                var inventoryError = Inventory.Validate();
+                if (inventoryError != null) { Debug.LogError("Chef Show: " + inventoryError, this); enabled = false; return; }
+                Inventory.Initialize(this, input);
+                Player.CancelInteraction = Inventory.CancelHeld;
+            }
             Hud.Resume.onClick.AddListener(() => SetPaused(false));
             Hud.Restart.onClick.AddListener(RestartShow);
             Hud.DebugRestart.onClick.AddListener(RestartShow);
@@ -95,9 +104,10 @@ namespace ChefShow.Core
             }
             Run.Tick(Time.unscaledDeltaTime);
             Player.Step(Run.Clock, !paused && Run.RemainingSeconds > 0);
+            if (Inventory != null) Inventory.Step(!paused && Run.RemainingSeconds > 0);
             UpdateMaps();
             bool task = !paused && input.FindAction((Player.Focused ? "Station" : "Gameplay") + "/Task", true).IsPressed();
-            Hud.Present(Run, Player, paused, debug, task);
+            Hud.Present(Run, Player, paused, debug, task, Inventory);
         }
 
         public void SetPaused(bool value)
@@ -115,13 +125,14 @@ namespace ChefShow.Core
         {
             Run?.Dispose();
             Run = new PrototypeRun(Config.RoundDurationSeconds, Config.RunSeed,
-                (type, error) => Debug.LogError($"Chef Show event {type.Name}: {error}"));
+                (type, error) => Debug.LogError($"Chef Show event {type.Name}: {error}"), Config.BasketCapacity, Config.TrayCapacity, Config.PlayerTeam);
             paused = debug = false;
             Player.ResetRig();
+            if (Inventory != null) Inventory.ResetPresentation();
             Player.SetSensitivity(sensitivity);
             UpdateMaps();
             Run.Events.Publish(new RunStarted(Run.RunId, Run.Seed));
-            Debug.Log($"Chef Show: start run={Run.RunId} seed={Run.Seed}; этап 1, готовка не реализована.", this);
+            Debug.Log($"Chef Show: start run={Run.RunId} seed={Run.Seed}; {(Inventory == null ? "арена" : "продукты и перенос")}, готовка не реализована.", this);
         }
 
         private void UpdateMaps()

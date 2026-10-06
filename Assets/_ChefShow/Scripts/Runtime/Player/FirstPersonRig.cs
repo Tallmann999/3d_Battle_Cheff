@@ -1,4 +1,6 @@
 using ChefShow.Core;
+using System;
+using ChefShow.Inventory;
 using ChefShow.Data;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,6 +22,8 @@ namespace ChefShow.Player
         private float verticalSpeed;
         private float sensitivity;
         private bool initialized;
+        private float focusYaw, focusPitch;
+        public Func<bool> CancelInteraction;
         public bool Focused { get; private set; }
         public PrototypeInteractable Target { get; private set; }
         public Camera ViewCamera => viewCamera;
@@ -71,17 +75,34 @@ namespace ChefShow.Player
                 verticalSpeed += Physics.gravity.y * clock.Delta;
                 controller.Move((direction * speed + Vector3.up * verticalSpeed) * clock.Delta);
             }
+            else
+            {
+                focusYaw = Mathf.Clamp(focusYaw + look.x, -55, 55);
+                focusPitch = Mathf.Clamp(focusPitch - look.y, 5, 65);
+                viewCamera.transform.localRotation = Quaternion.Euler(focusPitch, focusYaw, 0);
+            }
             RefreshTarget();
-            if (Focused && map.FindAction("Cancel", true).WasPressedThisFrame()) ExitFocus();
+            if (map.FindAction("Cancel")?.WasPressedThisFrame() == true)
+            {
+                if (CancelInteraction?.Invoke() != true && Focused) ExitFocus();
+            }
             else if (!Focused && map.FindAction("Interact", true).WasPressedThisFrame()
-                && Target != null && Target.CanFocus(config.PlayerTeam)) EnterFocus();
+                && Target != null && Target.GetComponent<InventoryInteractable>() == null && Target.CanFocus(config.PlayerTeam)) EnterFocus();
         }
 
         public void RefreshTarget()
         {
             var ray = new Ray(viewCamera.transform.position, viewCamera.transform.forward);
-            Target = Physics.Raycast(ray, out var hit, config.InteractionDistance, Physics.DefaultRaycastLayers,
-                QueryTriggerInteraction.Ignore) ? hit.collider.GetComponentInParent<PrototypeInteractable>() : null;
+            // CharacterController может дать self-hit на границе skin при взгляде
+            // вниз. Исключаем игрока/предметы в его руках, сохраняя ближайшую стену.
+            Target = null;
+            float nearest = float.PositiveInfinity;
+            foreach (var hit in Physics.RaycastAll(ray, config.InteractionDistance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider.transform == transform || hit.collider.transform.IsChildOf(transform) || hit.distance >= nearest) continue;
+                nearest = hit.distance;
+                Target = hit.collider.GetComponentInParent<PrototypeInteractable>();
+            }
         }
 
         private void EnterFocus()
@@ -90,6 +111,8 @@ namespace ChefShow.Player
             Focused = true;
             var point = Target.transform.position + Vector3.up * 0.3f;
             viewCamera.transform.LookAt(point);
+            focusPitch = Mathf.DeltaAngle(0, viewCamera.transform.localEulerAngles.x);
+            focusYaw = Mathf.DeltaAngle(0, viewCamera.transform.localEulerAngles.y);
         }
 
         public void ExitFocus()

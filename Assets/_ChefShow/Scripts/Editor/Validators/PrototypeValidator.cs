@@ -51,10 +51,19 @@ namespace ChefShow.Editor
                 && transforms.Single(t => t.name == "FinalDishSlots").childCount == 4, "Нужны 12 обычных и 4 финальных места подачи.");
             foreach (string name in new[] { "Gameplay", "Station", "UI", "Debug" })
                 Require(bootstrap.InputDefinition.FindActionMap(name) != null, "Нет action map " + name);
+            if (bootstrap.Inventory != null)
+            {
+                Require(bootstrap.Inventory.Validate() == null, bootstrap.Inventory.Validate());
+                Require(bootstrap.Inventory.PlayerStationId == contestants.Single(a => a.Kind == PrototypeActorKind.Player).StableId,
+                    "Станция инвентаря отличается от участника игрока.");
+                foreach (string map in new[] { "Gameplay", "Station" })
+                    foreach (string action in new[] { "Basket", "DropBasket", "Primary", "Interact", "Cancel", "Task" })
+                        Require(bootstrap.InputDefinition.FindAction(map + "/" + action) != null, "Нет inventory action " + map + "/" + action);
+            }
             Require(All<Text>().All(t => t.font != null), "Отсутствует шрифт UI.");
             foreach (var text in All<Text>()) PrototypeSceneBuilder.RequireCyrillic(text.font);
             Require(Shader.Find("Universal Render Pipeline/Lit") != null, "URP shader не найден.");
-            Debug.Log("Chef Show validator: PASS — этап 1. Готовка, scoring и полный выпуск ещё не реализованы.");
+            Debug.Log("Chef Show validator: PASS — " + (bootstrap.Inventory == null ? "foundation" : "foundation + inventory") + ". Готовка, scoring и полный выпуск ещё не реализованы.");
         }
 
         private static void Require(bool condition, string message)

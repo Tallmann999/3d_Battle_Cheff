@@ -1,5 +1,7 @@
 using System.Collections;
 using System.IO;
+using System.Linq;
+using ChefShow.Contestants;
 using ChefShow.Core;
 using ChefShow.Player;
 using NUnit.Framework;
@@ -83,7 +85,7 @@ namespace ChefShow.Tests
                     image.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0);
                     image.Apply();
                     Directory.CreateDirectory("TestResults");
-                    File.WriteAllBytes("TestResults/stage1-preview.png", image.EncodeToPNG());
+                    File.WriteAllBytes("TestResults/layout-first-person.png", image.EncodeToPNG());
                 }
                 finally
                 {
@@ -164,6 +166,110 @@ namespace ChefShow.Tests
                 if (blocker != null) Object.Destroy(blocker);
                 InputSystem.RemoveDevice(keyboard);
                 InputSystem.RemoveDevice(mouse);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator SquareRowsBlockGapsAndAllowBothEndRoutes()
+        {
+            var player = bootstrap.Player.transform;
+            var controller = player.GetComponent<CharacterController>();
+            var actors = Object.FindObjectsByType<PrototypeActor>(FindObjectsSortMode.None);
+            var floor = GameObject.Find("Floor").GetComponent<BoxCollider>().bounds;
+            Assert.That(floor.size.x, Is.EqualTo(60).Within(0.01f));
+            Assert.That(floor.size.z, Is.EqualTo(44).Within(0.01f));
+            foreach (string name in new[] { "Pantry", "Judging Table" })
+                Assert.That(GameObject.Find(name).GetComponent<BoxCollider>().bounds.max.y - floor.max.y,
+                    Is.EqualTo(0.9f).Within(0.01f), name + " worktop height");
+            foreach (var actor in actors.Where(a => a.Kind != PrototypeActorKind.Chef))
+            {
+                var table = GameObject.Find("Station_" + actor.StableId).GetComponent<BoxCollider>().bounds;
+                Assert.That(table.size.x, Is.EqualTo(2.3f).Within(0.01f));
+                Assert.That(table.size.z, Is.EqualTo(2.3f).Within(0.01f));
+                Assert.That(table.max.y - floor.max.y, Is.EqualTo(0.9f).Within(0.01f), actor.StableId + " worktop height");
+                Assert.That(table.min.y, Is.EqualTo(floor.max.y).Within(0.01f));
+                Assert.That(Mathf.Abs(actor.transform.position.x), Is.GreaterThan(Mathf.Abs(table.center.x) + table.extents.x));
+                Assert.That(Vector3.Dot(actor.transform.forward, (table.center - actor.transform.position).normalized), Is.GreaterThan(0.9f));
+                if (actor.Kind == PrototypeActorKind.Npc) Assert.That(actor.GetComponent<Collider>().enabled, Is.True);
+            }
+            bootstrap.SetPaused(true);
+            foreach (string team in new[] { "A", "B" })
+            {
+                float sign = team == "A" ? -1 : 1;
+                for (int i = 1; i < 6; i++)
+                {
+                    var first = GameObject.Find("Station_" + team + i).GetComponent<BoxCollider>().bounds;
+                    var second = GameObject.Find("Station_" + team + (i + 1)).GetComponent<BoxCollider>().bounds;
+                    Assert.That(second.center.z - first.center.z, Is.EqualTo(2.5f).Within(0.01f));
+                    Assert.That(second.min.z - first.max.z, Is.EqualTo(0.2f).Within(0.01f));
+                    Teleport(new Vector3(sign * 10, 0.05f, (first.center.z + second.center.z) / 2));
+                    WalkToward(new Vector3(sign * 4, 0.05f, player.position.z));
+                    Assert.That(Mathf.Abs(player.position.x), Is.GreaterThan(9.2f), team + " gap " + i + " must block the capsule");
+                }
+                foreach (int end in new[] { -1, 1 })
+                {
+                    // Идём за спинами NPC, затем вокруг края 1/6, через центр к общей зоне.
+                    Teleport(new Vector3(sign * 11.5f, 0.05f, -end * 6.25f));
+                    var targets = new[] {
+                        new Vector3(sign * 11.5f, 0.05f, end * 8.7f),
+                        new Vector3(0, 0.05f, end * 8.7f),
+                        new Vector3(0, 0.05f, end == 1 ? 10.6f : -10.6f)
+                    };
+                    foreach (var target in targets)
+                    {
+                        WalkToward(target);
+                        Assert.That(Vector2.Distance(new Vector2(player.position.x, player.position.z), new Vector2(target.x, target.z)),
+                            Is.LessThan(0.12f), team + " end " + end + " route to " + target);
+                    }
+                }
+            }
+            if (SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null)
+            {
+                var camera = bootstrap.Player.ViewCamera;
+                var canvas = bootstrap.Hud.GetComponentInParent<Canvas>();
+                canvas.enabled = false;
+                camera.transform.SetPositionAndRotation(new Vector3(0, 40, 0), Quaternion.Euler(90, 0, 0));
+                camera.orthographic = true;
+                camera.orthographicSize = 16;
+                var target = new RenderTexture(1280, 720, 24);
+                target.Create();
+                var previous = RenderTexture.active;
+                var preview = new Texture2D(1280, 720, TextureFormat.RGB24, false);
+                try
+                {
+                    RenderPipeline.SubmitRenderRequest(camera, new RenderPipeline.StandardRequest { destination = target });
+                    RenderTexture.active = target;
+                    preview.ReadPixels(new Rect(0, 0, 1280, 720), 0, 0);
+                    preview.Apply();
+                    Directory.CreateDirectory("TestResults");
+                    File.WriteAllBytes("TestResults/layout-overview.png", preview.EncodeToPNG());
+                }
+                finally
+                {
+                    RenderTexture.active = previous;
+                    target.Release();
+                    Object.Destroy(target);
+                    Object.Destroy(preview);
+                }
+            }
+            yield return null;
+
+            void Teleport(Vector3 position)
+            {
+                controller.enabled = false;
+                player.position = position;
+                controller.enabled = true;
+                Physics.SyncTransforms();
+            }
+            void WalkToward(Vector3 destination)
+            {
+                for (int step = 0; step < 1000; step++)
+                {
+                    var delta = destination - player.position;
+                    delta.y = 0;
+                    if (delta.magnitude < 0.04f) break;
+                    controller.Move(Vector3.ClampMagnitude(delta, 0.05f) + Vector3.down * 0.02f);
+                }
             }
         }
     }

@@ -1,4 +1,6 @@
 using System;
+using ChefShow.Inventory;
+using ChefShow.Data;
 
 namespace ChefShow.Core
 {
@@ -20,18 +22,22 @@ namespace ChefShow.Core
     {
         public string RunId { get; } = Guid.NewGuid().ToString("N");
         public int Seed { get; }
+        public TeamId PlayerTeam { get; }
         public GameClock Clock { get; } = new GameClock();
         public GameEventBus Events { get; }
+        public InventoryState Inventory { get; }
         public float RemainingSeconds { get; private set; }
         public bool Disposed { get; private set; }
 
-        public PrototypeRun(float duration, int seed, Action<Type, Exception> reportError)
+        public PrototypeRun(float duration, int seed, Action<Type, Exception> reportError, int basketCapacity = 10, int trayCapacity = 24, TeamId playerTeam = TeamId.A)
         {
             if (duration <= 0 || float.IsNaN(duration) || float.IsInfinity(duration))
                 throw new ArgumentOutOfRangeException(nameof(duration));
             RemainingSeconds = duration;
             Seed = seed;
+            PlayerTeam = playerTeam;
             Events = new GameEventBus(reportError);
+            Inventory = new InventoryState(this, basketCapacity, trayCapacity);
         }
 
         public void Tick(float realDelta)

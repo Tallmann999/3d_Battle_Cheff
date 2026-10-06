@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46ff3df86cc3a7641b59e7d7235f27b8, type: 3}
+  m_Name: potato_sack
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Data.IngredientDefinition
+  Id: potato_sack
+  DisplayName: "\u041C\u0435\u0448\u043E\u043A \u043A\u0430\u0440\u0442\u043E\u0448\u043A\u0438"
+  CanUseBoard: 0
+  IsDoseContainer: 0
+  Contents: {fileID: 11400000, guid: 3b69adc534bef5e48a82d3ae51b3111d, type: 2}
+  VisualMesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+  VisualMaterial: {fileID: 2100000, guid: bc01eeb13b7cf0a4db69d3c7ab2e2a95, type: 2}
+  VisualScale: {x: 0.19, y: 0.12, z: 0.19}
