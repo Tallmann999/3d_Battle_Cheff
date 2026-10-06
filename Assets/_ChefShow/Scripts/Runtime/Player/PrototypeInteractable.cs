@@ -8,6 +8,7 @@ namespace ChefShow.Player
         public string DisplayName;
         public bool IsPlayerStation;
         public TeamId Team;
+        public Transform FocusPoint;
         [TextArea] public string Description = "Готовка появится на следующем этапе.";
 
         public bool CanFocus(TeamId playerTeam) => IsPlayerStation && Team == playerTeam;

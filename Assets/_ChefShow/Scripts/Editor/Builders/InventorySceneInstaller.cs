@@ -137,24 +137,24 @@ namespace ChefShow.Editor
                 var group = Node("Inventory", station, station.position);
                 Vector3 At(float x, float z, float y = 0.03f) => new Vector3(station.position.x + sign * x, top + y, station.position.z + z);
                 var rotation = Quaternion.Euler(0, -sign * 90, 0);
-                var dock = Pad("Basket Dock", group, At(0.65f, -0.72f), new Vector3(0.65f, 0.05f, 0.55f), InventoryTargetKind.BasketDock, "КОРЗИНА", rotation, id);
+                var dock = Pad("Basket Dock", group, At(-0.35f, -0.72f), new Vector3(0.65f, 0.05f, 0.55f), InventoryTargetKind.BasketDock, "КОРЗИНА", rotation, id);
                 var dockMount = Node("Basket Snap", dock.transform, dock.transform.position + Vector3.up * 0.15f);
-                var tray = Pad("Ingredient Tray", group, At(0.65f, 0.65f), new Vector3(0.65f, 0.04f, 0.94f), InventoryTargetKind.Tray, "ЛОТОК", rotation, id);
-                var board = Pad("Board", group, At(-0.35f, -0.6f), new Vector3(0.65f, 0.06f, 0.6f), InventoryTargetKind.Socket, "ДОСКА", rotation, id); board.Index = 0;
-                var surface = Pad("Work Surface", group, At(-0.35f, 0.6f), new Vector3(0.65f, 0.06f, 0.6f), InventoryTargetKind.Socket, "МЕСТО ПРОДУКТА", rotation, id); surface.Index = 1;
+                var tray = Pad("Ingredient Tray", group, At(-0.35f, 0.65f), new Vector3(0.65f, 0.04f, 0.94f), InventoryTargetKind.Tray, "ЛОТОК", rotation, id);
+                var board = Pad("Board", group, At(0.65f, -0.6f), new Vector3(0.65f, 0.06f, 0.6f), InventoryTargetKind.Socket, "ДОСКА", rotation, id); board.Index = 0;
+                var surface = Pad("Work Surface", group, At(0.65f, 0.6f), new Vector3(0.65f, 0.06f, 0.6f), InventoryTargetKind.Socket, "МЕСТО ПРОДУКТА", rotation, id); surface.Index = 1;
                 Pad("Trash", group, At(-0.8f, 0, 0.07f), new Vector3(0.3f, 0.14f, 0.4f), InventoryTargetKind.Trash, "МУСОР", rotation, id);
                 if (id != inventory.PlayerStationId) continue;
                 inventory.StationDock = dockMount;
                 inventory.TrayDisplays = new FoodDisplay[24];
                 for (int i = 0; i < 24; i++)
                 {
-                    var point = At(0.43f + (i % 3) * 0.2f, 0.25f + (i / 3) * 0.115f, 0.12f);
+                    var point = At(-0.57f + (i % 3) * 0.2f, 0.25f + (i / 3) * 0.115f, 0.12f);
                     var item = Target("Tray Item_" + (i + 1), tray.transform, point, new Vector3(0.16f, 0.1f, 0.1f), InventoryTargetKind.TrayItem, id);
                     item.Index = i;
                     item.GetComponent<BoxCollider>().enabled = false;
                     inventory.TrayDisplays[i] = Display("Food", item.transform, point, 0.5f);
                 }
-                inventory.SocketDisplays = new[] { Display("Food", board.transform, At(-0.35f, -0.6f, 0.16f), 1), Display("Food", surface.transform, At(-0.35f, 0.6f, 0.16f), 1) };
+                inventory.SocketDisplays = new[] { Display("Food", board.transform, At(0.65f, -0.6f, 0.16f), 1), Display("Food", surface.transform, At(0.65f, 0.6f, 0.16f), 1) };
             }
             foreach (var text in bootstrap.Hud.GetComponentsInChildren<Text>(true))
                 if (text.name == "Controls")

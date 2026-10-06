@@ -11,18 +11,24 @@ namespace ChefShow.Player
     public sealed class FirstPersonRig : MonoBehaviour
     {
         [SerializeField] private Camera viewCamera;
+        [SerializeField] private Vector3 focusCameraOffset = new Vector3(0, -0.18f, 0.22f);
+        [SerializeField, Range(30, 75)] private float focusFieldOfView = 52;
+        [SerializeField, Range(0.05f, 0.5f)] private float focusTransitionSeconds = 0.18f;
         private PrototypeGameConfig config;
         private InputActionAsset input;
         private CharacterController controller;
         private Vector3 startPosition;
         private Quaternion startRotation;
         private Vector3 cameraHome;
+        private Vector3 cameraFocus;
+        private float cameraHomeFieldOfView;
+        private float focusBlend;
         private float initialPitch;
         private float pitch;
         private float verticalSpeed;
         private float sensitivity;
         private bool initialized;
-        private float focusYaw, focusPitch;
+        private float focusYaw, focusPitch, focusBaseYaw;
         public Func<bool> CancelInteraction;
         public bool Focused { get; private set; }
         public PrototypeInteractable Target { get; private set; }
@@ -39,6 +45,7 @@ namespace ChefShow.Player
             startPosition = transform.position;
             startRotation = transform.rotation;
             cameraHome = viewCamera.transform.localPosition;
+            cameraHomeFieldOfView = viewCamera.fieldOfView;
             initialPitch = Mathf.DeltaAngle(0, viewCamera.transform.localEulerAngles.x);
             initialized = true;
             ResetRig();
@@ -52,7 +59,9 @@ namespace ChefShow.Player
             controller.enabled = true;
             verticalSpeed = 0;
             pitch = initialPitch;
-            ExitFocus();
+            Focused = false;
+            focusBlend = 0;
+            ApplyCameraPose();
             Target = null;
         }
 
@@ -67,7 +76,6 @@ namespace ChefShow.Player
             {
                 transform.Rotate(0, look.x, 0);
                 pitch = Mathf.Clamp(pitch - look.y, -75, 75);
-                viewCamera.transform.localRotation = Quaternion.Euler(pitch, 0, 0);
                 var move = map.FindAction("Move", true).ReadValue<Vector2>();
                 var speed = map.FindAction("Sprint", true).IsPressed() ? config.RunSpeed : config.WalkSpeed;
                 var direction = Vector3.ClampMagnitude(transform.right * move.x + transform.forward * move.y, 1);
@@ -77,10 +85,11 @@ namespace ChefShow.Player
             }
             else
             {
-                focusYaw = Mathf.Clamp(focusYaw + look.x, -55, 55);
-                focusPitch = Mathf.Clamp(focusPitch - look.y, 5, 65);
-                viewCamera.transform.localRotation = Quaternion.Euler(focusPitch, focusYaw, 0);
+                focusYaw = Mathf.Clamp(focusYaw + look.x, focusBaseYaw - 55, focusBaseYaw + 55);
+                focusPitch = Mathf.Clamp(focusPitch - look.y, 5, 78);
             }
+            focusBlend = Mathf.MoveTowards(focusBlend, Focused ? 1 : 0, clock.Delta / Mathf.Max(0.05f, focusTransitionSeconds));
+            ApplyCameraPose();
             RefreshTarget();
             if (map.FindAction("Cancel")?.WasPressedThisFrame() == true)
             {
@@ -109,18 +118,44 @@ namespace ChefShow.Player
         {
             if (Target == null || !Target.CanFocus(config.PlayerTeam)) return;
             Focused = true;
-            var point = Target.transform.position + Vector3.up * 0.3f;
-            viewCamera.transform.LookAt(point);
-            focusPitch = Mathf.DeltaAngle(0, viewCamera.transform.localEulerAngles.x);
-            focusYaw = Mathf.DeltaAngle(0, viewCamera.transform.localEulerAngles.y);
+            cameraFocus = cameraHome + focusCameraOffset;
+            var point = Target.FocusPoint != null ? Target.FocusPoint.position
+                : Target.GetComponent<Collider>() is Collider surface
+                    ? new Vector3(surface.bounds.center.x, surface.bounds.max.y + 0.12f, surface.bounds.center.z)
+                    : Target.transform.position + Vector3.up * 0.3f;
+            var pose = Quaternion.Inverse(transform.rotation) * Quaternion.LookRotation(point - transform.TransformPoint(SafeFocusPosition()));
+            focusPitch = Mathf.Clamp(Mathf.DeltaAngle(0, pose.eulerAngles.x), 5, 78);
+            focusYaw = focusBaseYaw = Mathf.DeltaAngle(0, pose.eulerAngles.y);
         }
 
         public void ExitFocus()
         {
             Focused = false;
+        }
+
+        private void ApplyCameraPose()
+        {
             if (viewCamera == null) return;
-            viewCamera.transform.localPosition = cameraHome;
-            viewCamera.transform.localRotation = Quaternion.Euler(pitch, 0, 0);
+            float blend = Mathf.SmoothStep(0, 1, focusBlend);
+            viewCamera.transform.localPosition = Vector3.Lerp(cameraHome, focusBlend > 0 ? SafeFocusPosition() : cameraHome, blend);
+            viewCamera.fieldOfView = Mathf.Lerp(cameraHomeFieldOfView, Mathf.Min(cameraHomeFieldOfView, focusFieldOfView), blend);
+            viewCamera.transform.localRotation = Quaternion.Slerp(Quaternion.Euler(pitch, 0, 0), Quaternion.Euler(focusPitch, focusYaw, 0), blend);
+        }
+
+        private Vector3 SafeFocusPosition()
+        {
+            var origin = transform.TransformPoint(cameraHome);
+            var delta = transform.TransformVector(cameraFocus - cameraHome);
+            float distance = delta.magnitude;
+            if (distance < 0.001f) return cameraHome;
+            float allowed = distance;
+            foreach (var hit in Physics.SphereCastAll(origin, viewCamera.nearClipPlane + 0.02f,
+                delta / distance, distance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider.transform == transform || hit.collider.transform.IsChildOf(transform)) continue;
+                allowed = Mathf.Min(allowed, Mathf.Max(0, hit.distance - 0.02f));
+            }
+            return Vector3.Lerp(cameraHome, cameraFocus, allowed / distance);
         }
     }
 }

@@ -208,6 +208,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 213101}
   m_Mesh: {fileID: 0}
+--- !u!1 &3995838
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3995839}
+  m_Layer: 0
+  m_Name: Station Focus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3995839
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3995838}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.23913051, y: 0.6333334, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1315589150}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8076107
 GameObject:
   m_ObjectHideFlags: 0
@@ -288,6 +319,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8076107}
   m_CullTransparentMesh: 1
+--- !u!1 &24362742
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 24362743}
+  m_Layer: 0
+  m_Name: Station Focus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &24362743
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 24362742}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.23913051, y: 0.6333334, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 485439665}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &30907067
 GameObject:
   m_ObjectHideFlags: 0
@@ -671,7 +733,7 @@ Transform:
   m_GameObject: {fileID: 49263711}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: -0.5999999}
+  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: -0.5999997}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -709,6 +771,7 @@ MonoBehaviour:
   DisplayName: "\u0414\u041E\u0421\u041A\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &49263715
@@ -1315,6 +1378,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.FirstPersonRig
   viewCamera: {fileID: 2117713953}
+  focusCameraOffset: {x: 0, y: -0.18, z: 0.22}
+  focusFieldOfView: 52
+  focusTransitionSeconds: 0.18
 --- !u!4 &81540487
 Transform:
   m_ObjectHideFlags: 0
@@ -1324,7 +1390,7 @@ Transform:
   m_GameObject: {fileID: 81540485}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -10, y: 0.05, z: -6.25}
+  m_LocalPosition: {x: -9.65, y: 0.05, z: -6.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1444,6 +1510,7 @@ Transform:
   - {fileID: 651263085}
   - {fileID: 591286761}
   - {fileID: 1492527754}
+  - {fileID: 851837087}
   m_Father: {fileID: 1227314325}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &86147647
@@ -1461,6 +1528,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F A6"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 851837087}
   Description: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F \u0434\u0440\u0443\u0433\u043E\u0433\u043E
     \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430. \u0422\u043E\u043B\u044C\u043A\u043E
     \u043E\u0441\u043C\u043E\u0442\u0440."
@@ -1697,6 +1765,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u043E\u043B\u044C"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &90197102
@@ -1787,6 +1856,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u043E\u0440\u043E\u0431\u043A\u0430 \u044F\u0438\u0446"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &98227904
@@ -2020,7 +2090,7 @@ Transform:
   m_GameObject: {fileID: 106197473}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: -0.5999998}
+  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: -0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2058,6 +2128,7 @@ MonoBehaviour:
   DisplayName: "\u0414\u041E\u0421\u041A\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &106197477
@@ -2433,7 +2504,7 @@ Transform:
   m_GameObject: {fileID: 122111183}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: 0.5999999}
+  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: 0.5999997}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2471,6 +2542,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &122111187
@@ -2853,6 +2925,7 @@ MonoBehaviour:
   DisplayName: Tray Item_11
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &128872568
@@ -2906,7 +2979,7 @@ Transform:
   m_GameObject: {fileID: 129916880}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: -0.5999998}
+  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: -0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2945,6 +3018,7 @@ MonoBehaviour:
   DisplayName: "\u0414\u041E\u0421\u041A\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &129916884
@@ -3092,6 +3166,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0423\u0421\u041E\u0420"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &133090964
@@ -3787,6 +3862,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u043B\u0438\u0432\u043E\u0447\u043D\u043E\u0435 \u043C\u0430\u0441\u043B\u043E"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &153872410
@@ -3840,7 +3916,7 @@ Transform:
   m_GameObject: {fileID: 155552281}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: -0.72000015}
+  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: -0.72000015}
   m_LocalScale: {x: 0.65, y: 0.05, z: 0.55}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3879,6 +3955,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u041E\u0420\u0417\u0418\u041D\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &155552285
@@ -4237,6 +4314,7 @@ MonoBehaviour:
   DisplayName: "\u0413\u043E\u0432\u044F\u0434\u0438\u043D\u0430"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &172043479
@@ -4399,6 +4477,7 @@ Transform:
   - {fileID: 1006097329}
   - {fileID: 760314366}
   - {fileID: 981116979}
+  - {fileID: 1559464420}
   m_Father: {fileID: 84303397}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &180691619
@@ -4416,6 +4495,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F B1"
   IsPlayerStation: 0
   Team: 1
+  FocusPoint: {fileID: 1559464420}
   Description: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F \u0434\u0440\u0443\u0433\u043E\u0433\u043E
     \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430. \u0422\u043E\u043B\u044C\u043A\u043E
     \u043E\u0441\u043C\u043E\u0442\u0440."
@@ -4761,6 +4841,7 @@ Transform:
   - {fileID: 2099346390}
   - {fileID: 1606406131}
   - {fileID: 363787285}
+  - {fileID: 1912466156}
   m_Father: {fileID: 1227314325}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &188649612
@@ -4778,6 +4859,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F A4"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 1912466156}
   Description: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F \u0434\u0440\u0443\u0433\u043E\u0433\u043E
     \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430. \u0422\u043E\u043B\u044C\u043A\u043E
     \u043E\u0441\u043C\u043E\u0442\u0440."
@@ -4939,7 +5021,7 @@ Transform:
   m_GameObject: {fileID: 207808094}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: 0.5999998}
+  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: 0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4977,6 +5059,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &207808098
@@ -5763,6 +5846,7 @@ MonoBehaviour:
   DisplayName: "\u041E\u0431\u0449\u0430\u044F \u043A\u043B\u0430\u0434\u043E\u0432\u0430\u044F"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u041F\u043E\u0434\u0431\u043E\u0440 \u043F\u0440\u043E\u0434\u0443\u043A\u0442\u043E\u0432
     \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C
     \u044D\u0442\u0430\u043F\u0435."
@@ -6101,6 +6185,7 @@ MonoBehaviour:
   DisplayName: Tray Item_2
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &274040083
@@ -6323,6 +6408,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0423\u0421\u041E\u0420"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &285516022
@@ -6468,6 +6554,7 @@ MonoBehaviour:
   DisplayName: Tray Item_19
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &286286917
@@ -7308,7 +7395,7 @@ Transform:
   m_GameObject: {fileID: 380065565}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: -0.7199999}
+  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: -0.7199997}
   m_LocalScale: {x: 0.65, y: 0.05, z: 0.55}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7347,6 +7434,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u041E\u0420\u0417\u0418\u041D\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &380065569
@@ -7787,7 +7875,7 @@ Transform:
   m_GameObject: {fileID: 402394167}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: 0.5999998}
+  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: 0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7825,6 +7913,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &402394171
@@ -7965,7 +8054,7 @@ Transform:
   m_GameObject: {fileID: 408708126}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: 0.65}
+  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: 0.65}
   m_LocalScale: {x: 0.65, y: 0.04, z: 0.94}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8003,6 +8092,7 @@ MonoBehaviour:
   DisplayName: "\u041B\u041E\u0422\u041E\u041A"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &408708130
@@ -8728,6 +8818,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0423\u0421\u041E\u0420"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &457336259
@@ -9114,7 +9205,7 @@ Transform:
   m_GameObject: {fileID: 470955222}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: -0.5999999}
+  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: -0.5999997}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9152,6 +9243,7 @@ MonoBehaviour:
   DisplayName: "\u0414\u041E\u0421\u041A\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &470955226
@@ -9231,6 +9323,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 470955222}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &472146370
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 472146371}
+  m_Layer: 0
+  m_Name: Station Focus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &472146371
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472146370}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.23913051, y: 0.6333334, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1452151218}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &482033456
 GameObject:
   m_ObjectHideFlags: 0
@@ -9298,6 +9421,7 @@ Transform:
   - {fileID: 2020768727}
   - {fileID: 1171071895}
   - {fileID: 2080197804}
+  - {fileID: 24362743}
   m_Father: {fileID: 1227314325}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &485439666
@@ -9315,6 +9439,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F A1"
   IsPlayerStation: 1
   Team: 0
+  FocusPoint: {fileID: 24362743}
   Description: "E \u2014 \u0444\u043E\u043A\u0443\u0441 \u0441\u0442\u0430\u043D\u0446\u0438\u0438"
 --- !u!23 &485439667
 MeshRenderer:
@@ -9512,7 +9637,7 @@ Transform:
   m_GameObject: {fileID: 486163476}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: 0.6499999}
+  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: 0.64999986}
   m_LocalScale: {x: 0.65, y: 0.04, z: 0.94}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9550,6 +9675,7 @@ MonoBehaviour:
   DisplayName: "\u041B\u041E\u0422\u041E\u041A"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &486163480
@@ -9921,6 +10047,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041A\u041E\u0420\u0417\u0418\u041D\u042B"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &512167939
@@ -10066,6 +10193,7 @@ MonoBehaviour:
   DisplayName: Tray Item_14
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &527110271
@@ -10191,6 +10319,37 @@ MonoBehaviour:
   SizeMultiplier: 0.5
   Ingredient: {fileID: 0}
   PortionId: 
+--- !u!1 &533177985
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 533177986}
+  m_Layer: 0
+  m_Name: Station Focus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &533177986
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 533177985}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.23913051, y: 0.6333334, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1603986680}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &534862532
 GameObject:
   m_ObjectHideFlags: 0
@@ -10257,6 +10416,7 @@ MonoBehaviour:
   DisplayName: Tray Item_18
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &534862536
@@ -10346,6 +10506,7 @@ MonoBehaviour:
   DisplayName: Tray Item_15
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &536668510
@@ -10508,6 +10669,7 @@ Transform:
   - {fileID: 722257775}
   - {fileID: 115782660}
   - {fileID: 565542697}
+  - {fileID: 1084737761}
   m_Father: {fileID: 84303397}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &540317702
@@ -10525,6 +10687,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F B5"
   IsPlayerStation: 0
   Team: 1
+  FocusPoint: {fileID: 1084737761}
   Description: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F \u0434\u0440\u0443\u0433\u043E\u0433\u043E
     \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430. \u0422\u043E\u043B\u044C\u043A\u043E
     \u043E\u0441\u043C\u043E\u0442\u0440."
@@ -10884,6 +11047,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 573217891}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &585999766
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 585999767}
+  m_Layer: 0
+  m_Name: Station Focus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &585999767
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 585999766}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.23913051, y: 0.6333334, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 826790253}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &587521492
 GameObject:
   m_ObjectHideFlags: 0
@@ -11296,6 +11490,7 @@ MonoBehaviour:
   DisplayName: Tray Item_9
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &617694589
@@ -11452,7 +11647,7 @@ Transform:
   m_GameObject: {fileID: 619007950}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: -0.72000015}
+  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: -0.72000015}
   m_LocalScale: {x: 0.65, y: 0.05, z: 0.55}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -11491,6 +11686,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u041E\u0420\u0417\u0418\u041D\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &619007954
@@ -11895,6 +12091,7 @@ MonoBehaviour:
   DisplayName: "\u0412\u041E\u0417\u0412\u0420\u0410\u0422"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &644751389
@@ -12115,7 +12312,7 @@ Transform:
   m_GameObject: {fileID: 655121784}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: 0.65}
+  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: 0.65}
   m_LocalScale: {x: 0.65, y: 0.04, z: 0.94}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -12153,6 +12350,7 @@ MonoBehaviour:
   DisplayName: "\u041B\u041E\u0422\u041E\u041A"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &655121788
@@ -12506,6 +12704,7 @@ MonoBehaviour:
   DisplayName: Tray Item_10
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &676960246
@@ -12698,6 +12897,7 @@ MonoBehaviour:
   DisplayName: Tray Item_21
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &681527848
@@ -12782,7 +12982,7 @@ Transform:
   m_GameObject: {fileID: 690981451}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: 0.5999998}
+  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: 0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -12820,6 +13020,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &690981455
@@ -13357,7 +13558,7 @@ Transform:
   m_GameObject: {fileID: 715142961}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: 0.65}
+  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: 0.65}
   m_LocalScale: {x: 0.65, y: 0.04, z: 0.94}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13419,6 +13620,7 @@ MonoBehaviour:
   DisplayName: "\u041B\u041E\u0422\u041E\u041A"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &715142965
@@ -13639,7 +13841,7 @@ Transform:
   m_GameObject: {fileID: 735382502}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: 0.6499999}
+  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: 0.6499996}
   m_LocalScale: {x: 0.65, y: 0.04, z: 0.94}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13677,6 +13879,7 @@ MonoBehaviour:
   DisplayName: "\u041B\u041E\u0422\u041E\u041A"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &735382506
@@ -13895,6 +14098,7 @@ Transform:
   - {fileID: 2056510814}
   - {fileID: 30907068}
   - {fileID: 388553827}
+  - {fileID: 833465945}
   m_Father: {fileID: 1227314325}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &743389789
@@ -13912,6 +14116,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F A2"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 833465945}
   Description: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F \u0434\u0440\u0443\u0433\u043E\u0433\u043E
     \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430. \u0422\u043E\u043B\u044C\u043A\u043E
     \u043E\u0441\u043C\u043E\u0442\u0440."
@@ -14274,6 +14479,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0423\u0421\u041E\u0420"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &762948563
@@ -14465,7 +14671,7 @@ Transform:
   m_GameObject: {fileID: 778640050}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: -0.7199999}
+  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: -0.7199997}
   m_LocalScale: {x: 0.65, y: 0.05, z: 0.55}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -14504,6 +14710,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u041E\u0420\u0417\u0418\u041D\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &778640054
@@ -14650,6 +14857,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u0430\u0440\u0442\u043E\u0444\u0435\u043B\u044C"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &789448534
@@ -14844,6 +15052,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0423\u0421\u041E\u0420"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &792977292
@@ -14988,7 +15197,7 @@ Transform:
   m_GameObject: {fileID: 813841830}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: -0.72000015}
+  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: -0.72000015}
   m_LocalScale: {x: 0.65, y: 0.05, z: 0.55}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -15027,6 +15236,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u041E\u0420\u0417\u0418\u041D\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &813841834
@@ -15173,6 +15383,7 @@ Transform:
   - {fileID: 1211049371}
   - {fileID: 1750065145}
   - {fileID: 1267061565}
+  - {fileID: 585999767}
   m_Father: {fileID: 84303397}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &826790254
@@ -15190,6 +15401,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F B2"
   IsPlayerStation: 0
   Team: 1
+  FocusPoint: {fileID: 585999767}
   Description: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F \u0434\u0440\u0443\u0433\u043E\u0433\u043E
     \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430. \u0422\u043E\u043B\u044C\u043A\u043E
     \u043E\u0441\u043C\u043E\u0442\u0440."
@@ -15300,7 +15512,7 @@ Transform:
   m_GameObject: {fileID: 827958997}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: 0.65}
+  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: 0.65}
   m_LocalScale: {x: 0.65, y: 0.04, z: 0.94}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -15338,6 +15550,7 @@ MonoBehaviour:
   DisplayName: "\u041B\u041E\u0422\u041E\u041A"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &827959001
@@ -15609,6 +15822,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &833465944
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 833465945}
+  m_Layer: 0
+  m_Name: Station Focus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &833465945
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 833465944}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.23913051, y: 0.6333334, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 743389788}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &836311681
 GameObject:
   m_ObjectHideFlags: 0
@@ -15675,6 +15919,7 @@ MonoBehaviour:
   DisplayName: Tray Item_22
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &836311685
@@ -15698,6 +15943,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.16, y: 0.1, z: 0.1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &851837086
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 851837087}
+  m_Layer: 0
+  m_Name: Station Focus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &851837087
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 851837086}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.23913051, y: 0.6333334, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 86147646}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &853674947
 GameObject:
   m_ObjectHideFlags: 0
@@ -15934,7 +16210,7 @@ Transform:
   m_GameObject: {fileID: 857648665}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: -0.5999998}
+  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: -0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -15972,6 +16248,7 @@ MonoBehaviour:
   DisplayName: "\u0414\u041E\u0421\u041A\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &857648669
@@ -16051,6 +16328,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 857648665}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &871205451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 871205452}
+  m_Layer: 0
+  m_Name: Station Focus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &871205452
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 871205451}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.23913051, y: 0.6333334, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2115170100}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &880281711
 GameObject:
   m_ObjectHideFlags: 0
@@ -16321,7 +16629,7 @@ Transform:
   m_GameObject: {fileID: 884361751}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: 0.5999999}
+  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: 0.5999997}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -16359,6 +16667,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &884361755
@@ -16468,7 +16777,7 @@ Transform:
   m_GameObject: {fileID: 885810391}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: -0.72000015}
+  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: -0.72000015}
   m_LocalScale: {x: 0.65, y: 0.05, z: 0.55}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -16507,6 +16816,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u041E\u0420\u0417\u0418\u041D\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &885810395
@@ -16743,7 +17053,7 @@ Transform:
   m_GameObject: {fileID: 890598047}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: 0.5999999}
+  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: 0.5999997}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -16781,6 +17091,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &890598051
@@ -16890,7 +17201,7 @@ Transform:
   m_GameObject: {fileID: 893792385}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: -0.5999998}
+  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: -0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -16928,6 +17239,7 @@ MonoBehaviour:
   DisplayName: "\u0414\u041E\u0421\u041A\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &893792389
@@ -17075,6 +17387,7 @@ MonoBehaviour:
     \u043C\u0430\u0441\u043B\u043E"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &898313003
@@ -18069,6 +18382,7 @@ MonoBehaviour:
   DisplayName: Tray Item_7
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &998043984
@@ -18270,6 +18584,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u0430\u0445\u0430\u0440"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1006490345
@@ -18583,7 +18898,7 @@ Transform:
   m_GameObject: {fileID: 1029519749}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: 0.5999998}
+  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: 0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -18622,6 +18937,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1029519753
@@ -18884,7 +19200,7 @@ Transform:
   m_GameObject: {fileID: 1053810389}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: 0.65}
+  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: 0.65}
   m_LocalScale: {x: 0.65, y: 0.04, z: 0.94}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -18922,6 +19238,7 @@ MonoBehaviour:
   DisplayName: "\u041B\u041E\u0422\u041E\u041A"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1053810393
@@ -19158,6 +19475,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0423\u0421\u041E\u0420"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1057989033
@@ -19303,7 +19621,7 @@ Transform:
   m_GameObject: {fileID: 1074270555}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: -0.7199999}
+  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: -0.7199997}
   m_LocalScale: {x: 0.65, y: 0.05, z: 0.55}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -19342,6 +19660,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u041E\u0420\u0417\u0418\u041D\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1074270559
@@ -19510,6 +19829,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1079226390}
   m_Mesh: {fileID: 0}
+--- !u!1 &1084737760
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1084737761}
+  m_Layer: 0
+  m_Name: Station Focus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1084737761
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1084737760}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.23913051, y: 0.6333334, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 540317701}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1085224806
 GameObject:
   m_ObjectHideFlags: 0
@@ -19777,7 +20127,7 @@ Transform:
   m_GameObject: {fileID: 1101998109}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: -0.5999998}
+  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: -0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -19815,6 +20165,7 @@ MonoBehaviour:
   DisplayName: "\u0414\u041E\u0421\u041A\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1101998113
@@ -20226,6 +20577,7 @@ MonoBehaviour:
   DisplayName: Tray Item_13
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1113741323
@@ -20497,7 +20849,7 @@ Transform:
   m_GameObject: {fileID: 1119615702}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: -0.5999998}
+  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: -0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -20535,6 +20887,7 @@ MonoBehaviour:
   DisplayName: "\u0414\u041E\u0421\u041A\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1119615706
@@ -20644,7 +20997,7 @@ Transform:
   m_GameObject: {fileID: 1120157707}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: 0.5999998}
+  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: 0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -20682,6 +21035,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1120157711
@@ -21230,6 +21584,7 @@ MonoBehaviour:
   DisplayName: Tray Item_3
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1145433380
@@ -21925,6 +22280,7 @@ MonoBehaviour:
   DisplayName: Tray Item_17
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1181622889
@@ -22105,6 +22461,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0423\u0421\u041E\u0420"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1190075996
@@ -22214,7 +22571,7 @@ Transform:
   m_GameObject: {fileID: 1191859063}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: 0.5999998}
+  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: 0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -22252,6 +22609,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1191859067
@@ -22784,6 +23142,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0435\u0448\u043E\u043A \u043A\u0430\u0440\u0442\u043E\u0448\u043A\u0438"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1208058918
@@ -22986,6 +23345,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0423\u0421\u041E\u0420"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1212374836
@@ -23901,6 +24261,7 @@ MonoBehaviour:
   DisplayName: Tray Item_6
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1249885068
@@ -24656,7 +25017,7 @@ Transform:
   m_GameObject: {fileID: 1284364421}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: -0.7199999}
+  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: -0.7199997}
   m_LocalScale: {x: 0.65, y: 0.05, z: 0.55}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -24695,6 +25056,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u041E\u0420\u0417\u0418\u041D\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1284364425
@@ -25062,6 +25424,7 @@ Transform:
   - {fileID: 1907430432}
   - {fileID: 1392400349}
   - {fileID: 458924003}
+  - {fileID: 3995839}
   m_Father: {fileID: 84303397}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1315589151
@@ -25079,6 +25442,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F B3"
   IsPlayerStation: 0
   Team: 1
+  FocusPoint: {fileID: 3995839}
   Description: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F \u0434\u0440\u0443\u0433\u043E\u0433\u043E
     \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430. \u0422\u043E\u043B\u044C\u043A\u043E
     \u043E\u0441\u043C\u043E\u0442\u0440."
@@ -25195,6 +25559,7 @@ Transform:
   - {fileID: 1661119847}
   - {fileID: 853674948}
   - {fileID: 1449274656}
+  - {fileID: 1609424996}
   m_Father: {fileID: 1227314325}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1318948728
@@ -25212,6 +25577,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F A5"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 1609424996}
   Description: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F \u0434\u0440\u0443\u0433\u043E\u0433\u043E
     \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430. \u0422\u043E\u043B\u044C\u043A\u043E
     \u043E\u0441\u043C\u043E\u0442\u0440."
@@ -25500,7 +25866,7 @@ Transform:
   m_GameObject: {fileID: 1327222901}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: 0.6499999}
+  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: 0.6499996}
   m_LocalScale: {x: 0.65, y: 0.04, z: 0.94}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -25538,6 +25904,7 @@ MonoBehaviour:
   DisplayName: "\u041B\u041E\u0422\u041E\u041A"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1327222905
@@ -25683,6 +26050,7 @@ MonoBehaviour:
   DisplayName: Tray Item_16
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1330339783
@@ -25890,7 +26258,7 @@ Transform:
   m_GameObject: {fileID: 1347898046}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: -0.72000015}
+  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: -0.72000015}
   m_LocalScale: {x: 0.65, y: 0.05, z: 0.55}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -25929,6 +26297,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u041E\u0420\u0417\u0418\u041D\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1347898050
@@ -26239,6 +26608,7 @@ MonoBehaviour:
   DisplayName: "\u042F\u0431\u043B\u043E\u043A\u043E"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1361511037
@@ -26586,6 +26956,7 @@ MonoBehaviour:
   DisplayName: Tray Item_20
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1377824356
@@ -26639,7 +27010,7 @@ Transform:
   m_GameObject: {fileID: 1384819926}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: -0.72000015}
+  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: -0.72000015}
   m_LocalScale: {x: 0.65, y: 0.05, z: 0.55}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -26678,6 +27049,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u041E\u0420\u0417\u0418\u041D\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1384819930
@@ -27381,7 +27753,7 @@ Transform:
   m_GameObject: {fileID: 1395034628}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: -0.5999998}
+  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: -0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -27419,6 +27791,7 @@ MonoBehaviour:
   DisplayName: "\u0414\u041E\u0421\u041A\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1395034632
@@ -27969,6 +28342,7 @@ MonoBehaviour:
   DisplayName: Tray Item_4
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1447929098
@@ -28153,6 +28527,7 @@ Transform:
   - {fileID: 469013015}
   - {fileID: 679574954}
   - {fileID: 1071710067}
+  - {fileID: 472146371}
   m_Father: {fileID: 84303397}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1452151219
@@ -28170,6 +28545,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F B4"
   IsPlayerStation: 0
   Team: 1
+  FocusPoint: {fileID: 472146371}
   Description: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F \u0434\u0440\u0443\u0433\u043E\u0433\u043E
     \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430. \u0422\u043E\u043B\u044C\u043A\u043E
     \u043E\u0441\u043C\u043E\u0442\u0440."
@@ -28706,6 +29082,7 @@ MonoBehaviour:
   DisplayName: Tray Item_12
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1474734569
@@ -29214,6 +29591,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u043E\u0440\u0437\u0438\u043D\u0430"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1511230506
@@ -29730,6 +30108,37 @@ MonoBehaviour:
   SizeMultiplier: 1
   Ingredient: {fileID: 11400000, guid: 1063b531140ca4b4eacd7b49aef8d807, type: 2}
   PortionId: 
+--- !u!1 &1559464419
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1559464420}
+  m_Layer: 0
+  m_Name: Station Focus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1559464420
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1559464419}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.23913051, y: 0.6333334, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 180691618}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1564356892
 GameObject:
   m_ObjectHideFlags: 0
@@ -29933,7 +30342,7 @@ Transform:
   m_GameObject: {fileID: 1580246823}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: 0.6499999}
+  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: 0.64999986}
   m_LocalScale: {x: 0.65, y: 0.04, z: 0.94}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -29971,6 +30380,7 @@ MonoBehaviour:
   DisplayName: "\u041B\u041E\u0422\u041E\u041A"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1580246827
@@ -30080,7 +30490,7 @@ Transform:
   m_GameObject: {fileID: 1601514546}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: 0.5999998}
+  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: 0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -30118,6 +30528,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1601514550
@@ -30233,6 +30644,7 @@ Transform:
   - {fileID: 1224243555}
   - {fileID: 287808518}
   - {fileID: 1228719251}
+  - {fileID: 533177986}
   m_Father: {fileID: 84303397}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1603986681
@@ -30250,6 +30662,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F B6"
   IsPlayerStation: 0
   Team: 1
+  FocusPoint: {fileID: 533177986}
   Description: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F \u0434\u0440\u0443\u0433\u043E\u0433\u043E
     \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430. \u0422\u043E\u043B\u044C\u043A\u043E
     \u043E\u0441\u043C\u043E\u0442\u0440."
@@ -30433,6 +30846,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1609424995
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1609424996}
+  m_Layer: 0
+  m_Name: Station Focus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1609424996
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1609424995}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.23913051, y: 0.6333334, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1318948727}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1614639062
 GameObject:
   m_ObjectHideFlags: 0
@@ -30706,7 +31150,7 @@ Transform:
   m_GameObject: {fileID: 1619873032}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: -0.7199999}
+  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: -0.7199997}
   m_LocalScale: {x: 0.65, y: 0.05, z: 0.55}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -30745,6 +31189,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u041E\u0420\u0417\u0418\u041D\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1619873036
@@ -30891,6 +31336,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0443\u043A\u0430"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1621156119
@@ -31033,7 +31479,7 @@ Transform:
   m_GameObject: {fileID: 1621864055}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: 0.5999998}
+  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: 0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -31071,6 +31517,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1621864059
@@ -31384,6 +31831,7 @@ MonoBehaviour:
   DisplayName: Tray Item_8
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1641508746
@@ -31757,7 +32205,7 @@ Transform:
   m_GameObject: {fileID: 1668236350}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: -0.5999998}
+  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: -0.5999998}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -31795,6 +32243,7 @@ MonoBehaviour:
   DisplayName: "\u0414\u041E\u0421\u041A\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1668236354
@@ -32230,7 +32679,7 @@ Transform:
   m_GameObject: {fileID: 1689787004}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: 0.65}
+  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: 0.65}
   m_LocalScale: {x: 0.65, y: 0.04, z: 0.94}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -32268,6 +32717,7 @@ MonoBehaviour:
   DisplayName: "\u041B\u041E\u0422\u041E\u041A"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1689787008
@@ -33218,7 +33668,7 @@ Transform:
   m_GameObject: {fileID: 1734743173}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: 0.5999999}
+  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: 0.5999997}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -33256,6 +33706,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1734743177
@@ -34165,6 +34616,7 @@ MonoBehaviour:
   DisplayName: "\u041B\u0443\u043A"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1782123993
@@ -34722,6 +35174,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0423\u0421\u041E\u0420"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1807516570
@@ -34980,6 +35433,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0423\u0421\u041E\u0420"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1810644069
@@ -35126,6 +35580,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u043E\u0440\u043A\u043E\u0432\u044C"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1831143437
@@ -35685,6 +36140,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u044B\u0440"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1850614913
@@ -35769,7 +36225,7 @@ Transform:
   m_GameObject: {fileID: 1856770718}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: 0.65}
+  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: 0.65}
   m_LocalScale: {x: 0.65, y: 0.04, z: 0.94}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -35807,6 +36263,7 @@ MonoBehaviour:
   DisplayName: "\u041B\u041E\u0422\u041E\u041A"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1856770722
@@ -35953,6 +36410,7 @@ MonoBehaviour:
   DisplayName: "\u042F\u0439\u0446\u043E"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1856987448
@@ -36546,6 +37004,37 @@ MonoBehaviour:
   SizeMultiplier: 1
   Ingredient: {fileID: 11400000, guid: d4e4e5ff61f261f46a5e5cf594162851, type: 2}
   PortionId: 
+--- !u!1 &1912466155
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1912466156}
+  m_Layer: 0
+  m_Name: Station Focus
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1912466156
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1912466155}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.23913051, y: 0.6333334, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 188649611}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1917293518
 GameObject:
   m_ObjectHideFlags: 0
@@ -36746,6 +37235,7 @@ MonoBehaviour:
   DisplayName: Tray Item_5
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &1921968792
@@ -36902,7 +37392,7 @@ Transform:
   m_GameObject: {fileID: 1923982028}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.6499995, y: 0.47999996, z: -0.7199999}
+  m_LocalPosition: {x: 0.34999985, y: 0.47999996, z: -0.7199997}
   m_LocalScale: {x: 0.65, y: 0.05, z: 0.55}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -36941,6 +37431,7 @@ MonoBehaviour:
   DisplayName: "\u041A\u041E\u0420\u0417\u0418\u041D\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1923982032
@@ -37101,7 +37592,7 @@ Transform:
   m_GameObject: {fileID: 1987135758}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: -0.5999999}
+  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: -0.5999997}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -37139,6 +37630,7 @@ MonoBehaviour:
   DisplayName: "\u0414\u041E\u0421\u041A\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1987135762
@@ -37248,7 +37740,7 @@ Transform:
   m_GameObject: {fileID: 1992746982}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: 0.65}
+  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: 0.65}
   m_LocalScale: {x: 0.65, y: 0.04, z: 0.94}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -37286,6 +37778,7 @@ MonoBehaviour:
   DisplayName: "\u041B\u041E\u0422\u041E\u041A"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &1992746986
@@ -37963,6 +38456,7 @@ MonoBehaviour:
   DisplayName: Tray Item_23
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &2024358200
@@ -38321,6 +38815,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0423\u0421\u041E\u0420"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &2053743975
@@ -39012,7 +39507,7 @@ Transform:
   m_GameObject: {fileID: 2099057559}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.34999985, y: 0.47999996, z: -0.5999999}
+  m_LocalPosition: {x: 0.6499995, y: 0.47999996, z: -0.5999997}
   m_LocalScale: {x: 0.65, y: 0.06, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -39050,6 +39545,7 @@ MonoBehaviour:
   DisplayName: "\u0414\u041E\u0421\u041A\u0410"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &2099057563
@@ -39462,6 +39958,7 @@ MonoBehaviour:
   DisplayName: "\u041C\u0423\u0421\u041E\u0420"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!23 &2110963130
@@ -39608,6 +40105,7 @@ Transform:
   - {fileID: 136041015}
   - {fileID: 704272549}
   - {fileID: 43642853}
+  - {fileID: 871205452}
   m_Father: {fileID: 1227314325}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2115170101
@@ -39625,6 +40123,7 @@ MonoBehaviour:
   DisplayName: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F A3"
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 871205452}
   Description: "\u0421\u0442\u0430\u043D\u0446\u0438\u044F \u0434\u0440\u0443\u0433\u043E\u0433\u043E
     \u0443\u0447\u0430\u0441\u0442\u043D\u0438\u043A\u0430. \u0422\u043E\u043B\u044C\u043A\u043E
     \u043E\u0441\u043C\u043E\u0442\u0440."
@@ -39771,6 +40270,7 @@ MonoBehaviour:
   DisplayName: Tray Item_24
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &2116835056
@@ -39846,7 +40346,7 @@ Camera:
     height: 1
   near clip plane: 0.08
   far clip plane: 100
-  field of view: 75
+  field of view: 60
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -39880,7 +40380,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2117713952}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1736482, y: 0, z: 0, w: 0.9848078}
+  m_LocalRotation: {x: 0.3007058, y: 0, z: 0, w: 0.95371693}
   m_LocalPosition: {x: 0, y: 1.65, z: 0}
   m_LocalScale: {x: 0.99999976, y: 1, z: 0.99999976}
   m_ConstrainProportionsScale: 0
@@ -40436,6 +40936,7 @@ MonoBehaviour:
   DisplayName: Tray Item_1
   IsPlayerStation: 0
   Team: 0
+  FocusPoint: {fileID: 0}
   Description: "\u0413\u043E\u0442\u043E\u0432\u043A\u0430 \u043F\u043E\u044F\u0432\u0438\u0442\u0441\u044F
     \u043D\u0430 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0435\u043C \u044D\u0442\u0430\u043F\u0435."
 --- !u!65 &2142012057
