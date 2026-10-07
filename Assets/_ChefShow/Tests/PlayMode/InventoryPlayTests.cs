@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using ChefShow.Core;
 using ChefShow.Inventory;
+using ChefShow.Ingredients;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -35,6 +36,8 @@ namespace ChefShow.Tests
             yield return SceneManager.LoadSceneAsync("ChefShow_Prototype", LoadSceneMode.Single);
             yield return null;
             bootstrap = Object.FindFirstObjectByType<GameBootstrap>(); inventory = bootstrap.Inventory;
+            // Изолируем runtime-копию actions от мыши автора, работающего рядом с MCP-тестом.
+            bootstrap.UiInput.actionsAsset.devices = new InputDevice[] { keyboard, mouse };
             Assert.That(inventory, Is.Not.Null); Assert.That(inventory.Validate(), Is.Null);
             bootstrap.SetPaused(false);
         }
@@ -50,18 +53,22 @@ namespace ChefShow.Tests
             controller.enabled = false; bootstrap.Player.transform.position = position; controller.enabled = true;
             Physics.SyncTransforms();
         }
-        private IEnumerator Aim(Vector3 point)
+        private IEnumerator Aim(Vector3 point, bool exactPoint = true)
         {
             // После teleport даём CharacterController опуститься на пол прежде,
             // чем рассчитывать угол. В игре игрок доходит до цели уже на земле.
             yield return null; yield return null;
             var camera = bootstrap.Player.ViewCamera.transform;
-            var desired = Quaternion.LookRotation(point - camera.position).eulerAngles;
-            var current = camera.eulerAngles;
-            InputSystem.QueueDeltaStateEvent(mouse.delta, new Vector2(Mathf.DeltaAngle(current.y, desired.y), -Mathf.DeltaAngle(current.x, desired.x)) / bootstrap.Config.LookSensitivity);
-            yield return null; yield return null;
+            for (int correction = 0; correction < 3; correction++)
+            {
+                var desired = Quaternion.LookRotation(point - camera.position).eulerAngles;
+                var current = camera.eulerAngles;
+                InputSystem.QueueDeltaStateEvent(mouse.delta, new Vector2(Mathf.DeltaAngle(current.y, desired.y), -Mathf.DeltaAngle(current.x, desired.x)) / bootstrap.Config.LookSensitivity);
+                yield return null; yield return null;
+                if (Vector3.Angle(point - camera.position, camera.forward) < .2f) break;
+            }
             bootstrap.Player.RefreshTarget();
-            Assert.That(Vector3.Angle(point - camera.position, camera.forward), Is.LessThan(0.3f),
+            if (exactPoint) Assert.That(Vector3.Angle(point - camera.position, camera.forward), Is.LessThan(0.3f),
                 "Наведение камеры: цель=" + point + " камера=" + camera.position + " взгляд=" + camera.forward + " объект=" + bootstrap.Player.Target?.name);
         }
         private IEnumerator Press(Key key)
@@ -98,7 +105,10 @@ namespace ChefShow.Tests
             Teleport(new Vector3(-9.7f, .05f, -6.25f)); yield return Aim(inventory.StationDock.parent.position);
             Assert.That(bootstrap.Player.Target?.name, Is.EqualTo("Basket Dock"));
             yield return Press(Key.Tab); Assert.That(State.Placement, Is.EqualTo(BasketPlacement.Station));
-            yield return Aim(inventory.BasketBody.transform.position);
+            // Проверяем попадание в реальную корзину; её центр под продуктами
+            // не является отдельной игровой целью с требованием точности 0.3°.
+            yield return Aim(inventory.BasketBody.transform.position, false);
+            Assert.That(bootstrap.IsPaused, Is.False);
             Assert.That(bootstrap.Player.Target?.name, Is.EqualTo("InventoryBasket"), inventory.Describe(bootstrap.Player.Target));
             yield return Click(); Assert.That(State.Basket.Count, Is.Zero, inventory.Describe(bootstrap.Player.Target));
         }
@@ -265,6 +275,7 @@ namespace ChefShow.Tests
             var settings = Object.Instantiate(bootstrap.Config); settings.PlayerTeam = ChefShow.Data.TeamId.B;
             var actions = Object.Instantiate(bootstrap.InputDefinition);
             var rig = bootstrap.Player;
+            var home = rig.ViewCamera.transform.localPosition;
             var station = GameObject.Find("Station_B1").GetComponent<ChefShow.Player.PrototypeInteractable>();
             bool wasPlayerStation = station.IsPlayerStation;
             var ownNpc = GameObject.Find("NPC_B1").GetComponent<Collider>();
@@ -286,7 +297,6 @@ namespace ChefShow.Tests
                 actions.FindActionMap("Gameplay", true).Disable(); actions.FindActionMap("Station", true).Enable();
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState()); yield return null;
                 for (int i = 0; i < 5; i++) { clock.Tick(.05f); rig.Step(clock, true); }
-                var home = new Vector3(0, 1.65f, 0);
                 float freeOffset = Vector3.Distance(rig.ViewCamera.transform.localPosition, home);
                 Assert.That(freeOffset, Is.GreaterThan(.25f));
                 Assert.That(rig.ViewCamera.transform.position.x, Is.LessThan(9.65f));
@@ -312,6 +322,193 @@ namespace ChefShow.Tests
             }
         }
 
+        private IEnumerator AimDrawer(ToolDrawer drawer)
+        {
+            var bounds = drawer.GetComponent<BoxCollider>().bounds;
+            var point = drawer.IsOpen ? drawer.Tray.TransformPoint(new Vector3(.23f, -.02f, .76f))
+                : bounds.center + Vector3.up * bounds.extents.y * .9f;
+            yield return Aim(point);
+            var aimed = bootstrap.Player.Target;
+            var actual = aimed == null ? null : aimed.GetComponent<ToolDrawer>();
+            if (actual == null && aimed != null) actual = aimed.GetComponent<ToolDrawerTarget>()?.Drawer;
+            Assert.That(actual, Is.SameAs(drawer), "Drawer aim=" + aimed?.name);
+        }
+        private IEnumerator OpenDrawer(ToolDrawer drawer)
+        {
+            yield return AimDrawer(drawer); yield return Press(Key.E);
+            Assert.That(drawer.IsOpen, Is.True);
+            yield return new WaitForSecondsRealtime(drawer.SlideSeconds + .05f);
+        }
+        private IEnumerator AimTool(KitchenTool tool)
+        {
+            yield return Aim(tool.PickupCollider.bounds.center);
+            Assert.That(bootstrap.Player.Target?.GetComponent<KitchenTool>(), Is.SameAs(tool), "Tool=" + tool.transform.position + " collider=" + tool.PickupCollider.bounds + " camera=" + bootstrap.Player.ViewCamera.transform.position + " aimed=" + bootstrap.Player.Target?.name);
+        }
+        private KitchenTool Tool(ToolDrawer drawer, int index) => drawer.Tools[index].GetComponent<KitchenTool>();
+
+        [UnityTest]
+        public IEnumerator DirectDrawerSelectsFourWorldToolsAndKeepsMovementLookAndTimer()
+        {
+            var tools = bootstrap.Tools; Assert.That(tools.Validate(), Is.Null);
+            var drawer = tools.Drawers.Single(d => d.StationId == inventory.PlayerStationId);
+            Assert.That(bootstrap.Hud.transform.Find("Tool Drawer Menu"), Is.Null);
+            var facts = new System.Collections.Generic.List<KitchenToolChanged>();
+            using (bootstrap.Run.Events.Subscribe<KitchenToolChanged>(facts.Add))
+            {
+                yield return AimDrawer(drawer);
+                Assert.That(bootstrap.Hud.InteractionKey.enabled, Is.True);
+                Assert.That(bootstrap.Hud.Context.text, Is.EqualTo("Открыть ящик"));
+                float alpha = bootstrap.Hud.InteractionKey.color.a;
+                yield return new WaitForSecondsRealtime(.15f);
+                Assert.That(Mathf.Abs(bootstrap.Hud.InteractionKey.color.a - alpha), Is.GreaterThan(.01f));
+                yield return Press(Key.E);
+                Assert.That(tools.Equipped, Is.EqualTo(KitchenToolKind.None));
+                Assert.That(Cursor.lockState, Is.EqualTo(CursorLockMode.Locked));
+                var position = bootstrap.Player.transform.position; float time = bootstrap.Run.RemainingSeconds;
+                yield return Press(Key.A);
+                Assert.That(Vector3.Distance(bootstrap.Player.transform.position, position), Is.GreaterThan(.001f));
+                Assert.That(bootstrap.Run.RemainingSeconds, Is.LessThan(time));
+                yield return new WaitForSecondsRealtime(drawer.SlideSeconds + .05f);
+                for (int i = 0; i < 4; i++)
+                {
+                    var tool = Tool(drawer, i);
+                    yield return AimTool(tool);
+                    Assert.That(bootstrap.Hud.Context.text, Is.EqualTo("Взять " + ToolDrawerController.Accusative(tool.Kind)));
+                    yield return Press(Key.E);
+                    Assert.That(tools.EquippedObject, Is.SameAs(tool));
+                    Assert.That(tool.transform.parent, Is.SameAs(tools.RightHand));
+                    Assert.That(tool.PickupCollider.enabled, Is.False);
+                    Assert.That(tool.GetComponentsInChildren<Renderer>().All(r => r.enabled), Is.True);
+                    Assert.That(drawer.IsOpen, Is.True, "Выбор предмета не закрывает ящик.");
+                    if (i > 0) Assert.That(Tool(drawer, i-1).transform.parent, Is.SameAs(drawer.Compartments[i-1]));
+                }
+                Assert.That(State.Portions.Count, Is.Zero); Assert.That(facts.Count, Is.EqualTo(4));
+                Assert.That(facts[0].RunId, Is.EqualTo(bootstrap.Run.RunId)); Assert.That(facts[0].ActorId, Is.EqualTo("A1"));
+                yield return AimDrawer(drawer);
+                Assert.That(bootstrap.Hud.Context.text, Is.EqualTo("Закрыть ящик"));
+                yield return Press(Key.E); Assert.That(drawer.IsOpen, Is.False);
+                yield return new WaitForSecondsRealtime(drawer.SlideSeconds + .05f);
+                Assert.That(drawer.Tray.localPosition, Is.EqualTo(drawer.ClosedPosition));
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator FoodMovesToLeftHandAndTransfersWithKnifeWithoutChangingId()
+        {
+            var tools = bootstrap.Tools; var drawer = tools.Drawers.Single(d => d.StationId == inventory.PlayerStationId);
+            yield return TakeBasket(); yield return Aim(Stock("potato")); yield return Click(); yield return DockAndDump();
+            yield return Aim(TrayPoint(0));
+            Assert.That(bootstrap.Hud.Context.text, Is.EqualTo("Взять картошку"));
+            Assert.That(bootstrap.Hud.InteractionKey.enabled, Is.True);
+            yield return Press(Key.E); var id = State.Held.Id;
+            var originalParent = inventory.HeldDisplay.transform.parent;
+            Assert.That(inventory.FoodInLeftHand, Is.False);
+            yield return OpenDrawer(drawer); var knife = Tool(drawer, 0);
+            yield return AimTool(knife); yield return Press(Key.E);
+            Assert.That(State.Held.Id, Is.EqualTo(id)); Assert.That(State.Portions.Count, Is.EqualTo(1));
+            Assert.That(inventory.HeldDisplay.transform.parent, Is.SameAs(tools.LeftFoodHand));
+            Assert.That(inventory.HeldDisplay.Visual.enabled, Is.True); Assert.That(inventory.FoodInLeftHand, Is.True);
+            Assert.That(knife.transform.parent, Is.SameAs(tools.RightHand));
+            Capture("direct-tools-two-hands.png");
+            yield return Aim(Socket(0)); yield return Press(Key.E);
+            Assert.That(State.Socket(0).Id, Is.EqualTo(id)); Assert.That(State.Held, Is.Null);
+            Assert.That(tools.EquippedObject, Is.SameAs(knife));
+            yield return Press(Key.E); Assert.That(State.Held.Id, Is.EqualTo(id));
+            Assert.That(inventory.HeldDisplay.transform.parent, Is.SameAs(tools.LeftFoodHand));
+            yield return Cancel(); Assert.That(State.Socket(0).Id, Is.EqualTo(id));
+            yield return Press(Key.E); Assert.That(State.Held.Id, Is.EqualTo(id));
+            yield return Press(Key.G);
+            Assert.That(tools.Equipped, Is.EqualTo(KitchenToolKind.None));
+            Assert.That(knife.Placement, Is.EqualTo(KitchenToolPlacement.Dropped));
+            Assert.That(State.Held.Id, Is.EqualTo(id)); Assert.That(inventory.HeldDisplay.transform.parent, Is.SameAs(originalParent));
+            Assert.That(State.Placement, Is.EqualTo(BasketPlacement.Station), "G инструмента не роняет корзину.");
+            yield return Cancel();
+            var oldRun = bootstrap.Run; bootstrap.RestartShow(); yield return null;
+            Assert.That(oldRun.Disposed, Is.True); Assert.That(State.Portions.Count, Is.Zero);
+            Assert.That(knife.transform.parent, Is.SameAs(drawer.Compartments[0])); Assert.That(drawer.IsOpen, Is.False);
+        }
+
+        [UnityTest]
+        public IEnumerator DroppedKnifeUsesSameObjectPausePickupTimeoutAndRestart()
+        {
+            var tools = bootstrap.Tools; var drawer = tools.Drawers.Single(d => d.StationId == inventory.PlayerStationId);
+            var knife = Tool(drawer, 0); var objectId = knife.GetInstanceID();
+            yield return OpenDrawer(drawer); yield return AimTool(knife); yield return Press(Key.E); yield return Press(Key.G);
+            Assert.That(knife.Body.isKinematic, Is.False); Assert.That(knife.PickupCollider.isTrigger, Is.False);
+            bootstrap.SetPaused(true); yield return null; var frozen = knife.transform.position;
+            yield return new WaitForSecondsRealtime(.1f);
+            Assert.That(knife.transform.position, Is.EqualTo(frozen)); Assert.That(knife.Body.isKinematic, Is.True);
+            yield return Press(Key.E); Assert.That(tools.EquippedObject, Is.Null);
+            bootstrap.SetPaused(false); yield return new WaitForSecondsRealtime(.8f);
+            Teleport(new Vector3(knife.transform.position.x - 1.1f, .05f, knife.transform.position.z));
+            yield return AimTool(knife); yield return Press(Key.E);
+            Assert.That(tools.EquippedObject, Is.SameAs(knife)); Assert.That(knife.GetInstanceID(), Is.EqualTo(objectId));
+            Assert.That(knife.Body.isKinematic, Is.True); Assert.That(knife.transform.parent, Is.SameAs(tools.RightHand));
+            Capture("direct-tools-knife.png");
+            yield return Press(Key.G); bootstrap.Run.SetRemaining(.02f); yield return new WaitForSecondsRealtime(.4f);
+            Assert.That(drawer.IsOpen, Is.False); Assert.That(drawer.Tray.localPosition, Is.EqualTo(drawer.ClosedPosition));
+            Assert.That(knife.Body.isKinematic, Is.True); yield return Press(Key.E); Assert.That(tools.EquippedObject, Is.Null);
+            bootstrap.RestartShow(); yield return null;
+            Assert.That(knife.Placement, Is.EqualTo(KitchenToolPlacement.Stored)); Assert.That(knife.transform.parent, Is.SameAs(drawer.Compartments[0]));
+            Assert.That(Object.FindObjectsByType<KitchenTool>(FindObjectsSortMode.None).Length, Is.EqualTo(48));
+        }
+
+        [UnityTest]
+        public IEnumerator BasketLeftHandConflictRejectsWithoutLosingFoodOrTool()
+        {
+            var tools = bootstrap.Tools; var drawer = tools.Drawers.Single(d => d.StationId == inventory.PlayerStationId);
+            yield return TakeBasket(); yield return Aim(Stock("potato")); yield return Click(); yield return DockAndDump();
+            yield return OpenDrawer(drawer);
+            yield return Aim(inventory.BasketBody.transform.position, false); yield return Press(Key.Tab);
+            Assert.That(State.Placement, Is.EqualTo(BasketPlacement.Carried));
+            yield return Aim(TrayPoint(0)); yield return Press(Key.E); var id = State.Held.Id;
+            var knife = Tool(drawer, 0); yield return AimTool(knife); yield return Press(Key.E);
+            Assert.That(tools.Equipped, Is.EqualTo(KitchenToolKind.None)); Assert.That(State.Held.Id, Is.EqualTo(id));
+            Assert.That(tools.Describe(bootstrap.Player.Target), Does.Contain("корзина"));
+            yield return Cancel();
+            yield return Aim(TrayPoint(0)); yield return Press(Key.Tab); Assert.That(State.Placement, Is.EqualTo(BasketPlacement.Station));
+            yield return AimTool(knife); yield return Press(Key.E); Assert.That(tools.EquippedObject, Is.SameAs(knife));
+            yield return Aim(inventory.BasketBody.transform.position, false); yield return Press(Key.Tab);
+            yield return Aim(TrayPoint(0)); yield return Press(Key.E);
+            Assert.That(State.Held, Is.Null); Assert.That(State.Tray[0].Id, Is.EqualTo(id)); Assert.That(tools.EquippedObject, Is.SameAs(knife));
+            yield return Press(Key.Tab); Assert.That(State.Placement, Is.EqualTo(BasketPlacement.Station));
+            yield return Press(Key.E); Assert.That(State.Held.Id, Is.EqualTo(id)); Assert.That(inventory.FoodInLeftHand, Is.True);
+        }
+
+        [UnityTest]
+        public IEnumerator ForeignDrawerAndWorldToolCannotBeTaken()
+        {
+            var tools = bootstrap.Tools; var drawer = tools.Drawers.Single(d => d.StationId == "A2");
+            Teleport(new Vector3(-9.65f, .05f, -3)); yield return AimDrawer(drawer); yield return Press(Key.E);
+            Assert.That(drawer.IsOpen, Is.False); Assert.That(tools.Equipped, Is.EqualTo(KitchenToolKind.None));
+            drawer.AnimateOpen(true); yield return new WaitForSecondsRealtime(drawer.SlideSeconds + .05f);
+            var foreign = Tool(drawer, 0); Teleport(new Vector3(-10.4f, .05f, -4.3f)); yield return AimTool(foreign); yield return Press(Key.E);
+            Assert.That(tools.Equipped, Is.EqualTo(KitchenToolKind.None)); Assert.That(foreign.Placement, Is.EqualTo(KitchenToolPlacement.Stored));
+        }
+
+        [UnityTest]
+        public IEnumerator DrawerMovesFourCellsAndKeepsTriggerAvailableInBothRows()
+        {
+            foreach (var drawer in bootstrap.Tools.Drawers)
+            {
+                Assert.That(drawer.Compartments.Length, Is.EqualTo(4));
+                Assert.That(drawer.transform.IsChildOf(drawer.Tray), Is.True);
+                for (int i = 0; i < 4; i++) Assert.That(drawer.Tools[i].parent, Is.EqualTo(drawer.Compartments[i]));
+                var front = drawer.transform.position; var cells = drawer.Compartments.Select(c => c.position).ToArray();
+                drawer.AnimateOpen(true); yield return null;
+                Assert.That(Vector3.Distance(drawer.transform.position, front), Is.GreaterThan(0));
+                bootstrap.SetPaused(true); var halfway = drawer.Tray.position;
+                yield return new WaitForSecondsRealtime(.05f); Assert.That(drawer.Tray.position, Is.EqualTo(halfway));
+                bootstrap.SetPaused(false); yield return new WaitForSecondsRealtime(drawer.SlideSeconds + .05f);
+                var expected = drawer.OpenOffset;
+                Assert.That(Vector3.Distance(drawer.transform.position - front, expected), Is.LessThan(.001f));
+                Assert.That(Mathf.Sign(expected.x), Is.EqualTo(drawer.StationId.StartsWith("A") ? -1 : 1));
+                for (int i = 0; i < 4; i++) Assert.That(Vector3.Distance(drawer.Compartments[i].position - cells[i], expected), Is.LessThan(.001f));
+                Assert.That(drawer.GetComponent<Collider>().enabled, Is.True); Assert.That(drawer.GetComponent<Collider>().isTrigger, Is.True);
+                drawer.AnimateOpen(false); yield return new WaitForSecondsRealtime(drawer.SlideSeconds + .05f);
+                Assert.That(Vector3.Distance(drawer.transform.position, front), Is.LessThan(.001f));
+            }
+        }
         private void Capture(string filename)
         {
             if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null) return;

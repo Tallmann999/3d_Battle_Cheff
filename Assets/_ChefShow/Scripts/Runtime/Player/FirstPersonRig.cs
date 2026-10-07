@@ -31,6 +31,7 @@ namespace ChefShow.Player
         private float focusYaw, focusPitch, focusBaseYaw;
         public Func<bool> CancelInteraction;
         public bool Focused { get; private set; }
+        [Range(75, 89)] public float MaxDownPitch = 85;
         public PrototypeInteractable Target { get; private set; }
         public Camera ViewCamera => viewCamera;
 
@@ -75,7 +76,7 @@ namespace ChefShow.Player
             if (!Focused)
             {
                 transform.Rotate(0, look.x, 0);
-                pitch = Mathf.Clamp(pitch - look.y, -75, 75);
+                pitch = Mathf.Clamp(pitch - look.y, -75, MaxDownPitch);
                 var move = map.FindAction("Move", true).ReadValue<Vector2>();
                 var speed = map.FindAction("Sprint", true).IsPressed() ? config.RunSpeed : config.WalkSpeed;
                 var direction = Vector3.ClampMagnitude(transform.right * move.x + transform.forward * move.y, 1);
@@ -86,7 +87,7 @@ namespace ChefShow.Player
             else
             {
                 focusYaw = Mathf.Clamp(focusYaw + look.x, focusBaseYaw - 55, focusBaseYaw + 55);
-                focusPitch = Mathf.Clamp(focusPitch - look.y, 5, 78);
+                focusPitch = Mathf.Clamp(focusPitch - look.y, 5, MaxDownPitch);
             }
             focusBlend = Mathf.MoveTowards(focusBlend, Focused ? 1 : 0, clock.Delta / Mathf.Max(0.05f, focusTransitionSeconds));
             ApplyCameraPose();
@@ -106,11 +107,18 @@ namespace ChefShow.Player
             // вниз. Исключаем игрока/предметы в его руках, сохраняя ближайшую стену.
             Target = null;
             float nearest = float.PositiveInfinity;
-            foreach (var hit in Physics.RaycastAll(ray, config.InteractionDistance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+            foreach (var hit in Physics.RaycastAll(ray, config.InteractionDistance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Collide))
             {
                 if (hit.collider.transform == transform || hit.collider.transform.IsChildOf(transform) || hit.distance >= nearest) continue;
+                // Только игровые цели ящика/инструмента доступны через trigger;
+                // остальные trigger-зоны не закрывают прицел и не становятся стенами.
+                var interactable = hit.collider.GetComponentInParent<PrototypeInteractable>();
+                if (hit.collider.isTrigger && (interactable == null ||
+                    (interactable.GetComponent<ChefShow.Ingredients.ToolDrawer>() == null
+                    && interactable.GetComponent<ChefShow.Ingredients.KitchenTool>() == null
+                    && interactable.GetComponent<ChefShow.Ingredients.ToolDrawerTarget>() == null))) continue;
                 nearest = hit.distance;
-                Target = hit.collider.GetComponentInParent<PrototypeInteractable>();
+                Target = interactable;
             }
         }
 
@@ -124,7 +132,7 @@ namespace ChefShow.Player
                     ? new Vector3(surface.bounds.center.x, surface.bounds.max.y + 0.12f, surface.bounds.center.z)
                     : Target.transform.position + Vector3.up * 0.3f;
             var pose = Quaternion.Inverse(transform.rotation) * Quaternion.LookRotation(point - transform.TransformPoint(SafeFocusPosition()));
-            focusPitch = Mathf.Clamp(Mathf.DeltaAngle(0, pose.eulerAngles.x), 5, 78);
+            focusPitch = Mathf.Clamp(Mathf.DeltaAngle(0, pose.eulerAngles.x), 5, MaxDownPitch);
             focusYaw = focusBaseYaw = Mathf.DeltaAngle(0, pose.eulerAngles.y);
         }
 

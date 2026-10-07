@@ -165,6 +165,7 @@ namespace ChefShow.Editor
                 bootstrap.UiInput = uiModule;
                 InventorySceneInstaller.AddToScene(scene);
                 KitchenWorkspaceUpdate.ConfigureScene(scene);
+                ToolDrawerInstaller.AddToScene(scene);
                 PrototypeValidator.ValidateScene(scene);
                 Undo.FlushUndoRecordObjects();
                 EnsureFolder(Path.GetDirectoryName(GeneratedScene));

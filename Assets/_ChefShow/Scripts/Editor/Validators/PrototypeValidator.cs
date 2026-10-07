@@ -60,6 +60,11 @@ namespace ChefShow.Editor
                     foreach (string action in new[] { "Basket", "DropBasket", "Primary", "Interact", "Cancel", "Task" })
                         Require(bootstrap.InputDefinition.FindAction(map + "/" + action) != null, "Нет inventory action " + map + "/" + action);
             }
+            if (bootstrap.Tools != null)
+            {
+                Require(bootstrap.Tools.Validate() == null, bootstrap.Tools.Validate());
+                Require(bootstrap.Tools.Drawers.Select(d => d.StationId).Distinct().Count() == 12, "Нужны 12 уникальных ящиков.");
+            }
             Require(All<Text>().All(t => t.font != null), "Отсутствует шрифт UI.");
             foreach (var text in All<Text>()) PrototypeSceneBuilder.RequireCyrillic(text.font);
             Require(Shader.Find("Universal Render Pipeline/Lit") != null, "URP shader не найден.");

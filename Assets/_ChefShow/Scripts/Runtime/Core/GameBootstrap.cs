@@ -4,6 +4,7 @@ using ChefShow.Data;
 using ChefShow.Contestants;
 using ChefShow.Player;
 using ChefShow.Inventory;
+using ChefShow.Ingredients;
 using ChefShow.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,6 +20,7 @@ namespace ChefShow.Core
         public FirstPersonRig Player;
         public PrototypeHud Hud;
         public InventoryController Inventory;
+        public ToolDrawerController Tools;
         public InputSystemUIInputModule UiInput;
         private InputActionAsset input;
         private readonly List<InputActionReference> uiReferences = new List<InputActionReference>();
@@ -71,6 +73,13 @@ namespace ChefShow.Core
                 Inventory.Initialize(this, input);
                 Player.CancelInteraction = Inventory.CancelHeld;
             }
+            if (Tools != null)
+            {
+                var toolError = Tools.Validate();
+                if (toolError != null || Inventory == null)
+                { Debug.LogError("Chef Show: " + (toolError ?? "Ящику нужен инвентарь."), this); enabled = false; return; }
+                Tools.Initialize(this, input);
+            }
             Hud.Resume.onClick.AddListener(() => SetPaused(false));
             Hud.Restart.onClick.AddListener(RestartShow);
             Hud.DebugRestart.onClick.AddListener(RestartShow);
@@ -103,11 +112,13 @@ namespace ChefShow.Core
                 SetPaused(debug);
             }
             Run.Tick(Time.unscaledDeltaTime);
-            Player.Step(Run.Clock, !paused && Run.RemainingSeconds > 0);
-            if (Inventory != null) Inventory.Step(!paused && Run.RemainingSeconds > 0);
+            bool gameplay = !paused && Run.RemainingSeconds > 0;
+            Player.Step(Run.Clock, gameplay);
+            bool toolCommand = Tools != null && Tools.Step(gameplay);
+            if (Inventory != null) Inventory.Step(gameplay, toolCommand);
             UpdateMaps();
             bool task = !paused && input.FindAction((Player.Focused ? "Station" : "Gameplay") + "/Task", true).IsPressed();
-            Hud.Present(Run, Player, paused, debug, task, Inventory);
+            Hud.Present(Run, Player, paused, debug, task, Inventory, Tools);
         }
 
         public void SetPaused(bool value)
@@ -129,6 +140,7 @@ namespace ChefShow.Core
             paused = debug = false;
             Player.ResetRig();
             if (Inventory != null) Inventory.ResetPresentation();
+            if (Tools != null) Tools.ResetPresentation();
             Player.SetSensitivity(sensitivity);
             UpdateMaps();
             Run.Events.Publish(new RunStarted(Run.RunId, Run.Seed));
