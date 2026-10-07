@@ -23,10 +23,10 @@ namespace ChefShow.UI
         public Button Timer240;
         public Slider Sensitivity;
 
-        public void Present(PrototypeRun run, FirstPersonRig player, bool paused, bool debug, bool taskVisible, InventoryController inventory = null, ToolDrawerController tools = null)
+        public void Present(PrototypeRun run, FirstPersonRig player, bool paused, bool debug, bool taskVisible, InventoryController inventory = null, ToolDrawerController tools = null, PreparationController preparation = null)
         {
             int seconds = Mathf.CeilToInt(run.RemainingSeconds);
-            Status.text = $"CHEF SHOW · {(inventory == null ? "ЭТАП 1" : "ПРОДУКТЫ И ПЕРЕНОС")}\nПробный таймер  {seconds / 60:00}:{seconds % 60:00}     Команда {player.GetComponent<Contestants.PrototypeActor>().Team}\n"
+            Status.text = $"CHEF SHOW · {(inventory == null ? "ЭТАП 1" : preparation == null ? "ПРОДУКТЫ И ПЕРЕНОС" : "ПОДГОТОВКА ПРОДУКТОВ")}\nПробный таймер  {seconds / 60:00}:{seconds % 60:00}     Команда {player.GetComponent<Contestants.PrototypeActor>().Team}\n"
                 + (inventory == null ? "Арена и управление. Готовка ещё не реализована." : inventory.Summary);
             if (tools != null) Status.text += "\n" + tools.Summary;
             PausePanel.SetActive(paused && !debug);
@@ -42,6 +42,11 @@ namespace ChefShow.UI
                 string drawer = tools.Describe(player.Target);
                 if (drawer != null) Context.text = drawer;
 
+            }
+            if (preparation != null)
+            {
+                string board = preparation.Describe(player.Target);
+                if (board != null) Context.text = board;
             }
             if (run.RemainingSeconds <= 0 && !paused)
                 Context.text = "Пробный таймер завершён. Esc → Начать выпуск заново.";

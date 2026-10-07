@@ -21,6 +21,7 @@ namespace ChefShow.Core
         public PrototypeHud Hud;
         public InventoryController Inventory;
         public ToolDrawerController Tools;
+        public PreparationController Preparation;
         public InputSystemUIInputModule UiInput;
         private InputActionAsset input;
         private readonly List<InputActionReference> uiReferences = new List<InputActionReference>();
@@ -29,6 +30,8 @@ namespace ChefShow.Core
         private float sensitivity;
         public PrototypeRun Run { get; private set; }
         public bool IsPaused => paused;
+        // Automation can drive an unfocused Editor; ordinary runs keep focus-loss pause enabled.
+        public bool AutoPauseOnFocusLoss { get; set; } = true;
         public bool DebugAvailable => Config != null && Config.PrototypeDebugEnabled && (Application.isEditor || Debug.isDebugBuild);
 
         private void Awake()
@@ -80,6 +83,12 @@ namespace ChefShow.Core
                 { Debug.LogError("Chef Show: " + (toolError ?? "Ящику нужен инвентарь."), this); enabled = false; return; }
                 Tools.Initialize(this, input);
             }
+            if (Preparation != null)
+            {
+                var preparationError = Inventory == null || Tools == null ? "Нарезке нужны инвентарь и инструменты." : Preparation.Validate(Inventory);
+                if (preparationError != null) { Debug.LogError("Chef Show: " + preparationError, this); enabled = false; return; }
+                Preparation.Initialize(this, input);
+            }
             Hud.Resume.onClick.AddListener(() => SetPaused(false));
             Hud.Restart.onClick.AddListener(RestartShow);
             Hud.DebugRestart.onClick.AddListener(RestartShow);
@@ -115,10 +124,11 @@ namespace ChefShow.Core
             bool gameplay = !paused && Run.RemainingSeconds > 0;
             Player.Step(Run.Clock, gameplay);
             bool toolCommand = Tools != null && Tools.Step(gameplay);
+            if (Preparation != null) Preparation.Step(gameplay, toolCommand);
             if (Inventory != null) Inventory.Step(gameplay, toolCommand);
             UpdateMaps();
             bool task = !paused && input.FindAction((Player.Focused ? "Station" : "Gameplay") + "/Task", true).IsPressed();
-            Hud.Present(Run, Player, paused, debug, task, Inventory, Tools);
+            Hud.Present(Run, Player, paused, debug, task, Inventory, Tools, Preparation);
         }
 
         public void SetPaused(bool value)
@@ -141,6 +151,7 @@ namespace ChefShow.Core
             Player.ResetRig();
             if (Inventory != null) Inventory.ResetPresentation();
             if (Tools != null) Tools.ResetPresentation();
+            if (Preparation != null) Preparation.ResetPresentation();
             Player.SetSensitivity(sensitivity);
             UpdateMaps();
             Run.Events.Publish(new RunStarted(Run.RunId, Run.Seed));
@@ -173,7 +184,7 @@ namespace ChefShow.Core
 
         private void OnApplicationFocus(bool focused)
         {
-            if (!focused && Run != null) SetPaused(true);
+            if (!focused && AutoPauseOnFocusLoss && Run != null) SetPaused(true);
         }
 
         private void OnDestroy()

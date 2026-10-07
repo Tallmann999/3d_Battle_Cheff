@@ -3,21 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using ChefShow.Core;
 using ChefShow.Data;
+using ChefShow.Ingredients;
 
 namespace ChefShow.Inventory
 {
     public enum PortionLocation { Basket, Tray, Hand, Station, Returned, Trash }
     public enum StationSocketKind { Board, WorkSurface }
     public enum BasketPlacement { Pantry, Carried, Station, Floor }
-
-    public sealed class FoodPortion
-    {
-        public string Id { get; }
-        public IngredientDefinition Ingredient { get; }
-        public PortionLocation Location { get; internal set; }
-        public int SocketIndex { get; internal set; } = -1;
-        internal FoodPortion(string id, IngredientDefinition ingredient) { Id = id; Ingredient = ingredient; }
-    }
 
     // Значения факта, без mutable FoodPortion/GameObject references.
     public readonly struct InventoryChanged
@@ -77,6 +69,7 @@ namespace ChefShow.Inventory
         private void Fact(string action, FoodPortion portion = null, int count = 1)
         {
             Version++;
+            portion?.RecordOperation(action, run.Clock.SimulationTime);
             run.Events.Publish(new InventoryChanged(run.RunId, run.PlayerTeam, run.Clock.SimulationTime, action, portion?.Id,
                 portion?.Ingredient.Id, count, Placement, portion?.Location));
         }
@@ -110,8 +103,34 @@ namespace ChefShow.Inventory
             if (basket.Count == 0) { reason = "Корзина пуста."; return false; }
             if (basket.Count > TrayCapacity - tray.Count) { reason = "Лоток заполнен: выгрузка целиком не помещается."; return false; }
             int count = basket.Count;
-            foreach (var portion in basket) portion.Location = PortionLocation.Tray;
+            foreach (var portion in basket)
+            {
+                portion.Location = PortionLocation.Tray;
+                portion.RecordOperation("basket_unloaded", run.Clock.SimulationTime);
+            }
             tray.AddRange(basket); basket.Clear(); Fact("basket_unloaded", count: count); return true;
+        }
+
+        public const int RequiredChopPresses = 6;
+        public bool TryChop(KitchenToolKind tool, out string reason)
+        {
+            if (!Active(out reason)) return false;
+            if (Held != null) { reason = "Сначала положите продукт из руки."; return false; }
+            if (tool != KitchenToolKind.Knife) { reason = "Возьмите нож из ящика: E."; return false; }
+            var portion = Socket((int)StationSocketKind.Board);
+            if (portion == null) { reason = "Положите продукт на доску: E."; return false; }
+            if (!portion.Ingredient.CanUseBoard || portion.Ingredient.Contents != null || portion.Ingredient.IsDoseContainer)
+            { reason = "Этот продукт нельзя нарезать."; return false; }
+            if (portion.ChopPresses >= RequiredChopPresses || portion.Preparation != PreparationState.Whole)
+            { reason = "Продукт уже нарезан."; return false; }
+            portion.ChopPresses++;
+            if (portion.ChopPresses == RequiredChopPresses) portion.Preparation = PreparationState.Chopped;
+            string action = portion.ChopPresses == 1 ? "cut_started"
+                : portion.ChopPresses == RequiredChopPresses ? "preparation_completed" : "cut_progress";
+            // Record the state before publishing a value snapshot; callbacks cannot alter the accepted fact.
+            Version++; portion.RecordOperation(action, run.Clock.SimulationTime);
+            run.Events.Publish(new PreparationChanged(run, portion, action));
+            return true;
         }
 
         public bool TryTakeTray(int index, out string reason) => Take(tray, index, PortionLocation.Tray, out reason);

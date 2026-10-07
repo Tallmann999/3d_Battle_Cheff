@@ -80,8 +80,7 @@ namespace ChefShow.Inventory
                 var map = input.FindActionMap(bootstrap.Player.Focused ? "Station" : "Gameplay", true);
                 if (map.FindAction("Basket", true).WasPressedThisFrame()) HandleBasket();
                 else if (map.FindAction("DropBasket", true).WasPressedThisFrame()) DropBasket();
-                else if (map.FindAction("Primary", true).WasPressedThisFrame()) Act(true);
-                else if (map.FindAction("Interact", true).WasPressedThisFrame()) Act(false);
+                else if (map.FindAction("Interact", true).WasPressedThisFrame()) Act();
             }
             Sync();
         }
@@ -145,13 +144,13 @@ namespace ChefShow.Inventory
             floorPaused = false;
             Physics.SyncTransforms();
         }
-        private void Act(bool primary)
+        private void Act()
         {
             var target = Target();
             if (target == null) return;
             if (!Own(target)) { Notify("Это станция другого участника."); return; }
             bool takingFood = State.Held == null && (target.Kind == InventoryTargetKind.TrayItem
-                || target.Kind == InventoryTargetKind.Socket || (target.Kind == InventoryTargetKind.Basket && !primary));
+                || target.Kind == InventoryTargetKind.Socket);
             if (takingFood && bootstrap.Tools != null && bootstrap.Tools.FoodInLeftHand && State.Placement == BasketPlacement.Carried)
             { Notify("Левую руку занимает корзина. Сначала поставьте её Tab."); return; }
             bool success = false; string reason = null;
@@ -166,8 +165,7 @@ namespace ChefShow.Inventory
                     }
                     break;
                 case InventoryTargetKind.Basket:
-                    if (primary) success = State.TryUnload(out reason);
-                    else success = State.TryTakeBasket(0, out reason);
+                    success = State.TryUnload(out reason);
                     break;
                 case InventoryTargetKind.TrayItem:
                     success = State.Held == null ? State.TryTakeTray(target.Index, out reason) : State.TryPutInTray(out reason); break;
@@ -208,7 +206,7 @@ namespace ChefShow.Inventory
             for (int i = 0; i < SocketDisplays.Length; i++) Show(SocketDisplays[i], State.Socket(i));
             Show(HeldDisplay, State.Held);
         }
-        private static void Show(FoodDisplay view, FoodPortion portion) => view.Present(portion?.Ingredient, portion?.Id);
+        private static void Show(FoodDisplay view, FoodPortion portion) => view.PresentPortion(portion);
         private void Fly(IngredientDefinition ingredient, Vector3 from)
         {
             int index = flightIndex++ % Flights.Length;
@@ -255,6 +253,7 @@ namespace ChefShow.Inventory
                 case "carrot": return "морковь";
                 case "onion": return "лук";
                 case "meat": return "мясо";
+                case "beef": return "говядину";
                 case "cheese": return "сыр";
                 default: return food.DisplayName;
             }
@@ -270,17 +269,19 @@ namespace ChefShow.Inventory
             if (target == null) return aimed.CanFocus(bootstrap.Config.PlayerTeam) ? "E — фокус станции · мышь — выбор предмета" : aimed.DisplayName;
             switch (target.Kind)
             {
-                case InventoryTargetKind.Pickup: return State.Held != null ? "ЛКМ — вернуть продукт в кладовую"
-                    : target.Ingredient.DisplayName + (State.Placement == BasketPlacement.Carried ? " · ЛКМ — в корзину" : " · сначала возьмите корзину Tab");
+                case InventoryTargetKind.Pickup: return State.Held != null ? "E — Вернуть продукт в кладовую"
+                    : State.Placement == BasketPlacement.Carried ? "E — Взять " + FoodName(target.Ingredient) + " в корзину"
+                    : target.Ingredient.DisplayName + " · сначала возьмите корзину Tab";
                 case InventoryTargetKind.Basket: return State.Placement == BasketPlacement.Station
-                    ? "Tab — взять корзину · ЛКМ — выгрузить всё · E — взять один предмет" : "Tab — взять корзину";
+                    ? "E — Выгрузить всё в лоток · Tab — взять корзину" : "Tab — взять корзину";
                 case InventoryTargetKind.BasketDock: return "Место корзины · Tab — поставить";
                 case InventoryTargetKind.PantryRest: return "Tab — поставить корзину";
                 case InventoryTargetKind.TrayItem:
                     return State.Held != null ? "E — положить продукт в лоток"
                         : target.Index < State.Tray.Count ? "E — Взять " + FoodName(State.Tray[target.Index].Ingredient)
                         : "Пустое место лотка";
-                case InventoryTargetKind.Tray: return "Лоток · E — вернуть продукт из руки";
+                case InventoryTargetKind.Tray: return State.Held != null ? "E — Положить " + FoodName(State.Held.Ingredient) + " в лоток"
+                    : "Лоток · выберите продукт прицелом";
                 case InventoryTargetKind.Socket: return State.Held != null ? "E — Положить " + FoodName(State.Held.Ingredient) + " · " + aimed.DisplayName
                     : State.Socket(target.Index) != null ? "E — Взять " + FoodName(State.Socket(target.Index).Ingredient) : aimed.DisplayName + " · пусто";
                 case InventoryTargetKind.Trash: return "E — выбросить продукт из руки";

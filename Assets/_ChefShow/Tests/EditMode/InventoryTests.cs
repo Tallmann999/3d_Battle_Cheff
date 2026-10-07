@@ -3,6 +3,7 @@ using System.Linq;
 using ChefShow.Core;
 using ChefShow.Data;
 using ChefShow.Inventory;
+using ChefShow.Ingredients;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -58,6 +59,99 @@ namespace ChefShow.Tests
                 Assert.That(state.Tray[0].Location, Is.EqualTo(PortionLocation.Tray)); Conserved();
             }
         }
+        [Test]
+        public void FoodHistoryAndSnapshotSurviveTransfersWithoutAliasingLiveData()
+        {
+            Move(BasketPlacement.Carried); run.Tick(1); Fill(potato, 1);
+            var portion = state.Basket[0]; var taken = portion.Snapshot();
+            Move(BasketPlacement.Station); Unload(); run.Tick(2);
+            Assert.That(state.TryTakeTray(0, out _), Is.True);
+            Assert.That(state.TryPlaceSocket(0, out _), Is.True);
+            Assert.That(state.TryTakeSocket(0, out _), Is.True);
+            Assert.That(state.TryCancelHeld(out _), Is.True);
+            var prepared = portion.Snapshot();
+            Assert.That(state.TryTakeSocket(0, out _), Is.True);
+            Assert.That(state.TryRemove(false, out _), Is.True);
+            Assert.That(taken.Location, Is.EqualTo(PortionLocation.Basket));
+            Assert.That(taken.Operations.Count, Is.EqualTo(1));
+            Assert.That(taken.Operations[0].SimulationTime, Is.EqualTo(1));
+            Assert.That(prepared.Location, Is.EqualTo(PortionLocation.Station));
+            Assert.That(prepared.Operations.Count, Is.EqualTo(6));
+            Assert.That(portion.Location, Is.EqualTo(PortionLocation.Trash));
+            Assert.That(portion.Operations.Count, Is.EqualTo(8));
+            Assert.That(portion.Id, Is.EqualTo(taken.Id));
+            Assert.That(portion.Quantity, Is.EqualTo(1));
+            Assert.That(portion.Preparation, Is.EqualTo(PreparationState.Whole));
+            Assert.That(portion.Cooking, Is.EqualTo(CookState.Raw));
+            Assert.That(portion.OriginComponents[0].SourcePortionId, Is.EqualTo(taken.Id));
+            Assert.That(portion.OriginComponents[0].IngredientId, Is.EqualTo("potato"));
+            potato.Id = "changed_definition";
+            Assert.That(prepared.IngredientId, Is.EqualTo("potato"));
+            Assert.That(prepared.OriginComponents[0].IngredientId, Is.EqualTo("potato"));
+            Conserved();
+        }
+
+        [Test]
+        public void SixFastCutsPreserveFoodStateProgressAndEmitCompletionOnce()
+        {
+            Move(BasketPlacement.Carried); Fill(potato, 1); Move(BasketPlacement.Station); Unload();
+            state.TryTakeTray(0, out _); state.TryPlaceSocket(0, out _); var food = state.Socket(0);
+            // Seed an independent cooking/hygiene state; cutting must not erase it.
+            typeof(FoodPortion).GetProperty(nameof(FoodPortion.Cooking)).SetValue(food, CookState.Cooked);
+            typeof(FoodPortion).GetProperty(nameof(FoodPortion.HeatProgress)).SetValue(food, .7f);
+            typeof(FoodPortion).GetProperty(nameof(FoodPortion.Contaminated)).SetValue(food, true);
+            typeof(FoodPortion).GetProperty(nameof(FoodPortion.SaltDoses)).SetValue(food, 2);
+            var before = food.Snapshot(); var facts = new System.Collections.Generic.List<PreparationChanged>();
+            bool duplicateCompletionRejected = false;
+            using (run.Events.Subscribe<PreparationChanged>(fact =>
+            {
+                facts.Add(fact);
+                if (fact.Action == "preparation_completed") duplicateCompletionRejected = !state.TryChop(KitchenToolKind.Knife, out _);
+            }))
+            {
+                for (int i = 0; i < 3; i++) { run.Tick(.001f); Assert.That(state.TryChop(KitchenToolKind.Knife, out var reason), Is.True, reason); }
+                var halfway = food.Snapshot();
+                Assert.That(state.TryTakeSocket(0, out _), Is.True); Assert.That(state.TryPutInTray(out _), Is.True);
+                Assert.That(state.TryTakeTray(0, out _), Is.True); Assert.That(state.TryPlaceSocket(0, out _), Is.True);
+                for (int i = 0; i < 3; i++) { run.Tick(.001f); Assert.That(state.TryChop(KitchenToolKind.Knife, out var reason), Is.True, reason); }
+                int version = state.Version;
+                Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.False); Assert.That(state.Version, Is.EqualTo(version));
+                Assert.That(facts.Count, Is.EqualTo(6)); Assert.That(facts.Count(f => f.Action == "preparation_completed"), Is.EqualTo(1));
+                Assert.That(duplicateCompletionRejected, Is.True);
+                Assert.That(facts[0].RunId, Is.EqualTo(run.RunId)); Assert.That(facts[0].ActorId, Is.EqualTo("A1"));
+                Assert.That(facts[0].Presses, Is.EqualTo(1)); Assert.That(facts[0].Preparation, Is.EqualTo(PreparationState.Whole));
+                Assert.That(facts[5].Preparation, Is.EqualTo(PreparationState.Chopped));
+                Assert.That(before.ChopPresses, Is.Zero); Assert.That(halfway.ChopPresses, Is.EqualTo(3));
+                Assert.That(food.Id, Is.EqualTo(before.Id)); Assert.That(food.Quantity, Is.EqualTo(before.Quantity));
+                Assert.That(food.ChopPresses, Is.EqualTo(6)); Assert.That(food.Preparation, Is.EqualTo(PreparationState.Chopped));
+                Assert.That(food.Cooking, Is.EqualTo(CookState.Cooked)); Assert.That(food.HeatProgress, Is.EqualTo(.7f));
+                Assert.That(food.Contaminated, Is.True); Assert.That(food.SaltDoses, Is.EqualTo(2));
+                Assert.That(food.OriginComponents.Count, Is.EqualTo(1));
+                Assert.That(food.Operations.Count(o => o.Action == "preparation_completed"), Is.EqualTo(1)); Conserved();
+            }
+        }
+
+        [Test]
+        public void InvalidPausedTimedOutAndDisposedCutCommandsKeepActualPartialState()
+        {
+            Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.False);
+            Move(BasketPlacement.Carried); Fill(potato, 1); Move(BasketPlacement.Station); Unload();
+            state.TryTakeTray(0, out _); var food = state.Held;
+            Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.False);
+            state.TryPlaceSocket(0, out _);
+            Assert.That(state.TryChop(KitchenToolKind.Fork, out _), Is.False);
+            run.SetPaused(true); Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.False); run.Tick(10);
+            run.SetPaused(false); Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.True);
+            state.TryTakeSocket(0, out _); state.TryPlaceSocket(1, out _);
+            Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.False);
+            state.TryTakeSocket(1, out _); state.TryPlaceSocket(0, out _);
+            run.SetRemaining(0); int version = state.Version;
+            Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.False);
+            run.Dispose(); Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.False);
+            Assert.That(state.Version, Is.EqualTo(version)); Assert.That(food.ChopPresses, Is.EqualTo(1));
+            Assert.That(food.Preparation, Is.EqualTo(PreparationState.Whole)); Conserved();
+        }
+
         [Test]
         public void TenItemsIncludeRepeatedPotatoesAndOneWholePackage()
         {
