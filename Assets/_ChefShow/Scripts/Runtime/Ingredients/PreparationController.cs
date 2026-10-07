@@ -67,6 +67,19 @@ namespace ChefShow.Ingredients
                         if (success) { message = null; StartStroke(board); }
                         else { message = reason; messageUntil = bootstrap.Run.Clock.SimulationTime + 2.5f; }
                     }
+                    else
+                    {
+                        var surface = bootstrap.Player.Target == null ? null : bootstrap.Player.Target.GetComponent<InventoryInteractable>();
+                        if (surface != null && surface.Kind == InventoryTargetKind.Socket && surface.Index == (int)StationSocketKind.WorkSurface)
+                        {
+                            string reason = "Это место продукта другого участника.";
+                            var package = bootstrap.Run.Inventory.Socket((int)StationSocketKind.WorkSurface);
+                            bool success = surface.StationId == bootstrap.Inventory.PlayerStationId && bootstrap.Run.Inventory.TryUnpack(out reason);
+                            message = success ? "Распаковано: " + PackageContentsName(package) + " → лоток" : reason;
+                            messageUntil = bootstrap.Run.Clock.SimulationTime + 2.5f;
+                            observedVersion = bootstrap.Run.Inventory.Version;
+                        }
+                    }
                 }
             }
             if (acceptInput) AnimateStroke(bootstrap.Run.Clock.Delta);
@@ -101,7 +114,16 @@ namespace ChefShow.Ingredients
         public string Describe(PrototypeInteractable target)
         {
             var board = target == null ? null : target.GetComponent<ChoppingBoard>();
-            if (board == null) return null;
+            if (board == null)
+            {
+                var surface = target == null ? null : target.GetComponent<InventoryInteractable>();
+                if (surface == null || surface.Kind != InventoryTargetKind.Socket || surface.Index != (int)StationSocketKind.WorkSurface) return null;
+                if (surface.StationId != bootstrap.Inventory.PlayerStationId) return "Место продукта другого участника";
+                if (message != null && bootstrap.Run.Clock.SimulationTime < messageUntil) return message;
+                var package = bootstrap.Run.Inventory.Socket((int)StationSocketKind.WorkSurface);
+                if (bootstrap.Run.Inventory.Held != null || package == null || package.PackedIngredient == null) return null;
+                return bootstrap.Inventory.Describe(target) + "\nЛКМ — распаковать · " + PackageContentsName(package) + " в лоток";
+            }
             if (board != own) return "Доска другого участника";
             if (message != null && bootstrap.Run.Clock.SimulationTime < messageUntil) return message;
             var state = bootstrap.Run.Inventory; var food = state.Socket(0);
@@ -110,6 +132,12 @@ namespace ChefShow.Ingredients
             return take + "\n" + (food.Preparation == PreparationState.Chopped ? "Нарезано · можно перенести"
                 : bootstrap.Tools.Equipped == KitchenToolKind.Knife ? "ЛКМ — нарезать · " + food.ChopPresses + "/" + InventoryState.RequiredChopPresses
                 : "Для нарезки возьмите нож: E");
+        }
+        private static string PackageContentsName(FoodPortion package)
+        {
+            string name = package.PackedIngredient.Id == "potato" ? "картофелин"
+                : package.PackedIngredient.Id == "egg" ? "яиц" : package.PackedIngredient.DisplayName;
+            return package.PackedQuantity + " " + name;
         }
     }
 }

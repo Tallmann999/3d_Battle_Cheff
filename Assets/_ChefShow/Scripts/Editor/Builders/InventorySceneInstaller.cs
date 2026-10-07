@@ -199,7 +199,8 @@ namespace ChefShow.Editor
                     definition.VisualMaterial = Material("Ingredient_" + ids[i], colors[i]);
                     definition.VisualScale = shape == PrimitiveType.Cylinder ? new Vector3(.19f,.12f,.19f)
                         : i == 13 ? new Vector3(.34f,.12f,.22f) : new Vector3(.2f,.17f,.2f);
-                    if (i >= 12) definition.Contents = definitions[i == 12 ? 1 : 4];
+                    if (i >= 12)
+                    { definition.Contents = definitions[i == 12 ? 1 : 4]; definition.ContentsQuantity = i == 12 ? 5 : 6; }
                     AssetDatabase.CreateAsset(definition, path);
                 }
                 definitions[i] = definition;

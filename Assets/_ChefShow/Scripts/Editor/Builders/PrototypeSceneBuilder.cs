@@ -167,6 +167,7 @@ namespace ChefShow.Editor
                 KitchenWorkspaceUpdate.ConfigureScene(scene);
                 ToolDrawerInstaller.AddToScene(scene);
                 FoodPreparationInstaller.AddToScene(scene);
+                PackagePreparationInstaller.ApplyScene(scene);
                 PrototypeValidator.ValidateScene(scene);
                 Undo.FlushUndoRecordObjects();
                 EnsureFolder(Path.GetDirectoryName(GeneratedScene));

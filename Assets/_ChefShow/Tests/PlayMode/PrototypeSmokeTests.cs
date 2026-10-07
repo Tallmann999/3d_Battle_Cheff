@@ -19,6 +19,8 @@ namespace ChefShow.Tests
         private GameBootstrap bootstrap;
         private InputSettings savedInputSettings;
         private InputSettings testInputSettings;
+        private Keyboard fixtureKeyboard;
+        private Mouse fixtureMouse;
 
         [UnitySetUp]
         public IEnumerator LoadPrototype()
@@ -28,21 +30,26 @@ namespace ChefShow.Tests
             savedInputSettings = InputSystem.settings;
             testInputSettings = Object.Instantiate(savedInputSettings);
             testInputSettings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+            testInputSettings.updateMode = InputSettings.UpdateMode.ProcessEventsInDynamicUpdate;
 #if UNITY_EDITOR
             testInputSettings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
 #endif
             InputSystem.settings = testInputSettings;
+            fixtureKeyboard = InputSystem.AddDevice<Keyboard>(); fixtureMouse = InputSystem.AddDevice<Mouse>();
             yield return SceneManager.LoadSceneAsync("ChefShow_Prototype", LoadSceneMode.Single);
             yield return null;
             bootstrap = Object.FindFirstObjectByType<GameBootstrap>();
             Assert.That(bootstrap, Is.Not.Null);
             Assert.That(bootstrap.Run, Is.Not.Null);
+            bootstrap.UiInput.actionsAsset.devices = new InputDevice[] { fixtureKeyboard, fixtureMouse };
+            bootstrap.AutoPauseOnFocusLoss = false;
             bootstrap.SetPaused(false);
         }
 
         [UnityTearDown]
         public IEnumerator RestoreInputSettings()
         {
+            InputSystem.RemoveDevice(fixtureKeyboard); InputSystem.RemoveDevice(fixtureMouse);
             InputSystem.settings = savedInputSettings;
             Object.Destroy(testInputSettings);
             yield return null;
@@ -102,6 +109,7 @@ namespace ChefShow.Tests
         {
             var keyboard = InputSystem.AddDevice<Keyboard>();
             var mouse = InputSystem.AddDevice<Mouse>();
+            bootstrap.UiInput.actionsAsset.devices = new InputDevice[] { keyboard, mouse };
             try
             {
                 var initial = bootstrap.Player.transform.position;
@@ -136,6 +144,7 @@ namespace ChefShow.Tests
         {
             var keyboard = InputSystem.AddDevice<Keyboard>();
             var mouse = InputSystem.AddDevice<Mouse>();
+            bootstrap.UiInput.actionsAsset.devices = new InputDevice[] { keyboard, mouse };
             GameObject blocker = null;
             try
             {
@@ -189,7 +198,7 @@ namespace ChefShow.Tests
                 Assert.That(table.max.y - floor.max.y, Is.EqualTo(0.9f).Within(0.01f), actor.StableId + " worktop height");
                 Assert.That(table.min.y, Is.EqualTo(floor.max.y).Within(0.01f));
                 Assert.That(Mathf.Abs(actor.transform.position.x), Is.GreaterThan(Mathf.Abs(table.center.x) + table.extents.x));
-                Assert.That(Vector3.Dot(actor.transform.forward, (table.center - actor.transform.position).normalized), Is.GreaterThan(0.9f));
+                Assert.That(Vector3.Dot(actor.transform.forward, (table.center - actor.transform.position).normalized), Is.GreaterThan(0.9f), actor.StableId + " faces own table");
                 if (actor.Kind == PrototypeActorKind.Npc) Assert.That(actor.GetComponent<Collider>().enabled, Is.True);
             }
             bootstrap.SetPaused(true);

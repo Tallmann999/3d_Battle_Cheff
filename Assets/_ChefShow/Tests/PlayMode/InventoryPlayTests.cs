@@ -601,6 +601,98 @@ namespace ChefShow.Tests
             Assert.That(bootstrap.Preparation.Boards.All(b => b.Caption.text == "ДОСКА"), Is.True);
         }
 
+        [UnityTest]
+        public IEnumerator RealInputsUnpackFivePotatoesAndSixEggsThenCutOneChildWithoutDuplicateContents()
+        {
+            yield return TakeBasket(); Teleport(new Vector3(2.5f, .05f, 10.75f));
+            yield return Aim(Stock("potato_sack")); yield return Press(Key.E);
+            yield return Aim(Stock("egg_carton")); yield return Press(Key.E);
+            Assert.That(State.Basket.Count, Is.EqualTo(2)); yield return DockAndDump();
+            var facts = new System.Collections.Generic.List<PackageUnpacked>();
+            using (bootstrap.Run.Events.Subscribe<PackageUnpacked>(f => facts.Add(f)))
+            {
+                yield return Aim(TrayPoint(0)); yield return Press(Key.E); var sack = State.Held;
+                Assert.That(sack.PackedQuantity, Is.EqualTo(5)); yield return Aim(Socket(1)); yield return Press(Key.E);
+                Assert.That(State.Socket(1), Is.SameAs(sack));
+                Assert.That(bootstrap.Hud.Context.text, Does.Contain("ЛКМ — распаковать"));
+                yield return Press(Key.E); Assert.That(State.Held, Is.SameAs(sack));
+                yield return Click(); Assert.That(State.Tray.Count, Is.EqualTo(1));
+                yield return Cancel(); yield return Aim(Socket(1)); yield return Click();
+                Assert.That(State.Tray.Count, Is.EqualTo(6)); Assert.That(State.Socket(1), Is.Null);
+                Assert.That(sack.Location, Is.EqualTo(PortionLocation.Unpacked));
+                Assert.That(State.Tray.Count(p => p.Ingredient.Id == "potato" && p.Quantity == 1), Is.EqualTo(5));
+                Assert.That(inventory.SocketDisplays[1].Visual.enabled, Is.False);
+                Assert.That(inventory.TrayDisplays.Take(6).All(v => v.Visual.enabled), Is.True);
+                Capture("unpacking-potatoes.png");
+                yield return Aim(TrayPoint(0)); yield return Press(Key.E); var carton = State.Held;
+                Assert.That(carton.PackedQuantity, Is.EqualTo(6)); yield return Aim(Socket(1)); yield return Press(Key.E);
+                Assert.That(State.Socket(1), Is.SameAs(carton)); Assert.That(bootstrap.Player.Focused, Is.False);
+                var station = GameObject.Find("Station_A1").GetComponent<ChefShow.Player.PrototypeInteractable>();
+                // Фокус включается по видимой поверхности станции; marker ниже столешницы не является отдельной целью.
+                yield return Aim(station.FocusPoint.position, false);
+                Assert.That(bootstrap.Player.Target, Is.SameAs(station)); yield return Press(Key.E);
+                float readyAt = bootstrap.Run.Clock.SimulationTime + .4f;
+                while (bootstrap.Run.Clock.SimulationTime < readyAt) yield return null;
+                Assert.That(bootstrap.Player.Focused, Is.True); yield return Aim(Socket(1));
+                Assert.That(bootstrap.Hud.Context.text, Does.Contain("6 яиц"));
+                Capture("unpacking-carton-ready.png"); yield return Click();
+                Assert.That(State.Tray.Count, Is.EqualTo(11)); Assert.That(State.Tray.Count(p => p.Ingredient.Id == "egg"), Is.EqualTo(6));
+                Assert.That(State.Tray.All(p => p.Quantity == 1 && p.Preparation == PreparationState.Whole && p.Cooking == CookState.Raw), Is.True);
+                yield return Click(); Assert.That(State.Tray.Count, Is.EqualTo(11)); Assert.That(facts.Count, Is.EqualTo(2));
+                Assert.That(facts[0].Quantity, Is.EqualTo(5)); Assert.That(facts[1].Quantity, Is.EqualTo(6));
+                yield return Cancel(); Assert.That(bootstrap.Player.Focused, Is.False);
+                readyAt = bootstrap.Run.Clock.SimulationTime + .4f;
+                while (bootstrap.Run.Clock.SimulationTime < readyAt) yield return null;
+                var drawer = bootstrap.Tools.Drawers.Single(d => d.StationId == inventory.PlayerStationId);
+                yield return OpenDrawer(drawer); yield return AimTool(Tool(drawer, 0)); yield return Press(Key.E);
+                yield return Aim(TrayPoint(0)); yield return Press(Key.E); var potato = State.Held;
+                Assert.That(potato.Ingredient.Id, Is.EqualTo("potato")); Assert.That(inventory.FoodInLeftHand, Is.True);
+                Assert.That(potato.OriginComponents.Single().SourcePortionId, Is.EqualTo(sack.Id));
+                yield return Aim(Socket(0)); yield return Press(Key.E);
+                for (int i = 0; i < 6; i++) yield return Click();
+                Assert.That(potato.Preparation, Is.EqualTo(PreparationState.Chopped)); Assert.That(potato.Quantity, Is.EqualTo(1));
+                Assert.That(facts[0].Contents[0].ChopPresses, Is.Zero);
+                var old = bootstrap.Run; bootstrap.RestartShow(); yield return null;
+                Assert.That(old.Disposed, Is.True); Assert.That(State.Portions, Is.Empty); Assert.That(State.Tray, Is.Empty);
+                Assert.That(inventory.TrayDisplays.All(v => !v.Visual.enabled && v.CutPieces.All(r => !r.enabled)), Is.True);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator UnpackingFullTrayForeignSurfacePauseAndTimeoutKeepTheWholeCarton()
+        {
+            var cartonDefinition = inventory.Catalog.Ingredients.Single(d => d.Id == "egg_carton");
+            var potatoDefinition = inventory.Catalog.Ingredients.Single(d => d.Id == "potato");
+            for (int trip = 0; trip < 3; trip++)
+            {
+                Assert.That(State.TryMoveBasket(BasketPlacement.Carried, out _), Is.True);
+                for (int i = 0; i < (trip == 2 ? 4 : 10); i++)
+                    Assert.That(State.TryCollect(trip == 0 && i == 0 ? cartonDefinition : potatoDefinition, out _), Is.True);
+                Assert.That(State.TryMoveBasket(BasketPlacement.Station, out _), Is.True); Assert.That(State.TryUnload(out _), Is.True);
+            }
+            yield return null; Assert.That(State.TryTakeTray(0, out _), Is.True); var package = State.Held;
+            Assert.That(State.TryPlaceSocket(1, out _), Is.True); yield return null;
+            Teleport(new Vector3(-9.7f, .05f, -6.25f)); yield return Aim(Socket(1));
+            var ids = State.Tray.Select(p => p.Id).ToArray(); int version = State.Version;
+            yield return Click(); Assert.That(State.Version, Is.EqualTo(version)); Assert.That(State.Socket(1), Is.SameAs(package));
+            CollectionAssert.AreEqual(ids, State.Tray.Select(p => p.Id));
+            Assert.That(bootstrap.Hud.Context.text, Does.Contain("Нужно 6")); Capture("unpacking-full-tray.png");
+            for (int i = 0; i < 5; i++) { State.TryTakeTray(0, out _); State.TryRemove(false, out _); }
+            yield return null; yield return Aim(Socket(1)); bootstrap.SetPaused(true);
+            yield return Click(); Assert.That(State.Socket(1), Is.SameAs(package)); bootstrap.SetPaused(false);
+            var foreign = Object.FindObjectsByType<InventoryInteractable>(FindObjectsSortMode.None)
+                .Single(t => t.StationId == "B1" && t.Kind == InventoryTargetKind.Socket && t.Index == 1);
+            Teleport(new Vector3(9.7f, .05f, -7.1f)); yield return Aim(foreign.transform.position);
+            Assert.That(bootstrap.Player.Target.GetComponent<InventoryInteractable>(), Is.SameAs(foreign));
+            yield return Click(); Assert.That(State.Socket(1), Is.SameAs(package));
+            Teleport(new Vector3(-9.7f, .05f, -6.25f)); yield return Aim(Socket(1));
+            bootstrap.Run.SetRemaining(.01f); yield return new WaitForSecondsRealtime(.25f);
+            yield return Click(); yield return Press(Key.E); Assert.That(State.Socket(1), Is.SameAs(package));
+            Assert.That(package.Location, Is.EqualTo(PortionLocation.Station));
+            Assert.That(State.Portions.Count(p => p.Location == PortionLocation.Unpacked), Is.Zero);
+            bootstrap.RestartShow(); yield return null; Assert.That(State.Socket(1), Is.Null); Assert.That(State.Portions, Is.Empty);
+        }
+
         private void Capture(string filename)
         {
             if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null) return;

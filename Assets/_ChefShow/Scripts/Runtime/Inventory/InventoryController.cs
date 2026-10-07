@@ -255,6 +255,8 @@ namespace ChefShow.Inventory
                 case "meat": return "мясо";
                 case "beef": return "говядину";
                 case "cheese": return "сыр";
+                case "potato_sack": return "мешок картошки";
+                case "egg_carton": return "коробку яиц";
                 default: return food.DisplayName;
             }
         }

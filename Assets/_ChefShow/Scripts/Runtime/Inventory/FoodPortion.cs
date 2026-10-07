@@ -30,6 +30,8 @@ namespace ChefShow.Inventory
     {
         public string Id { get; }
         public string IngredientId { get; }
+        public string PackedIngredientId { get; }
+        public int PackedQuantity { get; }
         public int Quantity { get; }
         public PreparationState Preparation { get; }
         public int ChopPresses { get; }
@@ -44,6 +46,8 @@ namespace ChefShow.Inventory
         internal FoodPortionSnapshot(FoodPortion portion)
         {
             Id = portion.Id; IngredientId = portion.Ingredient.Id; Quantity = portion.Quantity;
+            PackedIngredientId = portion.PackedIngredient == null ? null : portion.PackedIngredient.Id;
+            PackedQuantity = portion.PackedQuantity;
             Preparation = portion.Preparation; ChopPresses = portion.ChopPresses; Cooking = portion.Cooking; HeatProgress = portion.HeatProgress;
             SaltDoses = portion.SaltDoses; OilDoses = portion.OilDoses; Contaminated = portion.Contaminated;
             Location = portion.Location;
@@ -58,6 +62,8 @@ namespace ChefShow.Inventory
         private readonly List<FoodOperation> operations = new List<FoodOperation>();
         public string Id { get; }
         public IngredientDefinition Ingredient { get; }
+        public IngredientDefinition PackedIngredient { get; }
+        public int PackedQuantity { get; }
         // One collected item is one unit. A package remains one container until unpacked.
         public int Quantity { get; internal set; } = 1;
         public PreparationState Preparation { get; internal set; } = PreparationState.Whole;
@@ -74,7 +80,15 @@ namespace ChefShow.Inventory
         internal FoodPortion(string id, IngredientDefinition ingredient)
         {
             Id = id; Ingredient = ingredient;
+            PackedIngredient = ingredient.Contents;
+            PackedQuantity = PackedIngredient == null ? 0 : ingredient.ContentsQuantity;
             origins.Add(new FoodOrigin(id, ingredient.Id, 1));
+        }
+        internal void InheritPackage(FoodPortion package)
+        {
+            origins.Clear(); origins.Add(new FoodOrigin(package.Id, Ingredient.Id, Quantity));
+            operations.AddRange(package.operations);
+            Contaminated = package.Contaminated;
         }
         internal void RecordOperation(string action, float time)
             => operations.Add(new FoodOperation(action, time, Location, Preparation));

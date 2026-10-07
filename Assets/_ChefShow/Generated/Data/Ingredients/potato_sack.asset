@@ -17,6 +17,7 @@ MonoBehaviour:
   CanUseBoard: 0
   IsDoseContainer: 0
   Contents: {fileID: 11400000, guid: 3b69adc534bef5e48a82d3ae51b3111d, type: 2}
+  ContentsQuantity: 5
   VisualMesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
   VisualMaterial: {fileID: 2100000, guid: bc01eeb13b7cf0a4db69d3c7ab2e2a95, type: 2}
   VisualScale: {x: 0.19, y: 0.12, z: 0.19}

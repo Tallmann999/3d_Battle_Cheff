@@ -7,7 +7,7 @@ using ChefShow.Ingredients;
 
 namespace ChefShow.Inventory
 {
-    public enum PortionLocation { Basket, Tray, Hand, Station, Returned, Trash }
+    public enum PortionLocation { Basket, Tray, Hand, Station, Returned, Trash, Unpacked }
     public enum StationSocketKind { Board, WorkSurface }
     public enum BasketPlacement { Pantry, Carried, Station, Floor }
 
@@ -92,6 +92,9 @@ namespace ChefShow.Inventory
             if (Placement != BasketPlacement.Carried) { reason = "Сначала возьмите корзину: Tab."; return false; }
             if (basket.Count >= BasketCapacity)
             { reason = "Корзина заполнена: " + BasketCapacity + "/" + BasketCapacity + "."; Fact("basket_overloaded", count: 0); return false; }
+            if (ingredient.Contents != null && (ingredient.ContentsQuantity < 1 || ingredient.Contents == ingredient
+                || ingredient.Contents.Contents != null || ingredient.CanUseBoard || ingredient.IsDoseContainer))
+            { reason = "Упаковка не настроена."; return false; }
             var portion = new FoodPortion(run.RunId + "_p" + ++serial, ingredient) { Location = PortionLocation.Basket };
             basket.Add(portion); portions.Add(portion); Fact("ingredient_taken", portion); return true;
         }
@@ -111,6 +114,35 @@ namespace ChefShow.Inventory
             tray.AddRange(basket); basket.Clear(); Fact("basket_unloaded", count: count); return true;
         }
 
+        public bool TryUnpack(out string reason)
+        {
+            if (!FreeHand(out reason)) return false;
+            var package = Socket((int)StationSocketKind.WorkSurface);
+            if (package == null || package.PackedIngredient == null)
+            { reason = "Положите упаковку на место продукта: E."; return false; }
+            int count = package.PackedQuantity;
+            if (count < 1 || package.PackedIngredient.Contents != null || package.Preparation != PreparationState.Whole
+                || package.ChopPresses != 0 || package.Cooking != CookState.Raw || package.HeatProgress != 0
+                || package.SaltDoses != 0 || package.OilDoses != 0)
+            { reason = "Упаковка не настроена для распаковки."; return false; }
+            if (count > TrayCapacity - tray.Count)
+            { reason = "Нужно " + count + " свободных мест в лотке; доступно " + (TrayCapacity - tray.Count) + ". Упаковка остаётся целой."; return false; }
+            // Commit the complete transfer before callbacks; no partially consumed package or duplicate output.
+            var contents = new FoodPortion[count];
+            for (int i = 0; i < count; i++)
+            {
+                var food = new FoodPortion(run.RunId + "_p" + ++serial, package.PackedIngredient) { Location = PortionLocation.Tray };
+                food.InheritPackage(package); food.RecordOperation("package_unpacked", run.Clock.SimulationTime); contents[i] = food;
+            }
+            sockets[(int)StationSocketKind.WorkSurface] = null;
+            package.Location = PortionLocation.Unpacked; package.SocketIndex = -1;
+            package.RecordOperation("package_unpacked", run.Clock.SimulationTime);
+            tray.AddRange(contents); portions.AddRange(contents); Version++;
+            var fact = new PackageUnpacked(run, package, contents);
+            run.Events.Publish(fact);
+            return true;
+        }
+
         public const int RequiredChopPresses = 6;
         public bool TryChop(KitchenToolKind tool, out string reason)
         {
@@ -119,7 +151,7 @@ namespace ChefShow.Inventory
             if (tool != KitchenToolKind.Knife) { reason = "Возьмите нож из ящика: E."; return false; }
             var portion = Socket((int)StationSocketKind.Board);
             if (portion == null) { reason = "Положите продукт на доску: E."; return false; }
-            if (!portion.Ingredient.CanUseBoard || portion.Ingredient.Contents != null || portion.Ingredient.IsDoseContainer)
+            if (!portion.Ingredient.CanUseBoard || portion.PackedIngredient != null || portion.Ingredient.IsDoseContainer)
             { reason = "Этот продукт нельзя нарезать."; return false; }
             if (portion.ChopPresses >= RequiredChopPresses || portion.Preparation != PreparationState.Whole)
             { reason = "Продукт уже нарезан."; return false; }
