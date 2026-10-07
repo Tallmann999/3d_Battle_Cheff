@@ -142,9 +142,9 @@ namespace ChefShow.Tests
             Assert.That(state.TryChop(KitchenToolKind.Fork, out _), Is.False);
             run.SetPaused(true); Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.False); run.Tick(10);
             run.SetPaused(false); Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.True);
-            state.TryTakeSocket(0, out _); state.TryPlaceSocket(1, out _);
+            state.TryTakeSocket(0, out _); state.TryPutInTray(out _);
             Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.False);
-            state.TryTakeSocket(1, out _); state.TryPlaceSocket(0, out _);
+            state.TryTakeTray(0, out _); state.TryPlaceSocket(0, out _);
             run.SetRemaining(0); int version = state.Version;
             Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.False);
             run.Dispose(); Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.False);
@@ -159,16 +159,16 @@ namespace ChefShow.Tests
             state = new InventoryState(run, 10, count); sack.ContentsQuantity = count;
             Move(BasketPlacement.Carried); Fill(sack, 1); var package = state.Basket[0];
             var packed = package.Snapshot(); sack.ContentsQuantity = count + 100;
-            Move(BasketPlacement.Station); Unload(); state.TryTakeTray(0, out _); state.TryPlaceSocket(1, out _);
+            Move(BasketPlacement.Station); Unload();
             typeof(FoodPortion).GetProperty(nameof(FoodPortion.Contaminated)).SetValue(package, true);
             PackageUnpacked recorded = default; int events = 0;
             using (run.Events.Subscribe<PackageUnpacked>(fact =>
             {
                 recorded = fact; events++;
-                Assert.That(state.TryUnpack(out _), Is.False, "Повтор из callback не должен создавать второй набор.");
+                Assert.That(state.TryUnpack(0, out _), Is.False, "Повтор из callback не должен создавать второй набор.");
             }))
             {
-                Assert.That(state.TryUnpack(out var error), Is.True, error);
+                Assert.That(state.TryUnpack(0, out var error), Is.True, error);
                 Assert.That(state.Tray.Count, Is.EqualTo(count)); Assert.That(state.Socket(1), Is.Null);
                 Assert.That(package.Location, Is.EqualTo(PortionLocation.Unpacked));
                 Assert.That(state.Tray.All(p => p.Quantity == 1 && p.Ingredient == potato && p.PackedIngredient == null), Is.True);
@@ -184,7 +184,7 @@ namespace ChefShow.Tests
                 Assert.That(state.TryChop(KitchenToolKind.Knife, out _), Is.True);
                 Assert.That(recorded.Contents[0].Location, Is.EqualTo(PortionLocation.Tray));
                 Assert.That(recorded.Contents[0].ChopPresses, Is.Zero); Assert.That(child.ChopPresses, Is.EqualTo(1));
-                Assert.That(state.TryUnpack(out _), Is.False); Assert.That(events, Is.EqualTo(1)); Conserved();
+                Assert.That(state.TryUnpack(0, out _), Is.False); Assert.That(events, Is.EqualTo(1)); Conserved();
             }
         }
 
@@ -192,18 +192,16 @@ namespace ChefShow.Tests
         public void UnpackingRejectsFullTrayHeldPausedTimeoutAndDisposedWithoutConsumingPackage()
         {
             state = new InventoryState(run, 10, 5);
-            Assert.That(state.TryUnpack(out _), Is.False);
+            Assert.That(state.TryUnpack(-1, out _), Is.False);
             Move(BasketPlacement.Carried); Fill(sack, 1); Fill(potato, 1); Move(BasketPlacement.Station); Unload();
-            state.TryTakeTray(0, out _); Assert.That(state.TryUnpack(out _), Is.False);
-            state.TryPlaceSocket(1, out _); var package = state.Socket(1);
-            int version = state.Version; var trayIds = state.Tray.Select(p => p.Id).ToArray();
-            Assert.That(state.TryUnpack(out _), Is.False); Assert.That(state.Version, Is.EqualTo(version));
-            CollectionAssert.AreEqual(trayIds, state.Tray.Select(p => p.Id)); Assert.That(state.Socket(1), Is.SameAs(package));
-            state.TryTakeTray(0, out _); Assert.That(state.TryUnpack(out _), Is.False);
-            state.TryRemove(false, out _); run.SetPaused(true); Assert.That(state.TryUnpack(out _), Is.False);
-            run.SetPaused(false); run.SetRemaining(0); Assert.That(state.TryUnpack(out _), Is.False);
-            run.Dispose(); Assert.That(state.TryUnpack(out _), Is.False);
-            Assert.That(package.Location, Is.EqualTo(PortionLocation.Station));
+            var package = state.Tray[0]; int version = state.Version; var trayIds = state.Tray.Select(p => p.Id).ToArray();
+            Assert.That(state.TryUnpack(0, out _), Is.False); Assert.That(state.Version, Is.EqualTo(version));
+            CollectionAssert.AreEqual(trayIds, state.Tray.Select(p => p.Id)); Assert.That(state.Tray[0], Is.SameAs(package));
+            state.TryTakeTray(1, out _); Assert.That(state.TryUnpack(0, out _), Is.False);
+            state.TryRemove(false, out _); run.SetPaused(true); Assert.That(state.TryUnpack(0, out _), Is.False);
+            run.SetPaused(false); run.SetRemaining(0); Assert.That(state.TryUnpack(0, out _), Is.False);
+            run.Dispose(); Assert.That(state.TryUnpack(0, out _), Is.False);
+            Assert.That(package.Location, Is.EqualTo(PortionLocation.Tray));
             Assert.That(package.Operations.Any(o => o.Action == "package_unpacked"), Is.False); Conserved();
         }
 
@@ -211,13 +209,45 @@ namespace ChefShow.Tests
         public void NonPackageAndMalformedPackageCannotProduceContents()
         {
             Move(BasketPlacement.Carried); Fill(potato, 1); Move(BasketPlacement.Station); Unload();
-            state.TryTakeTray(0, out _); state.TryPlaceSocket(1, out _); var whole = state.Socket(1);
-            Assert.That(state.TryUnpack(out _), Is.False); Assert.That(state.Socket(1), Is.SameAs(whole));
-            state.TryTakeSocket(1, out _); state.TryRemove(false, out _);
+            var whole = state.Tray[0]; Assert.That(state.TryUnpack(0, out _), Is.False); Assert.That(state.Tray[0], Is.SameAs(whole));
+            state.TryTakeTray(0, out _); state.TryRemove(false, out _);
             Move(BasketPlacement.Carried); sack.ContentsQuantity = 0;
             Assert.That(state.TryCollect(sack, out _), Is.False); Assert.That(state.Basket, Is.Empty);
             sack.ContentsQuantity = 5; sack.Contents = sack;
             Assert.That(state.TryCollect(sack, out _), Is.False); Assert.That(state.Basket, Is.Empty); Conserved();
+        }
+
+        [Test]
+        public void ReadyDishAreaRejectsRawChoppedPackagesAndDirtyFoodWithoutLosingHeldItem()
+        {
+            Move(BasketPlacement.Carried); Fill(potato, 1); Fill(sack, 1); Move(BasketPlacement.Station); Unload();
+            state.TryTakeTray(0, out _); var food=state.Held; int version=state.Version;
+            Assert.That(state.TryPlaceSocket(1, out _), Is.False); Assert.That(state.Held, Is.SameAs(food));
+            Assert.That(state.Version, Is.EqualTo(version)); Assert.That(state.Socket(1), Is.Null);
+            state.TryPlaceSocket(0, out _); for(int i=0;i<6;i++) state.TryChop(KitchenToolKind.Knife, out _);
+            state.TryTakeSocket(0, out _); Assert.That(state.TryPlaceSocket(1, out _), Is.False);
+            Assert.That(food.Preparation, Is.EqualTo(PreparationState.Chopped));
+            typeof(FoodPortion).GetProperty(nameof(FoodPortion.Cooking)).SetValue(food, CookState.Cooked);
+            typeof(FoodPortion).GetProperty(nameof(FoodPortion.Contaminated)).SetValue(food, true);
+            Assert.That(state.TryPlaceSocket(1, out _), Is.False); Assert.That(state.Held, Is.SameAs(food));
+            typeof(FoodPortion).GetProperty(nameof(FoodPortion.Contaminated)).SetValue(food, false);
+            Assert.That(state.TryPlaceSocket(1, out _), Is.True); Assert.That(state.Socket(1), Is.SameAs(food));
+            state.TryTakeTray(0, out _); var package=state.Held;
+            Assert.That(state.TryPlaceSocket(1, out _), Is.False); Assert.That(state.Held, Is.SameAs(package));
+            Assert.That(InventoryState.IsReadyForServing(package), Is.False); state.TryCancelHeld(out _); Conserved();
+        }
+
+        [Test]
+        public void UnpackingReusesPackageSlotAndPreservesNeighbourOrderAtExactCapacity()
+        {
+            state = new InventoryState(run, 10, 7);
+            Move(BasketPlacement.Carried); Fill(potato, 1); Fill(sack, 1); Fill(flour, 1); Move(BasketPlacement.Station); Unload();
+            var before=state.Tray[0]; var after=state.Tray[2]; var package=state.Tray[1];
+            Assert.That(state.TryUnpack(1, out var error), Is.True, error);
+            Assert.That(state.Tray.Count, Is.EqualTo(7)); Assert.That(state.Tray[0], Is.SameAs(before));
+            Assert.That(state.Tray[6], Is.SameAs(after)); Assert.That(state.Tray.Skip(1).Take(5)
+                .All(p=>p.OriginComponents.Single().SourcePortionId==package.Id), Is.True);
+            Assert.That(state.TryUnpack(1, out _), Is.False); Assert.That(state.Tray.Count, Is.EqualTo(7)); Conserved();
         }
 
         [Test]

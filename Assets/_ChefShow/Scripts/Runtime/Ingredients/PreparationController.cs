@@ -21,6 +21,7 @@ namespace ChefShow.Ingredients
         private Vector3 strokeStart, contact;
         private Quaternion strokeRotation, contactRotation;
         private string message;
+        private InventoryInteractable messageTarget;
         private float messageUntil;
         public string Validate(InventoryController inventory)
         {
@@ -42,14 +43,14 @@ namespace ChefShow.Ingredients
         }
         public void ResetPresentation()
         {
-            StopStroke(); message = null;
+            StopStroke(); message = null; messageTarget = null;
             foreach (var board in Boards) board.Present(null);
         }
         public void Step(bool acceptInput, bool commandConsumed)
         {
             if (observedTool != bootstrap.Tools.EquippedObject || observedVersion != bootstrap.Run.Inventory.Version)
             {
-                message = null; observedTool = bootstrap.Tools.EquippedObject; observedVersion = bootstrap.Run.Inventory.Version;
+                message = null; messageTarget = null; observedTool = bootstrap.Tools.EquippedObject; observedVersion = bootstrap.Run.Inventory.Version;
             }
             if (strokeTool != null && (strokeTool != bootstrap.Tools.EquippedObject || strokeTool.Placement != KitchenToolPlacement.Held))
             { strokeTool = null; strokeTime = -1; }
@@ -65,19 +66,23 @@ namespace ChefShow.Ingredients
                         string reason = "Это доска другого участника.";
                         bool success = board == own && bootstrap.Run.Inventory.TryChop(bootstrap.Tools.Equipped, out reason);
                         if (success) { message = null; StartStroke(board); }
-                        else { message = reason; messageUntil = bootstrap.Run.Clock.SimulationTime + 2.5f; }
+                        else { message = reason; messageTarget = null; messageUntil = bootstrap.Run.Clock.SimulationTime + 2.5f; }
                     }
                     else
                     {
-                        var surface = bootstrap.Player.Target == null ? null : bootstrap.Player.Target.GetComponent<InventoryInteractable>();
-                        if (surface != null && surface.Kind == InventoryTargetKind.Socket && surface.Index == (int)StationSocketKind.WorkSurface)
+                        var item = bootstrap.Player.Target == null ? null : bootstrap.Player.Target.GetComponent<InventoryInteractable>();
+                        if (item != null && item.Kind == InventoryTargetKind.TrayItem)
                         {
-                            string reason = "Это место продукта другого участника.";
-                            var package = bootstrap.Run.Inventory.Socket((int)StationSocketKind.WorkSurface);
-                            bool success = surface.StationId == bootstrap.Inventory.PlayerStationId && bootstrap.Run.Inventory.TryUnpack(out reason);
-                            message = success ? "Распаковано: " + PackageContentsName(package) + " → лоток" : reason;
-                            messageUntil = bootstrap.Run.Clock.SimulationTime + 2.5f;
-                            observedVersion = bootstrap.Run.Inventory.Version;
+                            string reason = "Это лоток другого участника.";
+                            var state = bootstrap.Run.Inventory;
+                            var package = item.Index >= 0 && item.Index < state.Tray.Count ? state.Tray[item.Index] : null;
+                            if (package != null && package.PackedIngredient != null)
+                            {
+                                bool success = item.StationId == bootstrap.Inventory.PlayerStationId && state.TryUnpack(item.Index, out reason);
+                                message = success ? "Распаковано: " + PackageContentsName(package) : reason; messageTarget = item;
+                                messageUntil = bootstrap.Run.Clock.SimulationTime + 2.5f;
+                                observedVersion = bootstrap.Run.Inventory.Version;
+                            }
                         }
                     }
                 }
@@ -116,13 +121,15 @@ namespace ChefShow.Ingredients
             var board = target == null ? null : target.GetComponent<ChoppingBoard>();
             if (board == null)
             {
-                var surface = target == null ? null : target.GetComponent<InventoryInteractable>();
-                if (surface == null || surface.Kind != InventoryTargetKind.Socket || surface.Index != (int)StationSocketKind.WorkSurface) return null;
-                if (surface.StationId != bootstrap.Inventory.PlayerStationId) return "Место продукта другого участника";
-                if (message != null && bootstrap.Run.Clock.SimulationTime < messageUntil) return message;
-                var package = bootstrap.Run.Inventory.Socket((int)StationSocketKind.WorkSurface);
+                var item = target == null ? null : target.GetComponent<InventoryInteractable>();
+                if (item == null || item.Kind != InventoryTargetKind.TrayItem) return null;
+                if (item.StationId != bootstrap.Inventory.PlayerStationId) return "Лоток другого участника";
+                if (message != null && item == messageTarget && bootstrap.Run.Clock.SimulationTime < messageUntil)
+                    return bootstrap.Inventory.Describe(target) + "\n" + message;
+                var trayState = bootstrap.Run.Inventory;
+                var package = item.Index >= 0 && item.Index < trayState.Tray.Count ? trayState.Tray[item.Index] : null;
                 if (bootstrap.Run.Inventory.Held != null || package == null || package.PackedIngredient == null) return null;
-                return bootstrap.Inventory.Describe(target) + "\nЛКМ — распаковать · " + PackageContentsName(package) + " в лоток";
+                return bootstrap.Inventory.Describe(target) + "\nЛКМ — открыть · " + PackageContentsName(package);
             }
             if (board != own) return "Доска другого участника";
             if (message != null && bootstrap.Run.Clock.SimulationTime < messageUntil) return message;

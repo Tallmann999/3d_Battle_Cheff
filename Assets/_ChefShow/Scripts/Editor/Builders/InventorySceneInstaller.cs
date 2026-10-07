@@ -141,7 +141,7 @@ namespace ChefShow.Editor
                 var dockMount = Node("Basket Snap", dock.transform, dock.transform.position + Vector3.up * 0.15f);
                 var tray = Pad("Ingredient Tray", group, At(-0.35f, 0.65f), new Vector3(0.65f, 0.04f, 0.94f), InventoryTargetKind.Tray, "ЛОТОК", rotation, id);
                 var board = Pad("Board", group, At(0.65f, -0.6f), new Vector3(0.65f, 0.06f, 0.6f), InventoryTargetKind.Socket, "ДОСКА", rotation, id); board.Index = 0;
-                var surface = Pad("Work Surface", group, At(0.65f, 0.6f), new Vector3(0.65f, 0.06f, 0.6f), InventoryTargetKind.Socket, "МЕСТО ПРОДУКТА", rotation, id); surface.Index = 1;
+                var surface = Pad("Work Surface", group, At(0.65f, 0.6f), new Vector3(0.65f, 0.06f, 0.6f), InventoryTargetKind.Socket, "ГОТОВОЕ БЛЮДО", rotation, id); surface.Index = 1;
                 Pad("Trash", group, At(-0.8f, 0, 0.07f), new Vector3(0.3f, 0.14f, 0.4f), InventoryTargetKind.Trash, "МУСОР", rotation, id);
                 if (id != inventory.PlayerStationId) continue;
                 inventory.StationDock = dockMount;

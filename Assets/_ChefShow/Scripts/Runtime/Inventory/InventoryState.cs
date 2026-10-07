@@ -114,19 +114,20 @@ namespace ChefShow.Inventory
             tray.AddRange(basket); basket.Clear(); Fact("basket_unloaded", count: count); return true;
         }
 
-        public bool TryUnpack(out string reason)
+        public bool TryUnpack(int index, out string reason)
         {
             if (!FreeHand(out reason)) return false;
-            var package = Socket((int)StationSocketKind.WorkSurface);
+            var package = index >= 0 && index < tray.Count ? tray[index] : null;
             if (package == null || package.PackedIngredient == null)
-            { reason = "Положите упаковку на место продукта: E."; return false; }
+            { reason = "Посмотрите на закрытую упаковку в лотке."; return false; }
             int count = package.PackedQuantity;
             if (count < 1 || package.PackedIngredient.Contents != null || package.Preparation != PreparationState.Whole
                 || package.ChopPresses != 0 || package.Cooking != CookState.Raw || package.HeatProgress != 0
                 || package.SaltDoses != 0 || package.OilDoses != 0)
             { reason = "Упаковка не настроена для распаковки."; return false; }
-            if (count > TrayCapacity - tray.Count)
-            { reason = "Нужно " + count + " свободных мест в лотке; доступно " + (TrayCapacity - tray.Count) + ". Упаковка остаётся целой."; return false; }
+            int extraPlaces = count - 1; // The package's own slot becomes the first content slot.
+            if (extraPlaces > TrayCapacity - tray.Count)
+            { reason = "Нужно ещё " + extraPlaces + " мест в лотке; свободно " + (TrayCapacity - tray.Count) + ". Упаковка остаётся целой."; return false; }
             // Commit the complete transfer before callbacks; no partially consumed package or duplicate output.
             var contents = new FoodPortion[count];
             for (int i = 0; i < count; i++)
@@ -134,10 +135,9 @@ namespace ChefShow.Inventory
                 var food = new FoodPortion(run.RunId + "_p" + ++serial, package.PackedIngredient) { Location = PortionLocation.Tray };
                 food.InheritPackage(package); food.RecordOperation("package_unpacked", run.Clock.SimulationTime); contents[i] = food;
             }
-            sockets[(int)StationSocketKind.WorkSurface] = null;
             package.Location = PortionLocation.Unpacked; package.SocketIndex = -1;
             package.RecordOperation("package_unpacked", run.Clock.SimulationTime);
-            tray.AddRange(contents); portions.AddRange(contents); Version++;
+            tray.RemoveAt(index); tray.InsertRange(index, contents); portions.AddRange(contents); Version++;
             var fact = new PackageUnpacked(run, package, contents);
             run.Events.Publish(fact);
             return true;
@@ -193,9 +193,14 @@ namespace ChefShow.Inventory
             if (sockets[index] != null) { reason = "Рабочее место занято."; return false; }
             if (index == (int)StationSocketKind.Board && !Held.Ingredient.CanUseBoard)
             { reason = "Этот продукт нельзя положить на доску."; return false; }
+            if (index == (int)StationSocketKind.WorkSurface && !IsReadyForServing(Held))
+            { reason = "Готовое блюдо: только чистая готовая еда. Сырые продукты и упаковки храните в лотке."; return false; }
             var portion = Held; portion.Location = PortionLocation.Station; portion.SocketIndex = index;
             sockets[index] = portion; Held = null; Fact("ingredient_transferred", portion); return true;
         }
+        public static bool IsReadyForServing(FoodPortion portion) => portion != null && portion.PackedIngredient == null
+            && !portion.Ingredient.IsDoseContainer && !portion.Contaminated
+            && (portion.Cooking == CookState.Cooked || portion.Cooking == CookState.Overcooked || portion.Cooking == CookState.Burned);
         public bool TryPutInTray(out string reason)
         {
             if (!Active(out reason)) return false;

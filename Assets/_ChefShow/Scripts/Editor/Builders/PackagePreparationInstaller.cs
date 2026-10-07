@@ -64,7 +64,10 @@ namespace ChefShow.Editor
                 .Where(t => t.Kind == InventoryTargetKind.Socket && t.Index == (int)StationSocketKind.WorkSurface))
             {
                 var caption = surface.transform.Find("Label").GetComponent<TextMesh>();
+                var target = surface.GetComponent<ChefShow.Player.PrototypeInteractable>();
+                Undo.RecordObject(target, "Ready dish zone name"); target.DisplayName = "Готовое блюдо"; EditorUtility.SetDirty(target);
                 Undo.RecordObject(caption, "Readable package surface caption"); Undo.RecordObject(caption.transform, "Package caption edge");
+                caption.text = "ГОТОВОЕ БЛЮДО";
                 var bounds = surface.GetComponent<BoxCollider>().bounds;
                 float side = surface.StationId.StartsWith("A", StringComparison.Ordinal) ? -1 : 1;
                 caption.transform.position = new Vector3(bounds.center.x + side * .24f, bounds.max.y + .035f, bounds.center.z);
@@ -77,7 +80,7 @@ namespace ChefShow.Editor
                 EditorUtility.SetDirty(text);
             }
             Undo.RecordObject(bootstrap.Hud.TaskCard, "Package task");
-            bootstrap.Hud.TaskCard.text = "ПОДГОТОВКА ПРОДУКТОВ\nTab — корзина; E — сбор, выгрузка, взять / положить.\nНож справа + продукт на доске: 6 ЛКМ — нарезать.\nУпаковка на Месте продукта: ЛКМ — распаковать в лоток.\nМешок — 5 картофелин; коробка — 6 яиц.\nНе хватает места — упаковка остаётся целой.\nE — перенести порцию; нагрев будет следующим этапом.";
+            bootstrap.Hud.TaskCard.text = "ПОДГОТОВКА ПРОДУКТОВ\nTab — корзина; E — сбор, выгрузка, взять / положить.\nНож справа + продукт на доске: 6 ЛКМ — нарезать.\nУпаковка в лотке: ЛКМ по ней — открыть.\nМешок — 5 картофелин; коробка — 6 яиц.\nНе хватает места — упаковка остаётся целой.\nГотовое блюдо: только тарелка и чистая готовая еда.";
             EditorUtility.SetDirty(bootstrap.Hud.TaskCard);
         }
     }

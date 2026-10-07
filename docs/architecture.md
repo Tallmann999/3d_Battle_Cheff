@@ -127,8 +127,16 @@ GameBootstrap.Update: Player → Tools (E/G priority) → Preparation → Invent
 
 Для фоновых Input-тестов GameBootstrap.AutoPauseOnFocusLoss имеет временное runtime override=False в fixture; default=True в обычной игре/сценах. Это изоляция смены окна Editor, без изменения ручной паузы/Esc/таймера/asset settings. Временные InputSettings clone/device filter сохраняются и восстанавливаются fixture. Проверено: Edit 10/10, Play 17/17 PASS 10:55:40–10:56:17 UTC. Распаковка/нагрев/полный выпуск не реализованы этим срезом.
 
-### Распаковка D-020 — фактическая архитектура
+### Распаковка D-020 — архитектура первого среза (место открытия заменено D-021)
 
 IngredientDefinition.ContentsQuantity на двух упаковках (5/6), IngredientCatalog.Validate проверяет допустимое содержимое/количество. FoodPortion фиксирует PackedIngredient/PackedQuantity при сборе; snapshot копирует значения. InventoryState.TryUnpack проверяет активность/свободную руку/WorkSurface/места в лотке, создаёт N отдельных FoodPortion, копирует историю/загрязнение и FoodOrigin(package.Id, contents.Id, 1), переводит упаковку в Unpacked и освобождает socket. Данные/Version меняются полностью до публикации immutable PackageUnpacked со snapshots; callback не может повторить открытие.
 
 PreparationController направляет Primary на доску (TryChop) либо своё место продукта (TryUnpack). E-пререносы InventoryController сохранены, инструменты для открытия не обязательны. Sync по Version показывает продукты через уже сохранённые FoodDisplay; runtime геометрия не создаётся. PackagePreparationInstaller адресно сохраняет defs/подсказки/подпись у края в working/generated с backups/Undo/guards; builder учитывает будущую явную генерацию. Сцены/GUID/ручная камера2.20 сохранены. F-005 verified: 14Edit/19Play PASS. Оба fixture Play-тестов используют изолированный synthetic input и временное AutoPauseOnFocusLoss=False; стандарт игры остаётся True. Нагрев — следующая F-006.
+
+### Распаковка в лотке и чистая зона — D-021
+
+`InventoryState.TryUnpack(int index, out reason)` читает упаковку прямо из Tray[index], проверяет активную попытку/свободную пищевую руку/состояние упаковки и N−1 дополнительных мест. После проверки создаёт N отдельных порций с прежним происхождением/историей/загрязнением, архивирует родителя Unpacked, выполняет RemoveAt/InsertRange в том же индексе, затем Version/immutable PackageUnpacked. Socket больше не участвует; порядок соседних предметов и повторный callback защищены.
+
+PreparationController направляет Primary на доску либо конкретный TrayItem своей станции с упаковкой. Для обычного содержимого ЛКМ ничего не берёт/не режет; E остаётся переносом. Сообщение об открытии привязано к TrayItem и сочетается с текущей E-подсказкой нового содержимого. InventoryState.IsReadyForServing допускает только чистую еду с завершённым состоянием нагрева, без упаковки/дозового контейнера. TryPlaceSocket(WorkSurface) отвергает остальные состояния без изменения руки/Version; HUD поясняет назначение зоны.
+
+Существующий Work Surface (Index1) сохранил ссылки/позицию, DisplayName/Label стали «Готовое блюдо» на всех12 станциях. PackagePreparationInstaller сохраняет обе сцены через Editor API/Undo/guards; будущий InventorySceneInstaller использует новую подпись. Никаких новых игровых GameObject/HideFlags. Edit16/16, Play19/19 PASS, обе сцены Validate/dirtyFalse; камеры2.20/1.65/GUID сохранены. Реальное нагревание и тарелки ещё относятся к F-006/F-007. Инъекция Cooked и contamination в модельных тестах проверяет правила размещения, не готовку.

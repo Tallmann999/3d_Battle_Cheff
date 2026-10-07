@@ -2796,7 +2796,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
-  DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  DisplayName: "\u0413\u043E\u0442\u043E\u0432\u043E\u0435 \u0431\u043B\u044E\u0434\u043E"
   IsPlayerStation: 0
   Team: 0
   FocusPoint: {fileID: 0}
@@ -3075,7 +3075,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 60703947}
-  m_Text: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  m_Text: "\u0413\u041E\u0422\u041E\u0412\u041E\u0415 \u0411\u041B\u042E\u0414\u041E"
   m_OffsetZ: 0
   m_CharacterSize: 0.009
   m_LineSpacing: 1
@@ -6015,7 +6015,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
-  DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  DisplayName: "\u0413\u043E\u0442\u043E\u0432\u043E\u0435 \u0431\u043B\u044E\u0434\u043E"
   IsPlayerStation: 0
   Team: 0
   FocusPoint: {fileID: 0}
@@ -9720,7 +9720,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
-  DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  DisplayName: "\u0413\u043E\u0442\u043E\u0432\u043E\u0435 \u0431\u043B\u044E\u0434\u043E"
   IsPlayerStation: 0
   Team: 0
   FocusPoint: {fileID: 0}
@@ -10778,7 +10778,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
-  DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  DisplayName: "\u0413\u043E\u0442\u043E\u0432\u043E\u0435 \u0431\u043B\u044E\u0434\u043E"
   IsPlayerStation: 0
   Team: 0
   FocusPoint: {fileID: 0}
@@ -17292,7 +17292,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
-  DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  DisplayName: "\u0413\u043E\u0442\u043E\u0432\u043E\u0435 \u0431\u043B\u044E\u0434\u043E"
   IsPlayerStation: 0
   Team: 0
   FocusPoint: {fileID: 0}
@@ -18117,7 +18117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
-  DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  DisplayName: "\u0413\u043E\u0442\u043E\u0432\u043E\u0435 \u0431\u043B\u044E\u0434\u043E"
   IsPlayerStation: 0
   Team: 0
   FocusPoint: {fileID: 0}
@@ -22454,16 +22454,15 @@ MonoBehaviour:
     / \u043F\u043E\u043B\u043E\u0436\u0438\u0442\u044C.\n\u041D\u043E\u0436 \u0441\u043F\u0440\u0430\u0432\u0430
     + \u043F\u0440\u043E\u0434\u0443\u043A\u0442 \u043D\u0430 \u0434\u043E\u0441\u043A\u0435:
     6 \u041B\u041A\u041C \u2014 \u043D\u0430\u0440\u0435\u0437\u0430\u0442\u044C.\n\u0423\u043F\u0430\u043A\u043E\u0432\u043A\u0430
-    \u043D\u0430 \u041C\u0435\u0441\u0442\u0435 \u043F\u0440\u043E\u0434\u0443\u043A\u0442\u0430:
-    \u041B\u041A\u041C \u2014 \u0440\u0430\u0441\u043F\u0430\u043A\u043E\u0432\u0430\u0442\u044C
-    \u0432 \u043B\u043E\u0442\u043E\u043A.\n\u041C\u0435\u0448\u043E\u043A \u2014
-    5 \u043A\u0430\u0440\u0442\u043E\u0444\u0435\u043B\u0438\u043D; \u043A\u043E\u0440\u043E\u0431\u043A\u0430
+    \u0432 \u043B\u043E\u0442\u043A\u0435: \u041B\u041A\u041C \u043F\u043E \u043D\u0435\u0439
+    \u2014 \u043E\u0442\u043A\u0440\u044B\u0442\u044C.\n\u041C\u0435\u0448\u043E\u043A
+    \u2014 5 \u043A\u0430\u0440\u0442\u043E\u0444\u0435\u043B\u0438\u043D; \u043A\u043E\u0440\u043E\u0431\u043A\u0430
     \u2014 6 \u044F\u0438\u0446.\n\u041D\u0435 \u0445\u0432\u0430\u0442\u0430\u0435\u0442
     \u043C\u0435\u0441\u0442\u0430 \u2014 \u0443\u043F\u0430\u043A\u043E\u0432\u043A\u0430
-    \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u0446\u0435\u043B\u043E\u0439.\nE
-    \u2014 \u043F\u0435\u0440\u0435\u043D\u0435\u0441\u0442\u0438 \u043F\u043E\u0440\u0446\u0438\u044E;
-    \u043D\u0430\u0433\u0440\u0435\u0432 \u0431\u0443\u0434\u0435\u0442 \u0441\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u043C
-    \u044D\u0442\u0430\u043F\u043E\u043C."
+    \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F \u0446\u0435\u043B\u043E\u0439.\n\u0413\u043E\u0442\u043E\u0432\u043E\u0435
+    \u0431\u043B\u044E\u0434\u043E: \u0442\u043E\u043B\u044C\u043A\u043E \u0442\u0430\u0440\u0435\u043B\u043A\u0430
+    \u0438 \u0447\u0438\u0441\u0442\u0430\u044F \u0433\u043E\u0442\u043E\u0432\u0430\u044F
+    \u0435\u0434\u0430."
 --- !u!1 &435102576
 GameObject:
   m_ObjectHideFlags: 0
@@ -35448,7 +35447,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 718736458}
-  m_Text: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  m_Text: "\u0413\u041E\u0422\u041E\u0412\u041E\u0415 \u0411\u041B\u042E\u0414\u041E"
   m_OffsetZ: 0
   m_CharacterSize: 0.009
   m_LineSpacing: 1
@@ -38359,7 +38358,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 782387060}
-  m_Text: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  m_Text: "\u0413\u041E\u0422\u041E\u0412\u041E\u0415 \u0411\u041B\u042E\u0414\u041E"
   m_OffsetZ: 0
   m_CharacterSize: 0.009
   m_LineSpacing: 1
@@ -39225,7 +39224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
-  DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  DisplayName: "\u0413\u043E\u0442\u043E\u0432\u043E\u0435 \u0431\u043B\u044E\u0434\u043E"
   IsPlayerStation: 0
   Team: 0
   FocusPoint: {fileID: 0}
@@ -42386,7 +42385,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 845012794}
-  m_Text: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  m_Text: "\u0413\u041E\u0422\u041E\u0412\u041E\u0415 \u0411\u041B\u042E\u0414\u041E"
   m_OffsetZ: 0
   m_CharacterSize: 0.009
   m_LineSpacing: 1
@@ -44004,7 +44003,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 885285442}
-  m_Text: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  m_Text: "\u0413\u041E\u0422\u041E\u0412\u041E\u0415 \u0411\u041B\u042E\u0414\u041E"
   m_OffsetZ: 0
   m_CharacterSize: 0.009
   m_LineSpacing: 1
@@ -46636,7 +46635,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
-  DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  DisplayName: "\u0413\u043E\u0442\u043E\u0432\u043E\u0435 \u0431\u043B\u044E\u0434\u043E"
   IsPlayerStation: 0
   Team: 0
   FocusPoint: {fileID: 0}
@@ -52856,7 +52855,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
-  DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  DisplayName: "\u0413\u043E\u0442\u043E\u0432\u043E\u0435 \u0431\u043B\u044E\u0434\u043E"
   IsPlayerStation: 0
   Team: 0
   FocusPoint: {fileID: 0}
@@ -74960,7 +74959,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1573569158}
-  m_Text: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  m_Text: "\u0413\u041E\u0422\u041E\u0412\u041E\u0415 \u0411\u041B\u042E\u0414\u041E"
   m_OffsetZ: 0
   m_CharacterSize: 0.009
   m_LineSpacing: 1
@@ -76194,7 +76193,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1605485714}
-  m_Text: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  m_Text: "\u0413\u041E\u0422\u041E\u0412\u041E\u0415 \u0411\u041B\u042E\u0414\u041E"
   m_OffsetZ: 0
   m_CharacterSize: 0.009
   m_LineSpacing: 1
@@ -79238,7 +79237,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
-  DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  DisplayName: "\u0413\u043E\u0442\u043E\u0432\u043E\u0435 \u0431\u043B\u044E\u0434\u043E"
   IsPlayerStation: 0
   Team: 0
   FocusPoint: {fileID: 0}
@@ -81255,7 +81254,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1708044154}
-  m_Text: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  m_Text: "\u0413\u041E\u0422\u041E\u0412\u041E\u0415 \u0411\u041B\u042E\u0414\u041E"
   m_OffsetZ: 0
   m_CharacterSize: 0.009
   m_LineSpacing: 1
@@ -84056,7 +84055,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1763206629}
-  m_Text: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  m_Text: "\u0413\u041E\u0422\u041E\u0412\u041E\u0415 \u0411\u041B\u042E\u0414\u041E"
   m_OffsetZ: 0
   m_CharacterSize: 0.009
   m_LineSpacing: 1
@@ -87252,7 +87251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
-  DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  DisplayName: "\u0413\u043E\u0442\u043E\u0432\u043E\u0435 \u0431\u043B\u044E\u0434\u043E"
   IsPlayerStation: 0
   Team: 0
   FocusPoint: {fileID: 0}
@@ -90699,7 +90698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
-  DisplayName: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  DisplayName: "\u0413\u043E\u0442\u043E\u0432\u043E\u0435 \u0431\u043B\u044E\u0434\u043E"
   IsPlayerStation: 0
   Team: 0
   FocusPoint: {fileID: 0}
@@ -95216,7 +95215,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2035993661}
-  m_Text: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  m_Text: "\u0413\u041E\u0422\u041E\u0412\u041E\u0415 \u0411\u041B\u042E\u0414\u041E"
   m_OffsetZ: 0
   m_CharacterSize: 0.009
   m_LineSpacing: 1
@@ -99425,7 +99424,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2122609207}
-  m_Text: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  m_Text: "\u0413\u041E\u0422\u041E\u0412\u041E\u0415 \u0411\u041B\u042E\u0414\u041E"
   m_OffsetZ: 0
   m_CharacterSize: 0.009
   m_LineSpacing: 1
@@ -99737,7 +99736,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2131480339}
-  m_Text: "\u041C\u0415\u0421\u0422\u041E \u041F\u0420\u041E\u0414\u0423\u041A\u0422\u0410"
+  m_Text: "\u0413\u041E\u0422\u041E\u0412\u041E\u0415 \u0411\u041B\u042E\u0414\u041E"
   m_OffsetZ: 0
   m_CharacterSize: 0.009
   m_LineSpacing: 1

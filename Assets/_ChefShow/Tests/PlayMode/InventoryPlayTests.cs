@@ -194,11 +194,14 @@ namespace ChefShow.Tests
             Assert.That(State.Held.Ingredient.Id, Is.EqualTo("flour")); yield return Cancel();
             yield return Aim(Socket(0)); yield return Press(Key.E);
             yield return Aim(Socket(1)); yield return Press(Key.E);
-            Assert.That(State.Socket(1)?.Id, Is.EqualTo(id));
+            Assert.That(State.Socket(1), Is.Null); Assert.That(State.Held?.Id, Is.EqualTo(id));
+            var tray = inventory.TrayDisplays[0].GetComponentInParent<InventoryInteractable>().transform.parent;
+            yield return Aim(tray.position); yield return Press(Key.E);
+            Assert.That(State.Tray.Last().Id, Is.EqualTo(id));
             yield return Aim(TrayPoint(0)); yield return Press(Key.E);
             yield return Aim(Socket(0)); yield return Press(Key.E);
             Assert.That(State.Held.Ingredient.Id, Is.EqualTo("flour")); Assert.That(State.Socket(0), Is.Null); yield return Cancel();
-            yield return Aim(Socket(1)); yield return Press(Key.E);
+            yield return Aim(TrayPoint(1)); yield return Press(Key.E);
             var trash = Object.FindObjectsByType<InventoryInteractable>(FindObjectsSortMode.None).Single(t => t.StationId == "A1" && t.Kind == InventoryTargetKind.Trash);
             yield return Aim(trash.transform.position); yield return Press(Key.E);
             Assert.That(State.Portions.Count(p => p.Location == PortionLocation.Trash), Is.EqualTo(1));
@@ -245,7 +248,8 @@ namespace ChefShow.Tests
             yield return Aim(Socket(0)); yield return Press(Key.E);
             Assert.That(State.Held?.Id, Is.EqualTo(id));
             yield return Aim(Socket(1)); yield return Press(Key.E);
-            Assert.That(State.Socket(1)?.Id, Is.EqualTo(id));
+            Assert.That(State.Socket(1), Is.Null); Assert.That(State.Held?.Id, Is.EqualTo(id));
+            yield return Cancel(); Assert.That(State.Socket(0)?.Id, Is.EqualTo(id));
             bootstrap.SetPaused(true);
             var frozen = camera.transform.localPosition; float frozenFov = camera.fieldOfView;
             float remaining = bootstrap.Run.RemainingSeconds;
@@ -257,7 +261,7 @@ namespace ChefShow.Tests
             Assert.That(bootstrap.Player.Focused, Is.False);
             Assert.That(Vector3.Distance(camera.transform.localPosition, home), Is.LessThan(.001f));
             Assert.That(camera.fieldOfView, Is.EqualTo(ordinaryFov).Within(.001f));
-            Assert.That(State.Socket(1)?.Id, Is.EqualTo(id));
+            Assert.That(State.Socket(0)?.Id, Is.EqualTo(id));
             yield return Aim(ownStation.FocusPoint.position); yield return Press(Key.E);
             yield return new WaitForSecondsRealtime(.25f);
             bootstrap.RestartShow(); yield return null;
@@ -549,8 +553,12 @@ namespace ChefShow.Tests
                 yield return Press(Key.E); Assert.That(State.Held.Id, Is.EqualTo(id));
                 Assert.That(inventory.HeldDisplay.CutPieces.Count(r => r.enabled), Is.EqualTo(4));
                 yield return Aim(Socket(1)); yield return Press(Key.E); yield return Click();
-                Assert.That(food.ChopPresses, Is.EqualTo(3), "Место продукта не является доской для нарезки.");
-                yield return Press(Key.E); yield return Aim(Socket(0)); yield return Press(Key.E);
+                Assert.That(State.Held, Is.SameAs(food)); Assert.That(State.Socket(1), Is.Null);
+                Assert.That(food.ChopPresses, Is.EqualTo(3), "Зона готового блюда не принимает сырую нарезку.");
+                var tray = inventory.TrayDisplays[0].GetComponentInParent<InventoryInteractable>().transform.parent;
+                yield return Aim(tray.position); yield return Press(Key.E); yield return Aim(TrayPoint(0)); yield return Click();
+                Assert.That(food.ChopPresses, Is.EqualTo(3)); yield return Press(Key.E);
+                yield return Aim(Socket(0)); yield return Press(Key.E);
                 var halfway = food.Snapshot();
                 var station = GameObject.Find("Station_A1").GetComponent<ChefShow.Player.PrototypeInteractable>();
                 yield return Aim(station.FocusPoint.position); yield return Press(Key.E); yield return new WaitForSecondsRealtime(.25f);
@@ -602,95 +610,87 @@ namespace ChefShow.Tests
         }
 
         [UnityTest]
-        public IEnumerator RealInputsUnpackFivePotatoesAndSixEggsThenCutOneChildWithoutDuplicateContents()
+        public IEnumerator RealInputsOpenPackagesInTrayAndKeepReadyDishAreaClean()
         {
             yield return TakeBasket(); Teleport(new Vector3(2.5f, .05f, 10.75f));
             yield return Aim(Stock("potato_sack")); yield return Press(Key.E);
-            yield return Aim(Stock("egg_carton")); yield return Press(Key.E);
-            Assert.That(State.Basket.Count, Is.EqualTo(2)); yield return DockAndDump();
-            var facts = new System.Collections.Generic.List<PackageUnpacked>();
-            using (bootstrap.Run.Events.Subscribe<PackageUnpacked>(f => facts.Add(f)))
+            yield return Aim(Stock("egg_carton")); yield return Press(Key.E); yield return DockAndDump();
+            var sack=State.Tray[0]; var carton=State.Tray[1];
+            var facts=new System.Collections.Generic.List<PackageUnpacked>();
+            using(bootstrap.Run.Events.Subscribe<PackageUnpacked>(f=>facts.Add(f)))
             {
-                yield return Aim(TrayPoint(0)); yield return Press(Key.E); var sack = State.Held;
-                Assert.That(sack.PackedQuantity, Is.EqualTo(5)); yield return Aim(Socket(1)); yield return Press(Key.E);
-                Assert.That(State.Socket(1), Is.SameAs(sack));
-                Assert.That(bootstrap.Hud.Context.text, Does.Contain("ЛКМ — распаковать"));
-                yield return Press(Key.E); Assert.That(State.Held, Is.SameAs(sack));
-                yield return Click(); Assert.That(State.Tray.Count, Is.EqualTo(1));
-                yield return Cancel(); yield return Aim(Socket(1)); yield return Click();
-                Assert.That(State.Tray.Count, Is.EqualTo(6)); Assert.That(State.Socket(1), Is.Null);
-                Assert.That(sack.Location, Is.EqualTo(PortionLocation.Unpacked));
-                Assert.That(State.Tray.Count(p => p.Ingredient.Id == "potato" && p.Quantity == 1), Is.EqualTo(5));
-                Assert.That(inventory.SocketDisplays[1].Visual.enabled, Is.False);
-                Assert.That(inventory.TrayDisplays.Take(6).All(v => v.Visual.enabled), Is.True);
-                Capture("unpacking-potatoes.png");
-                yield return Aim(TrayPoint(0)); yield return Press(Key.E); var carton = State.Held;
-                Assert.That(carton.PackedQuantity, Is.EqualTo(6)); yield return Aim(Socket(1)); yield return Press(Key.E);
-                Assert.That(State.Socket(1), Is.SameAs(carton)); Assert.That(bootstrap.Player.Focused, Is.False);
-                var station = GameObject.Find("Station_A1").GetComponent<ChefShow.Player.PrototypeInteractable>();
-                // Фокус включается по видимой поверхности станции; marker ниже столешницы не является отдельной целью.
-                yield return Aim(station.FocusPoint.position, false);
-                Assert.That(bootstrap.Player.Target, Is.SameAs(station)); yield return Press(Key.E);
-                float readyAt = bootstrap.Run.Clock.SimulationTime + .4f;
-                while (bootstrap.Run.Clock.SimulationTime < readyAt) yield return null;
-                Assert.That(bootstrap.Player.Focused, Is.True); yield return Aim(Socket(1));
-                Assert.That(bootstrap.Hud.Context.text, Does.Contain("6 яиц"));
-                Capture("unpacking-carton-ready.png"); yield return Click();
-                Assert.That(State.Tray.Count, Is.EqualTo(11)); Assert.That(State.Tray.Count(p => p.Ingredient.Id == "egg"), Is.EqualTo(6));
-                Assert.That(State.Tray.All(p => p.Quantity == 1 && p.Preparation == PreparationState.Whole && p.Cooking == CookState.Raw), Is.True);
-                yield return Click(); Assert.That(State.Tray.Count, Is.EqualTo(11)); Assert.That(facts.Count, Is.EqualTo(2));
-                Assert.That(facts[0].Quantity, Is.EqualTo(5)); Assert.That(facts[1].Quantity, Is.EqualTo(6));
-                yield return Cancel(); Assert.That(bootstrap.Player.Focused, Is.False);
-                readyAt = bootstrap.Run.Clock.SimulationTime + .4f;
-                while (bootstrap.Run.Clock.SimulationTime < readyAt) yield return null;
-                var drawer = bootstrap.Tools.Drawers.Single(d => d.StationId == inventory.PlayerStationId);
-                yield return OpenDrawer(drawer); yield return AimTool(Tool(drawer, 0)); yield return Press(Key.E);
-                yield return Aim(TrayPoint(0)); yield return Press(Key.E); var potato = State.Held;
-                Assert.That(potato.Ingredient.Id, Is.EqualTo("potato")); Assert.That(inventory.FoodInLeftHand, Is.True);
-                Assert.That(potato.OriginComponents.Single().SourcePortionId, Is.EqualTo(sack.Id));
-                yield return Aim(Socket(0)); yield return Press(Key.E);
-                for (int i = 0; i < 6; i++) yield return Click();
-                Assert.That(potato.Preparation, Is.EqualTo(PreparationState.Chopped)); Assert.That(potato.Quantity, Is.EqualTo(1));
-                Assert.That(facts[0].Contents[0].ChopPresses, Is.Zero);
-                var old = bootstrap.Run; bootstrap.RestartShow(); yield return null;
-                Assert.That(old.Disposed, Is.True); Assert.That(State.Portions, Is.Empty); Assert.That(State.Tray, Is.Empty);
-                Assert.That(inventory.TrayDisplays.All(v => !v.Visual.enabled && v.CutPieces.All(r => !r.enabled)), Is.True);
+                // A package can be moved, but the clean dish zone rejects it without consuming it.
+                yield return Aim(TrayPoint(1)); yield return Press(Key.E); Assert.That(State.Held, Is.SameAs(carton));
+                yield return Aim(Socket(1)); yield return Press(Key.E);
+                Assert.That(State.Held, Is.SameAs(carton)); Assert.That(State.Socket(1), Is.Null);
+                Assert.That(bootstrap.Hud.Context.text, Does.Contain("Готовое блюдо"));
+                var tray=inventory.TrayDisplays[0].GetComponentInParent<InventoryInteractable>().transform.parent;
+                yield return Aim(tray.position); yield return Press(Key.E); Assert.That(State.Tray[1], Is.SameAs(carton));
+                yield return Aim(TrayPoint(1)); Assert.That(bootstrap.Hud.Context.text, Does.Contain("ЛКМ — открыть"));
+                Assert.That(bootstrap.Hud.Context.text, Does.Contain("6 яиц")); Capture("tray-carton-ready.png");
+                yield return Click(); Assert.That(State.Tray.Count, Is.EqualTo(7)); Assert.That(State.Socket(1), Is.Null);
+                Assert.That(State.Tray.Skip(1).Take(6).All(p=>p.Ingredient.Id=="egg" && p.Quantity==1), Is.True);
+                Assert.That(State.Tray[0], Is.SameAs(sack)); yield return Aim(TrayPoint(1));
+                yield return Click(); Assert.That(State.Tray.Count, Is.EqualTo(7)); Assert.That(facts.Count, Is.EqualTo(1));
+                var station=GameObject.Find("Station_A1").GetComponent<ChefShow.Player.PrototypeInteractable>();
+                yield return Aim(station.FocusPoint.position,false); Assert.That(bootstrap.Player.Target,Is.SameAs(station));
+                yield return Press(Key.E); float readyAt=bootstrap.Run.Clock.SimulationTime+.4f;
+                while(bootstrap.Run.Clock.SimulationTime<readyAt) yield return null;
+                Assert.That(bootstrap.Player.Focused, Is.True); yield return Aim(TrayPoint(0)); yield return Click();
+                Assert.That(State.Tray.Count, Is.EqualTo(11)); Assert.That(State.Tray.Take(5).All(p=>p.Ingredient.Id=="potato"),Is.True);
+                Assert.That(State.Tray.Skip(5).All(p=>p.Ingredient.Id=="egg"),Is.True); Assert.That(State.Socket(1),Is.Null);
+                Assert.That(inventory.TrayDisplays.Take(11).All(v=>v.Visual.enabled),Is.True);
+                Assert.That(inventory.SocketDisplays[1].Visual.enabled,Is.False); Capture("tray-unpacked.png");
+                yield return Click(); Assert.That(State.Tray.Count,Is.EqualTo(11)); Assert.That(facts.Count,Is.EqualTo(2));
+                yield return Cancel(); readyAt=bootstrap.Run.Clock.SimulationTime+.4f;
+                while(bootstrap.Run.Clock.SimulationTime<readyAt) yield return null;
+                var drawer=bootstrap.Tools.Drawers.Single(d=>d.StationId==inventory.PlayerStationId);
+                yield return OpenDrawer(drawer); yield return AimTool(Tool(drawer,0)); yield return Press(Key.E);
+                yield return Aim(TrayPoint(0)); yield return Press(Key.E); var potato=State.Held;
+                Assert.That(inventory.FoodInLeftHand,Is.True); Assert.That(potato.OriginComponents.Single().SourcePortionId,Is.EqualTo(sack.Id));
+                yield return Aim(Socket(0)); yield return Press(Key.E); for(int i=0;i<6;i++) yield return Click();
+                Assert.That(potato.Preparation,Is.EqualTo(PreparationState.Chopped));
+                yield return Press(Key.E); yield return Aim(Socket(1)); yield return Press(Key.E);
+                Assert.That(State.Held,Is.SameAs(potato)); Assert.That(State.Socket(1),Is.Null); yield return Cancel();
+                Assert.That(State.Socket(0),Is.SameAs(potato)); Assert.That(facts[1].Contents[0].ChopPresses,Is.Zero);
+                var old=bootstrap.Run; bootstrap.RestartShow(); yield return null;
+                Assert.That(old.Disposed,Is.True); Assert.That(State.Portions,Is.Empty);
+                Assert.That(inventory.TrayDisplays.All(v=>!v.Visual.enabled && v.CutPieces.All(r=>!r.enabled)),Is.True);
             }
         }
 
         [UnityTest]
-        public IEnumerator UnpackingFullTrayForeignSurfacePauseAndTimeoutKeepTheWholeCarton()
+        public IEnumerator TrayUnpackingFullCapacityForeignTrayPauseAndTimeoutKeepTheWholeCarton()
         {
-            var cartonDefinition = inventory.Catalog.Ingredients.Single(d => d.Id == "egg_carton");
-            var potatoDefinition = inventory.Catalog.Ingredients.Single(d => d.Id == "potato");
-            for (int trip = 0; trip < 3; trip++)
+            var cartonDefinition=inventory.Catalog.Ingredients.Single(d=>d.Id=="egg_carton");
+            var potatoDefinition=inventory.Catalog.Ingredients.Single(d=>d.Id=="potato");
+            for(int trip=0;trip<3;trip++)
             {
-                Assert.That(State.TryMoveBasket(BasketPlacement.Carried, out _), Is.True);
-                for (int i = 0; i < (trip == 2 ? 4 : 10); i++)
-                    Assert.That(State.TryCollect(trip == 0 && i == 0 ? cartonDefinition : potatoDefinition, out _), Is.True);
-                Assert.That(State.TryMoveBasket(BasketPlacement.Station, out _), Is.True); Assert.That(State.TryUnload(out _), Is.True);
+                State.TryMoveBasket(BasketPlacement.Carried,out _);
+                for(int i=0;i<(trip==2?4:10);i++) State.TryCollect(trip==0&&i==0?cartonDefinition:potatoDefinition,out _);
+                State.TryMoveBasket(BasketPlacement.Station,out _); State.TryUnload(out _);
             }
-            yield return null; Assert.That(State.TryTakeTray(0, out _), Is.True); var package = State.Held;
-            Assert.That(State.TryPlaceSocket(1, out _), Is.True); yield return null;
-            Teleport(new Vector3(-9.7f, .05f, -6.25f)); yield return Aim(Socket(1));
-            var ids = State.Tray.Select(p => p.Id).ToArray(); int version = State.Version;
-            yield return Click(); Assert.That(State.Version, Is.EqualTo(version)); Assert.That(State.Socket(1), Is.SameAs(package));
-            CollectionAssert.AreEqual(ids, State.Tray.Select(p => p.Id));
-            Assert.That(bootstrap.Hud.Context.text, Does.Contain("Нужно 6")); Capture("unpacking-full-tray.png");
-            for (int i = 0; i < 5; i++) { State.TryTakeTray(0, out _); State.TryRemove(false, out _); }
-            yield return null; yield return Aim(Socket(1)); bootstrap.SetPaused(true);
-            yield return Click(); Assert.That(State.Socket(1), Is.SameAs(package)); bootstrap.SetPaused(false);
-            var foreign = Object.FindObjectsByType<InventoryInteractable>(FindObjectsSortMode.None)
-                .Single(t => t.StationId == "B1" && t.Kind == InventoryTargetKind.Socket && t.Index == 1);
-            Teleport(new Vector3(9.7f, .05f, -7.1f)); yield return Aim(foreign.transform.position);
-            Assert.That(bootstrap.Player.Target.GetComponent<InventoryInteractable>(), Is.SameAs(foreign));
-            yield return Click(); Assert.That(State.Socket(1), Is.SameAs(package));
-            Teleport(new Vector3(-9.7f, .05f, -6.25f)); yield return Aim(Socket(1));
-            bootstrap.Run.SetRemaining(.01f); yield return new WaitForSecondsRealtime(.25f);
-            yield return Click(); yield return Press(Key.E); Assert.That(State.Socket(1), Is.SameAs(package));
-            Assert.That(package.Location, Is.EqualTo(PortionLocation.Station));
-            Assert.That(State.Portions.Count(p => p.Location == PortionLocation.Unpacked), Is.Zero);
-            bootstrap.RestartShow(); yield return null; Assert.That(State.Socket(1), Is.Null); Assert.That(State.Portions, Is.Empty);
+            yield return null; var package=State.Tray[0];
+            Teleport(new Vector3(-9.7f,.05f,-6.25f)); yield return Aim(TrayPoint(0));
+            int version=State.Version; var ids=State.Tray.Select(p=>p.Id).ToArray();
+            yield return Click(); Assert.That(State.Version,Is.EqualTo(version)); Assert.That(State.Tray[0],Is.SameAs(package));
+            CollectionAssert.AreEqual(ids,State.Tray.Select(p=>p.Id)); Assert.That(bootstrap.Hud.Context.text,Does.Contain("Нужно ещё 5"));
+            Capture("tray-full.png");
+            for(int i=0;i<5;i++){State.TryTakeTray(1,out _);State.TryRemove(false,out _);} yield return null;
+            yield return Aim(TrayPoint(0)); bootstrap.SetPaused(true); yield return Click();
+            Assert.That(State.Tray[0],Is.SameAs(package)); bootstrap.SetPaused(false);
+            var foreign=Object.FindObjectsByType<InventoryInteractable>(FindObjectsSortMode.None)
+                .Single(t=>t.StationId=="B1"&&t.Kind==InventoryTargetKind.Tray);
+            // NPC trays are visual-only; simulate a future occupied item using the existing visible target in Play only.
+            foreign.Kind=InventoryTargetKind.TrayItem; foreign.Index=0; Physics.SyncTransforms();
+            Teleport(new Vector3(9.7f,.05f,-7.1f)); yield return Aim(foreign.transform.position);
+            Assert.That(bootstrap.Player.Target.GetComponent<InventoryInteractable>(),Is.SameAs(foreign));
+            yield return Click(); Assert.That(State.Tray[0],Is.SameAs(package));
+            Teleport(new Vector3(-9.7f,.05f,-6.25f)); yield return Aim(TrayPoint(0));
+            bootstrap.Run.SetRemaining(.01f); yield return new WaitForSecondsRealtime(.25f); yield return Click(); yield return Press(Key.E);
+            Assert.That(State.Tray[0],Is.SameAs(package)); Assert.That(package.Location,Is.EqualTo(PortionLocation.Tray));
+            Assert.That(State.Portions.Count(p=>p.Location==PortionLocation.Unpacked),Is.Zero);
+            bootstrap.RestartShow(); yield return null; Assert.That(State.Tray,Is.Empty); Assert.That(State.Socket(1),Is.Null);
         }
 
         private void Capture(string filename)
