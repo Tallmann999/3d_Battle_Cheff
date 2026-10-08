@@ -22,6 +22,7 @@ namespace ChefShow.Core
         public InventoryController Inventory;
         public ToolDrawerController Tools;
         public PreparationController Preparation;
+        public ChefShow.Cooking.CookingController Cooking;
         public InputSystemUIInputModule UiInput;
         private InputActionAsset input;
         private readonly List<InputActionReference> uiReferences = new List<InputActionReference>();
@@ -89,6 +90,12 @@ namespace ChefShow.Core
                 if (preparationError != null) { Debug.LogError("Chef Show: " + preparationError, this); enabled = false; return; }
                 Preparation.Initialize(this, input);
             }
+            if (Cooking != null)
+            {
+                var cookingError = Cooking.Validate(Inventory);
+                if (cookingError != null || Tools == null) { Debug.LogError("Chef Show: " + (cookingError ?? "Готовке нужны инструменты."), this); enabled = false; return; }
+                Cooking.Initialize(this, input);
+            }
             Hud.Resume.onClick.AddListener(() => SetPaused(false));
             Hud.Restart.onClick.AddListener(RestartShow);
             Hud.DebugRestart.onClick.AddListener(RestartShow);
@@ -124,11 +131,12 @@ namespace ChefShow.Core
             bool gameplay = !paused && Run.RemainingSeconds > 0;
             Player.Step(Run.Clock, gameplay);
             bool toolCommand = Tools != null && Tools.Step(gameplay);
-            if (Preparation != null) Preparation.Step(gameplay, toolCommand);
-            if (Inventory != null) Inventory.Step(gameplay, toolCommand);
+            bool cookCommand = Cooking != null && Cooking.Step(gameplay, toolCommand);
+            if (Preparation != null) Preparation.Step(gameplay, toolCommand || cookCommand);
+            if (Inventory != null) Inventory.Step(gameplay, toolCommand || cookCommand);
             UpdateMaps();
             bool task = !paused && input.FindAction((Player.Focused ? "Station" : "Gameplay") + "/Task", true).IsPressed();
-            Hud.Present(Run, Player, paused, debug, task, Inventory, Tools, Preparation);
+            Hud.Present(Run, Player, paused, debug, task, Inventory, Tools, Preparation, Cooking);
         }
 
         public void SetPaused(bool value)
@@ -146,16 +154,17 @@ namespace ChefShow.Core
         {
             Run?.Dispose();
             Run = new PrototypeRun(Config.RoundDurationSeconds, Config.RunSeed,
-                (type, error) => Debug.LogError($"Chef Show event {type.Name}: {error}"), Config.BasketCapacity, Config.TrayCapacity, Config.PlayerTeam);
+                (type, error) => Debug.LogError($"Chef Show event {type.Name}: {error}"), Config.BasketCapacity, Config.TrayCapacity, Config.PlayerTeam, Cooking == null ? null : Cooking.Config.Capture());
             paused = debug = false;
             Player.ResetRig();
             if (Inventory != null) Inventory.ResetPresentation();
             if (Tools != null) Tools.ResetPresentation();
             if (Preparation != null) Preparation.ResetPresentation();
+            if (Cooking != null) Cooking.ResetPresentation();
             Player.SetSensitivity(sensitivity);
             UpdateMaps();
             Run.Events.Publish(new RunStarted(Run.RunId, Run.Seed));
-            Debug.Log($"Chef Show: start run={Run.RunId} seed={Run.Seed}; {(Inventory == null ? "арена" : "продукты и перенос")}, готовка не реализована.", this);
+            Debug.Log($"Chef Show: start run={Run.RunId} seed={Run.Seed}; {(Cooking != null ? "сковорода/кастрюля" : Inventory == null ? "арена" : "продукты и перенос")}; полный выпуск ещё не реализован.", this);
         }
 
         private void UpdateMaps()

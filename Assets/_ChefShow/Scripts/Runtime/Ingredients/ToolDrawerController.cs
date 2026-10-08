@@ -80,8 +80,9 @@ namespace ChefShow.Ingredients
             foreach (var tool in tools) tool.FreezePhysics(acceptInput);
             foreach (var drawer in Drawers)
             {
-                if (bootstrap.Run.RemainingSeconds <= 0) drawer.AnimateOpen(false);
-                drawer.Step(bootstrap.Run.Clock.Delta);
+                // At timeout game time has stopped; finish the drawer's cleanup immediately.
+                if (bootstrap.Run.RemainingSeconds <= 0) drawer.ShowOpen(false);
+                else drawer.Step(bootstrap.Run.Clock.Delta);
             }
             bool consumed = false;
             if (acceptInput)

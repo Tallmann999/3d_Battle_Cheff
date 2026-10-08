@@ -29,7 +29,8 @@ namespace ChefShow.Core
         public float RemainingSeconds { get; private set; }
         public bool Disposed { get; private set; }
 
-        public PrototypeRun(float duration, int seed, Action<Type, Exception> reportError, int basketCapacity = 10, int trayCapacity = 24, TeamId playerTeam = TeamId.A)
+        public PrototypeRun(float duration, int seed, Action<Type, Exception> reportError, int basketCapacity = 10, int trayCapacity = 24, TeamId playerTeam = TeamId.A,
+            ChefShow.Cooking.CookingSettings cooking = null)
         {
             if (duration <= 0 || float.IsNaN(duration) || float.IsInfinity(duration))
                 throw new ArgumentOutOfRangeException(nameof(duration));
@@ -37,12 +38,18 @@ namespace ChefShow.Core
             Seed = seed;
             PlayerTeam = playerTeam;
             Events = new GameEventBus(reportError);
-            Inventory = new InventoryState(this, basketCapacity, trayCapacity);
+            Inventory = new InventoryState(this, basketCapacity, trayCapacity, cooking);
         }
 
         public void Tick(float realDelta)
         {
-            if (!Disposed) RemainingSeconds = Math.Max(0, RemainingSeconds - Clock.Tick(realDelta));
+            if (Disposed) return;
+            if (realDelta < 0 || float.IsNaN(realDelta) || float.IsInfinity(realDelta)) throw new ArgumentOutOfRangeException(nameof(realDelta));
+            // The final frame heats only until 00:00, never past the round boundary.
+            float accepted = Clock.Paused ? realDelta : Math.Min(realDelta, RemainingSeconds / Clock.Speed);
+            float delta = Clock.Tick(accepted);
+            Inventory.TickCooking(delta);
+            RemainingSeconds = Math.Max(0, RemainingSeconds - delta);
         }
 
         public void SetPaused(bool paused)

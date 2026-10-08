@@ -67,10 +67,12 @@ namespace ChefShow.Editor
             }
             if (bootstrap.Preparation != null)
                 Require(bootstrap.Preparation.Validate(bootstrap.Inventory) == null, bootstrap.Preparation.Validate(bootstrap.Inventory));
+            if (bootstrap.Cooking != null)
+                Require(bootstrap.Cooking.Validate(bootstrap.Inventory) == null, bootstrap.Cooking.Validate(bootstrap.Inventory));
             Require(All<Text>().All(t => t.font != null), "Отсутствует шрифт UI.");
             foreach (var text in All<Text>()) PrototypeSceneBuilder.RequireCyrillic(text.font);
             Require(Shader.Find("Universal Render Pipeline/Lit") != null, "URP shader не найден.");
-            Debug.Log("Chef Show validator: PASS — " + (bootstrap.Inventory == null ? "foundation" : "foundation + inventory") + ". Готовка, scoring и полный выпуск ещё не реализованы.");
+            Debug.Log("Chef Show validator: PASS — " + (bootstrap.Cooking != null ? "foundation + inventory + pan/pot" : bootstrap.Inventory == null ? "foundation" : "foundation + inventory") + ". Scoring и полный выпуск ещё не реализованы.");
         }
 
         private static void Require(bool condition, string message)

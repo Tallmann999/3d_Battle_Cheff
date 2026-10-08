@@ -2,6 +2,7 @@ using System.Collections;
 using System.IO;
 using System.Linq;
 using ChefShow.Core;
+using ChefShow.Cooking;
 using ChefShow.Inventory;
 using ChefShow.Ingredients;
 using NUnit.Framework;
@@ -691,6 +692,96 @@ namespace ChefShow.Tests
             Assert.That(State.Tray[0],Is.SameAs(package)); Assert.That(package.Location,Is.EqualTo(PortionLocation.Tray));
             Assert.That(State.Portions.Count(p=>p.Location==PortionLocation.Unpacked),Is.Zero);
             bootstrap.RestartShow(); yield return null; Assert.That(State.Tray,Is.Empty); Assert.That(State.Socket(1),Is.Null);
+        }
+
+        private CookingStation Appliance(CookerKind kind, string id = "A1") => bootstrap.Cooking.Stations.Single(s => s.Kind == kind && s.StationId == id);
+        private Vector3 CookFoodPoint(CookingStation station,int index) => station.Food[index].GetComponent<BoxCollider>().bounds.center + Vector3.up*.045f;
+        private IEnumerator HeatTwice(CookingStation station)
+        {
+            yield return Aim(station.transform.Find("Heat Knob").position); yield return Press(Key.E); yield return Press(Key.E);
+            Assert.That(State.Heat(station.Kind),Is.EqualTo(HeatLevel.Medium));
+        }
+        [UnityTest]
+        public IEnumerator RealInputsPanHeatsAndReadyFoodTransfersWithoutTurningOffTheBurner()
+        {
+            Assert.That(bootstrap.Cooking.Validate(inventory),Is.Null);
+            yield return TakeBasket();yield return Aim(Stock("beef"));yield return Press(Key.E);yield return DockAndDump();
+            yield return Aim(TrayPoint(0));yield return Press(Key.E);var food=State.Held;string id=food.Id;
+            var pan=Appliance(CookerKind.Pan);yield return Aim(pan.transform.position+Vector3.up*.025f);
+            Assert.That(bootstrap.Player.Target.GetComponent<CookingTarget>().Station,Is.SameAs(pan));yield return Press(Key.E);
+            Assert.That(State.Cooker(CookerKind.Pan)[0],Is.SameAs(food));Assert.That(State.Held,Is.Null);
+            yield return HeatTwice(pan);bootstrap.Run.Tick(bootstrap.Cooking.Config.ReadySeconds);yield return null;
+            Assert.That(food.Cooking,Is.EqualTo(CookState.Cooked));Assert.That(food.Quantity,Is.EqualTo(1));
+            yield return Aim(CookFoodPoint(pan,0));Assert.That(bootstrap.Hud.Context.text,Does.Contain("Готово"));Capture("cooking-pan-ready.png");
+            var profile=bootstrap.Cooking.Config;float ready=profile.ReadySeconds;int capacity=profile.Capacity;
+            try
+            {
+                profile.ReadySeconds=40;profile.Capacity=1;yield return null;
+                Assert.That(bootstrap.Hud.Context.text,Does.Contain("100%"));
+                Assert.That(bootstrap.Hud.Context.text,Does.Contain("1/3"));
+            }
+            finally {profile.ReadySeconds=ready;profile.Capacity=capacity;}
+            var snapshot=food.Snapshot();yield return Press(Key.E);Assert.That(State.Held.Id,Is.EqualTo(id));
+            Assert.That(State.Heat(CookerKind.Pan),Is.EqualTo(HeatLevel.Medium));float heat=food.HeatProgress;
+            bootstrap.Run.Tick(2);Assert.That(food.HeatProgress,Is.EqualTo(heat));
+            yield return Aim(Socket(1));yield return Press(Key.E);Assert.That(State.Socket(1),Is.SameAs(food));
+            Assert.That(snapshot.Location,Is.EqualTo(PortionLocation.Appliance));Assert.That(snapshot.Cooking,Is.EqualTo(CookState.Cooked));
+            yield return Aim(pan.transform.Find("Heat Knob").position);yield return Press(Key.E);yield return Press(Key.E);
+            Assert.That(State.Heat(CookerKind.Pan),Is.EqualTo(HeatLevel.Off));Assert.That(State.Socket(1).Id,Is.EqualTo(id));
+        }
+        [UnityTest]
+        public IEnumerator RealInputsPotNeedsChoppingAndThreeSpatulaClicksAndResetsClean()
+        {
+            yield return TakeBasket();yield return Aim(Stock("potato"));yield return Press(Key.E);yield return DockAndDump();
+            var drawer=bootstrap.Tools.Drawers.Single(d=>d.StationId==inventory.PlayerStationId);yield return OpenDrawer(drawer);
+            yield return AimTool(Tool(drawer,0));yield return Press(Key.E);yield return Aim(TrayPoint(0));yield return Press(Key.E);
+            var potato=State.Held;string id=potato.Id;var pot=Appliance(CookerKind.Pot);
+            yield return Aim(pot.transform.position+Vector3.up*.025f);yield return Press(Key.E);
+            Assert.That(State.Held,Is.SameAs(potato));Assert.That(State.Cooker(CookerKind.Pot),Is.Empty);
+            yield return Aim(Socket(0));yield return Press(Key.E);for(int i=0;i<6;i++)yield return Click();yield return Press(Key.E);
+            yield return Aim(pot.transform.position+Vector3.up*.025f);yield return Press(Key.E);Assert.That(State.Held,Is.Null);
+            yield return HeatTwice(pot);bootstrap.Run.Tick(bootstrap.Cooking.Config.ReadySeconds);yield return null;
+            Assert.That(potato.Cooking,Is.EqualTo(CookState.Cooking));yield return Aim(CookFoodPoint(pot,0));yield return Click();Assert.That(potato.StirPresses,Is.Zero);
+            yield return AimTool(Tool(drawer,3));yield return Press(Key.E);Assert.That(bootstrap.Tools.Equipped,Is.EqualTo(KitchenToolKind.Spatula));
+            yield return Aim(CookFoodPoint(pot,0));bootstrap.SetPaused(true);float before=potato.HeatProgress;yield return Click();
+            Assert.That(potato.StirPresses,Is.Zero);Assert.That(potato.HeatProgress,Is.EqualTo(before));bootstrap.SetPaused(false);
+            for(int i=0;i<3;i++)yield return Click();Assert.That(potato.StirPresses,Is.EqualTo(3));Assert.That(potato.Cooking,Is.EqualTo(CookState.Cooked));
+            Assert.That(potato.Preparation,Is.EqualTo(PreparationState.Chopped));Assert.That(potato.ChopPresses,Is.EqualTo(6));Capture("cooking-pot-ready.png");
+            yield return Press(Key.E);Assert.That(State.Held.Id,Is.EqualTo(id));Assert.That(inventory.FoodInLeftHand,Is.True);
+            yield return Aim(Socket(1));yield return Press(Key.E);Assert.That(State.Socket(1),Is.SameAs(potato));
+            var old=bootstrap.Run;bootstrap.RestartShow();yield return null;
+            Assert.That(old.Disposed,Is.True);Assert.That(State.Portions,Is.Empty);Assert.That(State.Heat(CookerKind.Pot),Is.EqualTo(HeatLevel.Off));
+            Assert.That(bootstrap.Cooking.Stations.All(s=>s.Food.All(v=>!v.Visual.enabled&&v.CutPieces.All(r=>!r.enabled))&&s.Smoke.All(r=>!r.enabled)),Is.True);
+        }
+        [UnityTest]
+        public IEnumerator FarApplianceTargetsKeepWallsForeignGuardsCapacityAndTimeout()
+        {
+            var definition=inventory.Catalog.Ingredients.Single(d=>d.Id=="beef");
+            for(int i=0;i<4;i++)
+            {
+                State.TryMoveBasket(BasketPlacement.Carried,out _);State.TryCollect(definition,out _);State.TryMoveBasket(BasketPlacement.Station,out _);
+                State.TryUnload(out _);State.TryTakeTray(0,out _);if(i<3)Assert.That(State.TryPlaceCooker(CookerKind.Pan,out _),Is.True);
+            }
+            var held=State.Held;var pan=Appliance(CookerKind.Pan);Teleport(new Vector3(-9.7f,.05f,-6.25f));yield return Aim(CookFoodPoint(pan,0));
+            Assert.That(Vector3.Distance(bootstrap.Player.ViewCamera.transform.position,CookFoodPoint(pan,0)),Is.GreaterThan(bootstrap.Config.InteractionDistance));
+            Assert.That(bootstrap.Player.Target.GetComponent<CookingTarget>().Station,Is.SameAs(pan));yield return Press(Key.E);
+            Assert.That(State.Held,Is.SameAs(held));Assert.That(State.Cooker(CookerKind.Pan).Count,Is.EqualTo(3));
+            var foreign=Appliance(CookerKind.Pan,"B1");Teleport(new Vector3(9.7f,.05f,-6.25f));yield return Aim(foreign.transform.Find("Heat Knob").position);yield return Press(Key.E);
+            Assert.That(State.Heat(CookerKind.Pan),Is.EqualTo(HeatLevel.Off));Assert.That(State.Held,Is.SameAs(held));
+            Teleport(new Vector3(-9.7f,.05f,-6.25f));yield return Aim(CookFoodPoint(pan,0));
+            var blocker=GameObject.CreatePrimitive(PrimitiveType.Cube);
+            try
+            {
+                blocker.transform.position=bootstrap.Player.ViewCamera.transform.position+bootstrap.Player.ViewCamera.transform.forward*.5f;
+                blocker.transform.localScale=Vector3.one*.18f;Physics.SyncTransforms();bootstrap.Player.RefreshTarget();Assert.That(bootstrap.Player.Target,Is.Null);
+            }
+            finally{Object.Destroy(blocker);}yield return null;
+            Assert.That(State.TryRemove(false,out _),Is.True);yield return HeatTwice(pan);
+            bootstrap.Run.Tick(bootstrap.Cooking.Config.BurnedSeconds);yield return null;
+            Assert.That(State.Cooker(CookerKind.Pan).All(p=>p.Cooking==CookState.Burned),Is.True);Assert.That(pan.Smoke.All(r=>r.enabled),Is.True);
+            yield return Aim(CookFoodPoint(pan,0));Capture("cooking-burned.png");
+            bootstrap.Run.SetRemaining(.01f);yield return new WaitForSecondsRealtime(.2f);yield return Press(Key.E);
+            Assert.That(State.Held,Is.Null);Assert.That(State.Cooker(CookerKind.Pan).Count,Is.EqualTo(3));
         }
 
         private void Capture(string filename)

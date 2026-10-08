@@ -34,6 +34,7 @@ namespace ChefShow.Player
         [Range(75, 89)] public float MaxDownPitch = 85;
         public PrototypeInteractable Target { get; private set; }
         public Camera ViewCamera => viewCamera;
+        public float ExtendedInteractionDistance { get; set; }
 
         public void Configure(Camera camera) => viewCamera = camera;
 
@@ -107,12 +108,13 @@ namespace ChefShow.Player
             // вниз. Исключаем игрока/предметы в его руках, сохраняя ближайшую стену.
             Target = null;
             float nearest = float.PositiveInfinity;
-            foreach (var hit in Physics.RaycastAll(ray, config.InteractionDistance, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Collide))
+            foreach (var hit in Physics.RaycastAll(ray, Mathf.Max(config.InteractionDistance, ExtendedInteractionDistance), Physics.DefaultRaycastLayers, QueryTriggerInteraction.Collide))
             {
                 if (hit.collider.transform == transform || hit.collider.transform.IsChildOf(transform) || hit.distance >= nearest) continue;
                 // Только игровые цели ящика/инструмента доступны через trigger;
                 // остальные trigger-зоны не закрывают прицел и не становятся стенами.
                 var interactable = hit.collider.GetComponentInParent<PrototypeInteractable>();
+                if (interactable != null && hit.distance > Mathf.Max(config.InteractionDistance, interactable.InteractionDistanceOverride)) continue;
                 if (hit.collider.isTrigger && (interactable == null ||
                     (interactable.GetComponent<ChefShow.Ingredients.ToolDrawer>() == null
                     && interactable.GetComponent<ChefShow.Ingredients.KitchenTool>() == null

@@ -179,7 +179,7 @@ namespace ChefShow.Tests
         }
 
         [UnityTest]
-        public IEnumerator SquareRowsBlockGapsAndAllowBothEndRoutes()
+        public IEnumerator StationRowsBlockGapsAndAllowBothEndRoutes()
         {
             var player = bootstrap.Player.transform;
             var controller = player.GetComponent<CharacterController>();
@@ -193,7 +193,7 @@ namespace ChefShow.Tests
             foreach (var actor in actors.Where(a => a.Kind != PrototypeActorKind.Chef))
             {
                 var table = GameObject.Find("Station_" + actor.StableId).GetComponent<BoxCollider>().bounds;
-                Assert.That(table.size.x, Is.EqualTo(2.3f).Within(0.01f));
+                Assert.That(table.size.x, Is.EqualTo(bootstrap.Cooking == null ? 2.3f : bootstrap.Cooking.Config.TableLength).Within(0.01f));
                 Assert.That(table.size.z, Is.EqualTo(2.3f).Within(0.01f));
                 Assert.That(table.max.y - floor.max.y, Is.EqualTo(0.9f).Within(0.01f), actor.StableId + " worktop height");
                 Assert.That(table.min.y, Is.EqualTo(floor.max.y).Within(0.01f));

@@ -23,12 +23,13 @@ namespace ChefShow.UI
         public Button Timer240;
         public Slider Sensitivity;
 
-        public void Present(PrototypeRun run, FirstPersonRig player, bool paused, bool debug, bool taskVisible, InventoryController inventory = null, ToolDrawerController tools = null, PreparationController preparation = null)
+        public void Present(PrototypeRun run, FirstPersonRig player, bool paused, bool debug, bool taskVisible, InventoryController inventory = null, ToolDrawerController tools = null, PreparationController preparation = null, ChefShow.Cooking.CookingController cooking = null)
         {
             int seconds = Mathf.CeilToInt(run.RemainingSeconds);
-            Status.text = $"CHEF SHOW · {(inventory == null ? "ЭТАП 1" : preparation == null ? "ПРОДУКТЫ И ПЕРЕНОС" : "ПОДГОТОВКА ПРОДУКТОВ")}\nПробный таймер  {seconds / 60:00}:{seconds % 60:00}     Команда {player.GetComponent<Contestants.PrototypeActor>().Team}\n"
+            Status.text = $"CHEF SHOW · {(cooking != null ? "НАРЕЗКА И НАГРЕВ" : inventory == null ? "ЭТАП 1" : preparation == null ? "ПРОДУКТЫ И ПЕРЕНОС" : "ПОДГОТОВКА ПРОДУКТОВ")}\nПробный таймер  {seconds / 60:00}:{seconds % 60:00}     Команда {player.GetComponent<Contestants.PrototypeActor>().Team}\n"
                 + (inventory == null ? "Арена и управление. Готовка ещё не реализована." : inventory.Summary);
             if (tools != null) Status.text += "\n" + tools.Summary;
+            if (cooking != null) Status.text += "\n" + cooking.Summary;
             PausePanel.SetActive(paused && !debug);
             DebugPanel.SetActive(debug);
             TaskCard.gameObject.SetActive(taskVisible && !paused);
@@ -48,6 +49,8 @@ namespace ChefShow.UI
                 string board = preparation.Describe(player.Target);
                 if (board != null) Context.text = board;
             }
+            if (cooking != null)
+            { string appliance = cooking.Describe(player.Target); if (appliance != null) Context.text = appliance; }
             if (run.RemainingSeconds <= 0 && !paused)
                 Context.text = "Пробный таймер завершён. Esc → Начать выпуск заново.";
             if (InteractionKey != null)

@@ -242,7 +242,7 @@ namespace ChefShow.Inventory
         public string Summary => $"Корзина {State.Basket.Count}/{State.BasketCapacity} · лоток {State.Tray.Count}/{State.TrayCapacity}"
             + (State.Held == null ? "" : " · " + (FoodInLeftHand ? "левая" : "правая") + " рука: " + State.Held.Ingredient.DisplayName);
 
-        private static string FoodName(IngredientDefinition food)
+        public static string FoodName(IngredientDefinition food)
         {
             // Имена действия в винительном падеже; каталог остаётся именительным.
             switch (food.Id)

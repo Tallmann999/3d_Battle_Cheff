@@ -1,0 +1,46 @@
+using System;
+using System.Linq;
+using ChefShow.Cooking;
+using UnityEngine;
+
+namespace ChefShow.Data
+{
+    [CreateAssetMenu(menuName = "Chef Show/Cooking Config")]
+    public sealed class CookingConfig : ScriptableObject
+    {
+        [Header("Первый срез D-022; стартовые параметры")]
+        [Range(1, 3)] public int Capacity = 3;
+        [Min(1)] public float ReadySeconds = 30;
+        [Min(1)] public float OvercookedSeconds = 45;
+        [Min(1)] public float BurnedSeconds = 60;
+        [Min(.01f)] public float LowRate = .55f;
+        [Min(.01f)] public float MediumRate = 1;
+        [Min(.01f)] public float HighRate = 1.75f;
+        [Range(0, 10)] public int PotStirs = 3;
+        public string[] PanIngredients = { "beef", "carrot", "onion" };
+        public string[] PotIngredients = { "potato", "carrot", "onion" };
+        [Header("Геометрия и доступ к дальним приборам")]
+        [Min(2.3f)] public float TableLength = 3.6f;
+        [Range(3.1f, 5)] public float ApplianceInteractionDistance = 4.2f;
+        public string Validate()
+        {
+            if (Capacity < 1 || Capacity > 3 || PotStirs < 0 || PotStirs > 10) return "Прибор: 1–3 порции, 0–10 перемешиваний.";
+            if (!Positive(ReadySeconds) || !Positive(OvercookedSeconds) || !Positive(BurnedSeconds)
+                || !(ReadySeconds < OvercookedSeconds && OvercookedSeconds < BurnedSeconds)) return "Тепловые пороги должны возрастать: готово < переготовка < сгорание.";
+            if (!Positive(LowRate) || !Positive(MediumRate) || !Positive(HighRate)
+                || !(LowRate < MediumRate && MediumRate < HighRate)) return "Скорости должны возрастать: слабый < средний < сильный.";
+            if (!Positive(TableLength) || TableLength < 3.2f || !Positive(ApplianceInteractionDistance)
+                || ApplianceInteractionDistance > 5) return "Проверьте длину стола и дистанцию приборов (до 5 м).";
+            if (PanIngredients == null || PotIngredients == null || PanIngredients.Length == 0 || PotIngredients.Length == 0
+                || PanIngredients.Concat(PotIngredients).Any(string.IsNullOrWhiteSpace)) return "Нужны ID продуктов для обоих приборов.";
+            return null;
+        }
+        private static bool Positive(float n) => n > 0 && !float.IsNaN(n) && !float.IsInfinity(n);
+        public CookingSettings Capture()
+        {
+            var error = Validate(); if (error != null) throw new InvalidOperationException(error);
+            return new CookingSettings(Capacity, ReadySeconds, OvercookedSeconds, BurnedSeconds,
+                LowRate, MediumRate, HighRate, PotStirs, PanIngredients, PotIngredients);
+        }
+    }
+}

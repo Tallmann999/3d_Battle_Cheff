@@ -7,7 +7,7 @@ using ChefShow.Ingredients;
 
 namespace ChefShow.Inventory
 {
-    public enum PortionLocation { Basket, Tray, Hand, Station, Returned, Trash, Unpacked }
+    public enum PortionLocation { Basket, Tray, Hand, Station, Returned, Trash, Unpacked, Appliance }
     public enum StationSocketKind { Board, WorkSurface }
     public enum BasketPlacement { Pantry, Carried, Station, Floor }
 
@@ -29,7 +29,7 @@ namespace ChefShow.Inventory
         }
     }
 
-    public sealed class InventoryState
+    public sealed partial class InventoryState
     {
         private readonly List<FoodPortion> basket = new List<FoodPortion>();
         private readonly List<FoodPortion> tray = new List<FoodPortion>();
@@ -47,11 +47,11 @@ namespace ChefShow.Inventory
         public IReadOnlyList<FoodPortion> Portions => portions.AsReadOnly();
         public FoodPortion Held { get; private set; }
         public FoodPortion Socket(int index) => index >= 0 && index < sockets.Length ? sockets[index] : null;
-        public InventoryState(PrototypeRun owner, int basketCapacity, int trayCapacity)
+        public InventoryState(PrototypeRun owner, int basketCapacity, int trayCapacity, ChefShow.Cooking.CookingSettings cookingSettings = null)
         {
             if (basketCapacity < 1 || trayCapacity < 1) throw new ArgumentOutOfRangeException(nameof(basketCapacity));
             run = owner ?? throw new ArgumentNullException(nameof(owner));
-            BasketCapacity = basketCapacity; TrayCapacity = trayCapacity;
+            BasketCapacity = basketCapacity; TrayCapacity = trayCapacity; cooking = cookingSettings;
         }
 
         private bool Active(out string reason)
@@ -214,7 +214,9 @@ namespace ChefShow.Inventory
             if (!Active(out reason)) return false;
             if (Held == null) { reason = "В руке нет продукта."; return false; }
             var portion = Held;
-            if (origin == PortionLocation.Station) { sockets[originIndex] = portion; portion.SocketIndex = originIndex; }
+            if (origin == PortionLocation.Appliance)
+            { var list = cookers[originIndex]; list.Insert(Math.Min(originFoodIndex, list.Count), portion); portion.SocketIndex = originIndex; }
+            else if (origin == PortionLocation.Station) { sockets[originIndex] = portion; portion.SocketIndex = originIndex; }
             else { var source = origin == PortionLocation.Basket ? basket : tray; source.Insert(Math.Min(originIndex, source.Count), portion); }
             portion.Location = origin; Held = null; Fact("ingredient_transferred", portion); return true;
         }

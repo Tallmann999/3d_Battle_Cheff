@@ -37,6 +37,9 @@ namespace ChefShow.Inventory
         public int ChopPresses { get; }
         public CookState Cooking { get; }
         public float HeatProgress { get; }
+        public ChefShow.Cooking.CookerKind? LastCooker { get; }
+        public int StirPresses { get; }
+        public int RequiredStirs { get; }
         public int SaltDoses { get; }
         public int OilDoses { get; }
         public bool Contaminated { get; }
@@ -50,6 +53,7 @@ namespace ChefShow.Inventory
             PackedQuantity = portion.PackedQuantity;
             Preparation = portion.Preparation; ChopPresses = portion.ChopPresses; Cooking = portion.Cooking; HeatProgress = portion.HeatProgress;
             SaltDoses = portion.SaltDoses; OilDoses = portion.OilDoses; Contaminated = portion.Contaminated;
+            LastCooker = portion.LastCooker; StirPresses = portion.StirPresses; RequiredStirs = portion.RequiredStirs;
             Location = portion.Location;
             OriginComponents = System.Array.AsReadOnly(portion.OriginComponents.ToArray());
             Operations = System.Array.AsReadOnly(portion.Operations.ToArray());
@@ -70,6 +74,9 @@ namespace ChefShow.Inventory
         public int ChopPresses { get; internal set; }
         public CookState Cooking { get; internal set; } = CookState.Raw;
         public float HeatProgress { get; internal set; }
+        public ChefShow.Cooking.CookerKind? LastCooker { get; internal set; }
+        public int StirPresses { get; internal set; }
+        public int RequiredStirs { get; internal set; }
         public int SaltDoses { get; internal set; }
         public int OilDoses { get; internal set; }
         public bool Contaminated { get; internal set; }
