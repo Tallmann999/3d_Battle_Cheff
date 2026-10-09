@@ -14,6 +14,8 @@ namespace ChefShow.Player
         [SerializeField] private Vector3 focusCameraOffset = new Vector3(0, -0.18f, 0.22f);
         [SerializeField, Range(30, 75)] private float focusFieldOfView = 52;
         [SerializeField, Range(0.05f, 0.5f)] private float focusTransitionSeconds = 0.18f;
+        [Tooltip("Обзор влево/вправо в фокусе широкой станции, включая правые приборы.")]
+        [SerializeField, Range(55, 89)] private float focusYawRange = 80;
         private PrototypeGameConfig config;
         private InputActionAsset input;
         private CharacterController controller;
@@ -87,7 +89,7 @@ namespace ChefShow.Player
             }
             else
             {
-                focusYaw = Mathf.Clamp(focusYaw + look.x, focusBaseYaw - 55, focusBaseYaw + 55);
+                focusYaw = Mathf.Clamp(focusYaw + look.x, focusBaseYaw - focusYawRange, focusBaseYaw + focusYawRange);
                 focusPitch = Mathf.Clamp(focusPitch - look.y, 5, MaxDownPitch);
             }
             focusBlend = Mathf.MoveTowards(focusBlend, Focused ? 1 : 0, clock.Delta / Mathf.Max(0.05f, focusTransitionSeconds));

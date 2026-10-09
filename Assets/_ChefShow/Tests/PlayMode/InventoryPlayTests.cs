@@ -291,8 +291,9 @@ namespace ChefShow.Tests
             try
             {
                 Teleport(new Vector3(9.65f, .05f, station.transform.position.z));
-                rig.transform.rotation = Quaternion.Euler(0, -90, 0);
-                rig.ViewCamera.transform.localRotation = Quaternion.Euler(35, 0, 0);
+                var aim=Quaternion.LookRotation(station.FocusPoint.position-rig.ViewCamera.transform.position).eulerAngles;
+                rig.transform.rotation = Quaternion.Euler(0,aim.y,0);
+                rig.ViewCamera.transform.localRotation = Quaternion.Euler(Mathf.DeltaAngle(0,aim.x),0,0);
                 rig.Initialize(settings, actions); station.IsPlayerStation = true;
                 // При реальном выборе B Builder не создаёт NPC на месте игрока.
                 ownNpc.enabled = false; Physics.SyncTransforms();
@@ -492,10 +493,11 @@ namespace ChefShow.Tests
         public IEnumerator ForeignDrawerAndWorldToolCannotBeTaken()
         {
             var tools = bootstrap.Tools; var drawer = tools.Drawers.Single(d => d.StationId == "A2");
-            Teleport(new Vector3(-9.65f, .05f, -3)); yield return AimDrawer(drawer); yield return Press(Key.E);
+            float stationZ=GameObject.Find("Station_A2").transform.position.z;
+            Teleport(new Vector3(-9.65f, .05f, stationZ+.75f)); yield return AimDrawer(drawer); yield return Press(Key.E);
             Assert.That(drawer.IsOpen, Is.False); Assert.That(tools.Equipped, Is.EqualTo(KitchenToolKind.None));
             drawer.AnimateOpen(true); yield return new WaitForSecondsRealtime(drawer.SlideSeconds + .05f);
-            var foreign = Tool(drawer, 0); Teleport(new Vector3(-10.4f, .05f, -4.3f)); yield return AimTool(foreign); yield return Press(Key.E);
+            var foreign = Tool(drawer, 0); Teleport(new Vector3(-10.4f, .05f, stationZ-.55f)); yield return AimTool(foreign); yield return Press(Key.E);
             Assert.That(tools.Equipped, Is.EqualTo(KitchenToolKind.None)); Assert.That(foreign.Placement, Is.EqualTo(KitchenToolPlacement.Stored));
         }
 
@@ -710,6 +712,9 @@ namespace ChefShow.Tests
             var pan=Appliance(CookerKind.Pan);yield return Aim(pan.transform.position+Vector3.up*.025f);
             Assert.That(bootstrap.Player.Target.GetComponent<CookingTarget>().Station,Is.SameAs(pan));yield return Press(Key.E);
             Assert.That(State.Cooker(CookerKind.Pan)[0],Is.SameAs(food));Assert.That(State.Held,Is.Null);
+            var own=GameObject.Find("Station_A1").GetComponent<ChefShow.Player.PrototypeInteractable>();
+            yield return Aim(own.FocusPoint.position);Assert.That(bootstrap.Player.Target,Is.SameAs(own));
+            yield return Press(Key.E);yield return new WaitForSecondsRealtime(.25f);Assert.That(bootstrap.Player.Focused,Is.True);
             yield return HeatTwice(pan);bootstrap.Run.Tick(bootstrap.Cooking.Config.ReadySeconds);yield return null;
             Assert.That(food.Cooking,Is.EqualTo(CookState.Cooked));Assert.That(food.Quantity,Is.EqualTo(1));
             yield return Aim(CookFoodPoint(pan,0));Assert.That(bootstrap.Hud.Context.text,Does.Contain("Готово"));Capture("cooking-pan-ready.png");
@@ -762,7 +767,7 @@ namespace ChefShow.Tests
                 State.TryMoveBasket(BasketPlacement.Carried,out _);State.TryCollect(definition,out _);State.TryMoveBasket(BasketPlacement.Station,out _);
                 State.TryUnload(out _);State.TryTakeTray(0,out _);if(i<3)Assert.That(State.TryPlaceCooker(CookerKind.Pan,out _),Is.True);
             }
-            var held=State.Held;var pan=Appliance(CookerKind.Pan);Teleport(new Vector3(-9.7f,.05f,-6.25f));yield return Aim(CookFoodPoint(pan,0));
+            var held=State.Held;var pan=Appliance(CookerKind.Pan);Teleport(new Vector3(-11.4f,.05f,-6.25f));yield return Aim(CookFoodPoint(pan,0));
             Assert.That(Vector3.Distance(bootstrap.Player.ViewCamera.transform.position,CookFoodPoint(pan,0)),Is.GreaterThan(bootstrap.Config.InteractionDistance));
             Assert.That(bootstrap.Player.Target.GetComponent<CookingTarget>().Station,Is.SameAs(pan));yield return Press(Key.E);
             Assert.That(State.Held,Is.SameAs(held));Assert.That(State.Cooker(CookerKind.Pan).Count,Is.EqualTo(3));

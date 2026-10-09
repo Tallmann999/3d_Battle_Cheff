@@ -38,7 +38,7 @@ namespace ChefShow.Editor
                     Undo.FlushUndoRecordObjects(); EditorSceneManager.MarkSceneDirty(scene);
                     if (!EditorSceneManager.SaveScene(scene)) throw new IOException("Не удалось сохранить " + scene.path);
                 }
-                AssetDatabase.SaveAssets();
+                AssetDatabase.SaveAssetIfDirty(AssetDatabase.LoadAssetAtPath<CookingConfig>(ConfigPath));
             }
             finally { SceneManager.SetActiveScene(working); if (opened) EditorSceneManager.CloseScene(generated,true); }
         }
@@ -53,25 +53,41 @@ namespace ChefShow.Editor
                 AssetDatabase.CreateAsset(config,ConfigPath);
             }
             var error = config.Validate(); if (error != null) throw new InvalidOperationException(error);
+            EditorUtility.SetDirty(config);
             var cooking = bootstrap.Cooking;
             if (cooking == null) { cooking = Undo.AddComponent<CookingController>(bootstrap.gameObject); Undo.RecordObject(bootstrap,"Cooking reference"); bootstrap.Cooking = cooking; }
             Undo.RecordObject(cooking,"Cooking settings"); cooking.Config = config;
             var tables = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<PrototypeInteractable>(true))
                 .Where(t => t.name.StartsWith("Station_",StringComparison.Ordinal)).OrderBy(t => t.name).ToArray();
+            ArrangeRows(scene,tables,config.TableWidth);
             var stations = new System.Collections.Generic.List<CookingStation>();
             foreach (var table in tables)
             {
-                ResizeTable(table.transform,config.TableLength);
                 string id = table.name.Substring("Station_".Length); float side = id.StartsWith("A",StringComparison.Ordinal) ? -1 : 1;
+                ResizeTable(table.transform,config.TableWidth,config.TableDepth,side);
                 var bounds = table.GetComponent<BoxCollider>().bounds;
-                float x = (side < 0 ? bounds.max.x : bounds.min.x) + side * .49f;
+                var focus=table.FocusPoint;
+                if(focus!=null)
+                {
+                    Undo.RecordObject(focus,"Focus the wide workspace");
+                    float inner=side<0?bounds.max.x:bounds.min.x;
+                    // Aim through the free gap between preparation and cooking, even with a full tray.
+                    focus.position=new Vector3(inner+side*.4f,bounds.max.y+.08f,bounds.center.z+side*.62f); EditorUtility.SetDirty(focus);
+                }
+                float rightZ = bounds.center.z + side * (bounds.extents.z - .55f);
                 var parent = table.transform.Find("Cooking"); if (parent == null) parent = Node("Cooking",table.transform,table.transform.position);
                 foreach (CookerKind kind in new[]{CookerKind.Pan,CookerKind.Pot})
                 {
                     string name = kind == CookerKind.Pan ? "Pan" : "Pot";
+                    float x = bounds.center.x + side * (kind==CookerKind.Pan ? bounds.extents.x-.55f : -bounds.extents.x+.55f);
+                    var point = new Vector3(x,bounds.max.y+.06f,rightZ);
                     var root = parent.Find(name); CookingStation station;
-                    if (root == null) station = BuildStation(parent, new Vector3(x,bounds.max.y+.06f, bounds.center.z + (kind==CookerKind.Pan ? -.55f : .55f)),id,kind,side,bootstrap);
-                    else station = root.GetComponent<CookingStation>();
+                    if (root == null) station = BuildStation(parent,point,id,kind,side,bootstrap);
+                    else
+                    {
+                        station = root.GetComponent<CookingStation>();
+                        Undo.RecordObject(root,"Right column cooking appliances"); root.position=point; EditorUtility.SetDirty(root);
+                    }
                     foreach(var target in station.GetComponentsInChildren<PrototypeInteractable>(true))
                     { Undo.RecordObject(target,"Appliance reach"); target.InteractionDistanceOverride = config.ApplianceInteractionDistance; EditorUtility.SetDirty(target); }
                     stations.Add(station);
@@ -94,21 +110,43 @@ namespace ChefShow.Editor
             bootstrap.Hud.TaskCard.text = "НАРЕЗКА И НАГРЕВ\nTab — корзина; E — собрать / выгрузить / перенести.\nНож + продукт на доске: 6 ЛКМ. Упаковка в лотке: 1 ЛКМ.\nE — положить в прибор; E по отдельной ручке — нагрев.\nСредний огонь: около 30 с; дальше переготовка и сгорание.\nГарнир: нарезанный картофель + 3 ЛКМ с лопаткой.\nE по порции — снять; выключить прибор отдельной ручкой.\nГотовое блюдо: только чистая готовая еда; тарелки позже.";
             EditorUtility.SetDirty(bootstrap.Hud.TaskCard);
         }
-        private static void ResizeTable(Transform table,float width)
+        private static void ArrangeRows(Scene scene,PrototypeInteractable[] tables,float width)
         {
-            // Preserve every manual child pose/scale while extending the table towards the centre.
+            // Keep station 1 and each actor's offset; retain the existing 20 cm gaps.
+            var actors=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<ChefShow.Contestants.PrototypeActor>(true)).ToArray();
+            foreach(string team in new[]{"A","B"})
+            {
+                var row=tables.Where(t=>t.name.StartsWith("Station_"+team,StringComparison.Ordinal)).OrderBy(t=>t.name).ToArray();
+                if(row.Length!=6) throw new InvalidOperationException("Нужны шесть станций команды "+team);
+                float first=row[0].transform.position.z;
+                for(int i=0;i<row.Length;i++)
+                {
+                    var table=row[i].transform; float delta=first+i*(width+.2f)-table.position.z;
+                    if(Mathf.Abs(delta)<.0001f) continue;
+                    Undo.RecordObject(table,"Wider station rows"); table.position+=Vector3.forward*delta; EditorUtility.SetDirty(table);
+                    foreach(var actor in actors.Where(a=>a.StableId==table.name.Substring("Station_".Length)))
+                    { Undo.RecordObject(actor.transform,"Keep participant at own station"); actor.transform.position+=Vector3.forward*delta; EditorUtility.SetDirty(actor.transform); }
+                }
+            }
+            Physics.SyncTransforms();
+        }
+        private static void ResizeTable(Transform table,float width,float depth,float side)
+        {
+            // The original two columns move left to make room for cooking on the right.
+            // Stored world scales/rotations and relative workspace arrangement remain intact.
             var children=table.Cast<Transform>().ToArray(); var positions=children.Select(t=>t.position).ToArray();
             var rotations=children.Select(t=>t.rotation).ToArray(); var scales=children.Select(t=>t.lossyScale).ToArray();
             var bounds=table.GetComponent<BoxCollider>().bounds;
-            float side=table.name.StartsWith("Station_A",StringComparison.Ordinal)?-1:1;
             float edge=side<0?bounds.min.x:bounds.max.x;
+            float workspaceShift=-side*(width-bounds.size.z)/2;
             Undo.RecordObject(table,"Rectangular cooking station");
-            table.position=new Vector3(edge-side*width/2,table.position.y,table.position.z);
-            table.localScale=new Vector3(width/table.parent.lossyScale.x,table.localScale.y,table.localScale.z);
+            table.position=new Vector3(edge-side*depth/2,table.position.y,table.position.z);
+            table.localScale=new Vector3(depth/table.parent.lossyScale.x,table.localScale.y,width/table.parent.lossyScale.z);
             for(int i=0;i<children.Length;i++)
             {
                 Undo.RecordObject(children[i],"Preserve existing station workspace");
-                children[i].SetPositionAndRotation(positions[i],rotations[i]);
+                var shift=children[i].name=="Cooking"||children[i].name=="Tool Drawer Contents" ? Vector3.zero : Vector3.forward*workspaceShift;
+                children[i].SetPositionAndRotation(positions[i]+shift,rotations[i]);
                 var parentScale=children[i].parent.lossyScale;
                 children[i].localScale=new Vector3(scales[i].x/parentScale.x,scales[i].y/parentScale.y,scales[i].z/parentScale.z);
                 EditorUtility.SetDirty(children[i]);

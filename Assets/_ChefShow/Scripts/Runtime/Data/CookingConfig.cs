@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using ChefShow.Cooking;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace ChefShow.Data
 {
@@ -20,7 +21,11 @@ namespace ChefShow.Data
         public string[] PanIngredients = { "beef", "carrot", "onion" };
         public string[] PotIngredients = { "potato", "carrot", "onion" };
         [Header("Геометрия и доступ к дальним приборам")]
-        [Min(2.3f)] public float TableLength = 3.6f;
+        [FormerlySerializedAs("TableLength")]
+        [Tooltip("Ширина перед участником (вдоль ряда / мировая Z).")]
+        [Min(3.2f)] public float TableWidth = 3.6f;
+        [Tooltip("Глубина от участника к центру студии (мировая X).")]
+        [Min(2.1f)] public float TableDepth = 2.3f;
         [Range(3.1f, 5)] public float ApplianceInteractionDistance = 4.2f;
         public string Validate()
         {
@@ -29,8 +34,8 @@ namespace ChefShow.Data
                 || !(ReadySeconds < OvercookedSeconds && OvercookedSeconds < BurnedSeconds)) return "Тепловые пороги должны возрастать: готово < переготовка < сгорание.";
             if (!Positive(LowRate) || !Positive(MediumRate) || !Positive(HighRate)
                 || !(LowRate < MediumRate && MediumRate < HighRate)) return "Скорости должны возрастать: слабый < средний < сильный.";
-            if (!Positive(TableLength) || TableLength < 3.2f || !Positive(ApplianceInteractionDistance)
-                || ApplianceInteractionDistance > 5) return "Проверьте длину стола и дистанцию приборов (до 5 м).";
+            if (!Positive(TableWidth) || TableWidth < 3.2f || !Positive(TableDepth) || TableDepth < 2.1f || !Positive(ApplianceInteractionDistance)
+                || ApplianceInteractionDistance > 5) return "Проверьте ширину/глубину стола и дистанцию приборов (до 5 м).";
             if (PanIngredients == null || PotIngredients == null || PanIngredients.Length == 0 || PotIngredients.Length == 0
                 || PanIngredients.Concat(PotIngredients).Any(string.IsNullOrWhiteSpace)) return "Нужны ID продуктов для обоих приборов.";
             return null;

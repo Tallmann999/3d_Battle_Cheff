@@ -148,6 +148,11 @@ namespace ChefShow.Tests
             GameObject blocker = null;
             try
             {
+                var station=GameObject.Find("Station_"+bootstrap.Inventory.PlayerStationId).GetComponent<PrototypeInteractable>();
+                var aim=Quaternion.LookRotation(station.FocusPoint.position-bootstrap.Player.ViewCamera.transform.position).eulerAngles;
+                var current=bootstrap.Player.ViewCamera.transform.eulerAngles;
+                InputSystem.QueueDeltaStateEvent(mouse.delta,new Vector2(Mathf.DeltaAngle(current.y,aim.y),-Mathf.DeltaAngle(current.x,aim.x))/bootstrap.Config.LookSensitivity);
+                yield return null;yield return null;
                 bootstrap.Player.RefreshTarget();
                 Assert.That(bootstrap.Player.Target, Is.Not.Null);
                 Assert.That(bootstrap.Player.Target.IsPlayerStation, Is.True);
@@ -193,13 +198,27 @@ namespace ChefShow.Tests
             foreach (var actor in actors.Where(a => a.Kind != PrototypeActorKind.Chef))
             {
                 var table = GameObject.Find("Station_" + actor.StableId).GetComponent<BoxCollider>().bounds;
-                Assert.That(table.size.x, Is.EqualTo(bootstrap.Cooking == null ? 2.3f : bootstrap.Cooking.Config.TableLength).Within(0.01f));
-                Assert.That(table.size.z, Is.EqualTo(2.3f).Within(0.01f));
+                Assert.That(table.size.x, Is.EqualTo(bootstrap.Cooking == null ? 2.3f : bootstrap.Cooking.Config.TableDepth).Within(0.01f));
+                Assert.That(table.size.z, Is.EqualTo(bootstrap.Cooking == null ? 2.3f : bootstrap.Cooking.Config.TableWidth).Within(0.01f));
                 Assert.That(table.max.y - floor.max.y, Is.EqualTo(0.9f).Within(0.01f), actor.StableId + " worktop height");
                 Assert.That(table.min.y, Is.EqualTo(floor.max.y).Within(0.01f));
                 Assert.That(Mathf.Abs(actor.transform.position.x), Is.GreaterThan(Mathf.Abs(table.center.x) + table.extents.x));
                 Assert.That(Vector3.Dot(actor.transform.forward, (table.center - actor.transform.position).normalized), Is.GreaterThan(0.9f), actor.StableId + " faces own table");
                 if (actor.Kind == PrototypeActorKind.Npc) Assert.That(actor.GetComponent<Collider>().enabled, Is.True);
+                if(bootstrap.Cooking!=null)
+                {
+                    var pan=bootstrap.Cooking.Stations.Single(s=>s.StationId==actor.StableId&&s.Kind==ChefShow.Cooking.CookerKind.Pan);
+                    var pot=bootstrap.Cooking.Stations.Single(s=>s.StationId==actor.StableId&&s.Kind==ChefShow.Cooking.CookerKind.Pot);
+                    Assert.That(Vector3.Dot(pan.transform.position-table.center,actor.transform.right),Is.GreaterThan(.8f),actor.StableId+" pan is on the right");
+                    Assert.That(Vector3.Dot(pot.transform.position-table.center,actor.transform.right),Is.GreaterThan(.8f),actor.StableId+" pot is on the right");
+                    Assert.That(Vector3.Dot(pot.transform.position-pan.transform.position,actor.transform.forward),Is.GreaterThan(.8f),actor.StableId+" pot is behind the pan");
+                    foreach(var appliance in new[]{pan,pot})
+                    {
+                        var pad=appliance.GetComponent<BoxCollider>().bounds;
+                        Assert.That(pad.min.x,Is.GreaterThan(table.min.x));Assert.That(pad.max.x,Is.LessThan(table.max.x));
+                        Assert.That(pad.min.z,Is.GreaterThan(table.min.z));Assert.That(pad.max.z,Is.LessThan(table.max.z));
+                    }
+                }
             }
             bootstrap.SetPaused(true);
             foreach (string team in new[] { "A", "B" })
@@ -209,7 +228,7 @@ namespace ChefShow.Tests
                 {
                     var first = GameObject.Find("Station_" + team + i).GetComponent<BoxCollider>().bounds;
                     var second = GameObject.Find("Station_" + team + (i + 1)).GetComponent<BoxCollider>().bounds;
-                    Assert.That(second.center.z - first.center.z, Is.EqualTo(2.5f).Within(0.01f));
+                    Assert.That(second.center.z - first.center.z, Is.EqualTo(first.size.z+.2f).Within(0.01f));
                     Assert.That(second.min.z - first.max.z, Is.EqualTo(0.2f).Within(0.01f));
                     Teleport(new Vector3(sign * 10, 0.05f, (first.center.z + second.center.z) / 2));
                     WalkToward(new Vector3(sign * 4, 0.05f, player.position.z));
@@ -218,10 +237,14 @@ namespace ChefShow.Tests
                 foreach (int end in new[] { -1, 1 })
                 {
                     // Идём за спинами NPC, затем вокруг края 1/6, через центр к общей зоне.
-                    Teleport(new Vector3(sign * 11.5f, 0.05f, -end * 6.25f));
+                    var firstEnd=GameObject.Find("Station_"+team+"1").GetComponent<BoxCollider>().bounds;
+                    var lastEnd=GameObject.Find("Station_"+team+"6").GetComponent<BoxCollider>().bounds;
+                    float bypassZ=end<0?firstEnd.min.z-1.3f:lastEnd.max.z+1.3f;
+                    Teleport(new Vector3(sign * 11.5f, 0.05f, end<0?lastEnd.center.z:firstEnd.center.z));
                     var targets = new[] {
-                        new Vector3(sign * 11.5f, 0.05f, end * 8.7f),
-                        new Vector3(0, 0.05f, end * 8.7f),
+                        new Vector3(sign * 11.5f, 0.05f, bypassZ),
+                        new Vector3(sign * 6, 0.05f, bypassZ),
+                        new Vector3(sign * 6, 0.05f, end == 1 ? 10.6f : -10.6f),
                         new Vector3(0, 0.05f, end == 1 ? 10.6f : -10.6f)
                     };
                     foreach (var target in targets)
