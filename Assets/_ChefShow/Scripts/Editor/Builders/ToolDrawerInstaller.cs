@@ -67,6 +67,7 @@ namespace ChefShow.Editor
             {
                 UpgradeVisuals(bootstrap.Tools);
                 UpgradeDirectInteraction(bootstrap.Tools);
+                AddToolReturnTargets(bootstrap.Tools);
                 string error = bootstrap.Tools.Validate();
                 if (error != null) throw new InvalidOperationException(error);
                 return; // Повтор установки не сбрасывает ручные позиции/высоту/предпросмотр.
@@ -112,7 +113,72 @@ namespace ChefShow.Editor
             }).ToArray();
             UpgradeVisuals(controller);
             UpgradeDirectInteraction(controller);
+            AddToolReturnTargets(controller);
             string validation = controller.Validate(); if (validation != null) throw new InvalidOperationException(validation);
+            Physics.SyncTransforms();
+        }
+
+        [MenuItem("Tools/Chef Show/Install Tool Return Targets")]
+        public static void InstallToolReturns()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling || EditorApplication.isUpdating)
+                throw new InvalidOperationException("Нужен Edit Mode после компиляции.");
+            var working = SceneManager.GetActiveScene();
+            if (working.path != PrototypeSceneBuilder.EditableScene || working.isDirty || Selection.activeObject != null)
+                throw new InvalidOperationException("Нужна сохранённая рабочая сцена без выделения.");
+            var generated = SceneManager.GetSceneByPath(PrototypeSceneBuilder.GeneratedScene);
+            bool opened = !generated.IsValid() || !generated.isLoaded;
+            if (!opened && generated.isDirty) throw new InvalidOperationException("Сохраните generated-сцену.");
+            if (opened) generated = EditorSceneManager.OpenScene(PrototypeSceneBuilder.GeneratedScene, OpenSceneMode.Additive);
+            try
+            {
+                Directory.CreateDirectory("TestResults");
+                string stamp = DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
+                foreach (var scene in new[] { working, generated })
+                {
+                    File.Copy(scene.path, "TestResults/tool-return-before-" + scene.name + "-" + stamp + ".unity", false);
+                    var owner = scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<GameBootstrap>(true)).Single();
+                    AddToolReturnTargets(owner.Tools);
+                    var controls = owner.Hud.transform.Find("Controls").GetComponent<Text>();
+                    Undo.RecordObject(controls, "Tool return controls");
+                    controls.text = controls.text.Replace("RMB — возврат", "ПКМ — инструмент в ячейку / отмена").Replace("RMB — отмена", "ПКМ — инструмент в ячейку / отмена");
+                    EditorUtility.SetDirty(controls);
+                    Undo.RecordObject(owner.Hud.TaskCard, "Experimental food task hint");
+                    owner.Hud.TaskCard.text = owner.Hud.TaskCard.text.Replace("Готовое блюдо: только чистая готовая еда; тарелки позже.", "Зона блюда: любая еда; качество оценим при подаче. Тарелки позже.");
+                    EditorUtility.SetDirty(owner.Hud.TaskCard);
+                    EditorUtility.SetDirty(owner.Cooking.Config); AssetDatabase.SaveAssetIfDirty(owner.Cooking.Config);
+                    PrototypeValidator.ValidateScene(scene); Undo.FlushUndoRecordObjects();
+                    EditorSceneManager.MarkSceneDirty(scene);
+                    if (!EditorSceneManager.SaveScene(scene)) throw new IOException("Не удалось сохранить " + scene.path);
+                }
+            }
+            finally
+            {
+                SceneManager.SetActiveScene(working);
+                if (opened) EditorSceneManager.CloseScene(generated, true);
+            }
+        }
+
+        private static void AddToolReturnTargets(ToolDrawerController controller)
+        {
+            foreach (var drawer in controller.Drawers)
+                for (int i = 0; i < drawer.Compartments.Length; i++)
+                {
+                    var bottom = drawer.Compartments[i].Find("Cell Bottom").gameObject;
+                    Undo.RecordObject(bottom, "Tool cell target layer"); bottom.layer = 0;
+                    var collider = bottom.GetComponent<BoxCollider>();
+                    if (collider == null) collider = Undo.AddComponent<BoxCollider>(bottom);
+                    Undo.RecordObject(collider, "Tool cell trigger"); collider.isTrigger = true;
+                    var cell = bottom.GetComponent<ToolDrawerTarget>();
+                    if (cell == null) cell = Undo.AddComponent<ToolDrawerTarget>(bottom);
+                    Undo.RecordObject(cell, "Tool cell reference"); cell.Drawer = drawer; cell.CompartmentIndex = i;
+                    var target = bottom.GetComponent<PrototypeInteractable>();
+                    if (target == null) target = Undo.AddComponent<PrototypeInteractable>(bottom);
+                    Undo.RecordObject(target, "Tool cell prompt");
+                    target.DisplayName = "Ячейка: " + ToolDrawerController.Name((KitchenToolKind)(i + 1));
+                    target.Description = "ПКМ — вернуть свой инструмент";
+                    foreach (var obj in new UnityEngine.Object[] { bottom, collider, cell, target }) EditorUtility.SetDirty(obj);
+                }
             Physics.SyncTransforms();
         }
 

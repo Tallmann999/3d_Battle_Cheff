@@ -20,14 +20,6 @@ MonoBehaviour:
   MediumRate: 1
   HighRate: 1.75
   PotStirs: 3
-  PanIngredients:
-  - beef
-  - carrot
-  - onion
-  PotIngredients:
-  - potato
-  - carrot
-  - onion
   SaltIngredientId: salt
   OilIngredientId: oil
   DosesPerPress: 1

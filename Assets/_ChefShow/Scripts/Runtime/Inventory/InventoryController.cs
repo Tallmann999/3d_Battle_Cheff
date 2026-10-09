@@ -285,10 +285,10 @@ namespace ChefShow.Inventory
                 case InventoryTargetKind.Tray: return State.Held != null ? "E — Положить " + FoodName(State.Held.Ingredient) + " в лоток"
                     : "Лоток · выберите продукт прицелом";
                 case InventoryTargetKind.Socket:
-                    if (target.Index == (int)StationSocketKind.WorkSurface && State.Held != null && !InventoryState.IsReadyForServing(State.Held))
-                        return "Готовое блюдо · сырые продукты и упаковки положите в лоток";
+                    if (target.Index == (int)StationSocketKind.WorkSurface && State.Held != null && !InventoryState.CanPlaceOnServingSurface(State.Held))
+                        return "Готовое блюдо · упаковки и контейнеры положите в лоток";
                     if (target.Index == (int)StationSocketKind.WorkSurface && State.Held == null && State.Socket(target.Index) == null)
-                        return "Готовое блюдо · только тарелка и готовая еда";
+                        return "Готовое блюдо · можно собрать экспериментальное блюдо";
                     return State.Held != null ? "E — Положить " + FoodName(State.Held.Ingredient) + " · " + aimed.DisplayName
                     : State.Socket(target.Index) != null ? "E — Взять " + FoodName(State.Socket(target.Index).Ingredient) : aimed.DisplayName + " · пусто";
                 case InventoryTargetKind.Trash: return "E — выбросить продукт из руки";

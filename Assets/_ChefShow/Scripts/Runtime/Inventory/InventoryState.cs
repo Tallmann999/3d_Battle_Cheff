@@ -193,11 +193,13 @@ namespace ChefShow.Inventory
             if (sockets[index] != null) { reason = "Рабочее место занято."; return false; }
             if (index == (int)StationSocketKind.Board && !Held.Ingredient.CanUseBoard)
             { reason = "Этот продукт нельзя положить на доску."; return false; }
-            if (index == (int)StationSocketKind.WorkSurface && !IsReadyForServing(Held))
-            { reason = "Готовое блюдо: только чистая готовая еда. Сырые продукты и упаковки храните в лотке."; return false; }
+            if (index == (int)StationSocketKind.WorkSurface && !CanPlaceOnServingSurface(Held))
+            { reason = "Готовое блюдо: здесь можно выкладывать еду. Упаковки и контейнеры храните в лотке."; return false; }
             var portion = Held; portion.Location = PortionLocation.Station; portion.SocketIndex = index;
             sockets[index] = portion; Held = null; Fact("ingredient_transferred", portion); return true;
         }
+        public static bool CanPlaceOnServingSurface(FoodPortion portion) => portion != null
+            && portion.PackedIngredient == null && !portion.Ingredient.IsDoseContainer;
         public static bool IsReadyForServing(FoodPortion portion) => portion != null && portion.PackedIngredient == null
             && !portion.Ingredient.IsDoseContainer && !portion.Contaminated
             && (portion.Cooking == CookState.Cooked || portion.Cooking == CookState.Overcooked || portion.Cooking == CookState.Burned);

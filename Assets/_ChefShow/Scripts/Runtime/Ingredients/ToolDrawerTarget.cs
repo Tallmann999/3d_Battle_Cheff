@@ -6,5 +6,7 @@ namespace ChefShow.Ingredients
     public sealed class ToolDrawerTarget : MonoBehaviour
     {
         public ToolDrawer Drawer;
+        [Tooltip("-1: панель/дно; 0–3: ячейка ножа, вилки, ложки, лопатки.")]
+        public int CompartmentIndex = -1;
     }
 }

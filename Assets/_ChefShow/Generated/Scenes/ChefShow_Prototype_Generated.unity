@@ -6732,8 +6732,10 @@ MonoBehaviour:
     / \u043F\u043E\u043B\u043E\u0436\u0438\u0442\u044C / \u043D\u0430\u0433\u0440\u0435\u0432\n\u041B\u041A\u041C
     \u2014 \u043D\u0430\u0440\u0435\u0437\u0430\u0442\u044C / \u0440\u0430\u0441\u043F\u0430\u043A\u043E\u0432\u0430\u0442\u044C
     / \u043C\u0435\u0448\u0430\u0442\u044C / \u0434\u043E\u0437\u0438\u0440\u043E\u0432\u0430\u0442\u044C
-    \xB7 G \u2014 \u0443\u0440\u043E\u043D\u0438\u0442\u044C\nRMB \u2014 \u043E\u0442\u043C\u0435\u043D\u0430
-    \xB7 Q \u2014 \u0437\u0430\u0434\u0430\u043D\u0438\u0435 \xB7 Esc \u2014 \u043F\u0430\u0443\u0437\u0430"
+    \xB7 G \u2014 \u0443\u0440\u043E\u043D\u0438\u0442\u044C\n\u041F\u041A\u041C
+    \u2014 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442 \u0432 \u044F\u0447\u0435\u0439\u043A\u0443
+    / \u043E\u0442\u043C\u0435\u043D\u0430 \xB7 Q \u2014 \u0437\u0430\u0434\u0430\u043D\u0438\u0435
+    \xB7 Esc \u2014 \u043F\u0430\u0443\u0437\u0430"
 --- !u!222 &71033974
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7400,6 +7402,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
   Drawer: {fileID: 845082787}
+  CompartmentIndex: -1
 --- !u!65 &77134426
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8661,6 +8664,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
   Drawer: {fileID: 2064227442}
+  CompartmentIndex: -1
 --- !u!65 &86398505
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10455,7 +10459,10 @@ GameObject:
   - component: {fileID: 108619049}
   - component: {fileID: 108619051}
   - component: {fileID: 108619050}
-  m_Layer: 2
+  - component: {fileID: 108619054}
+  - component: {fileID: 108619053}
+  - component: {fileID: 108619052}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10533,6 +10540,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 108619048}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &108619052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 108619048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0414\u0435\u0440\u0435\u0432\u044F\u043D\u043D\u0430\u044F
+    \u043B\u043E\u043F\u0430\u0442\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &108619053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 108619048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1710191122}
+  CompartmentIndex: 3
+--- !u!65 &108619054
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 108619048}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.00000047683716}
 --- !u!1 &108886532
 GameObject:
   m_ObjectHideFlags: 0
@@ -11216,7 +11278,10 @@ GameObject:
   - component: {fileID: 115540963}
   - component: {fileID: 115540965}
   - component: {fileID: 115540964}
-  m_Layer: 2
+  - component: {fileID: 115540968}
+  - component: {fileID: 115540967}
+  - component: {fileID: 115540966}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11294,6 +11359,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 115540962}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &115540966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 115540962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0414\u0435\u0440\u0435\u0432\u044F\u043D\u043D\u0430\u044F
+    \u043B\u043E\u043F\u0430\u0442\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &115540967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 115540962}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 2064227442}
+  CompartmentIndex: 3
+--- !u!65 &115540968
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 115540962}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0.0000009536743}
 --- !u!1 &115558554
 GameObject:
   m_ObjectHideFlags: 0
@@ -13149,7 +13269,10 @@ GameObject:
   - component: {fileID: 129829943}
   - component: {fileID: 129829945}
   - component: {fileID: 129829944}
-  m_Layer: 2
+  - component: {fileID: 129829948}
+  - component: {fileID: 129829947}
+  - component: {fileID: 129829946}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13227,6 +13350,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 129829942}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &129829946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 129829942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0412\u0438\u043B\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &129829947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 129829942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 435102582}
+  CompartmentIndex: 1
+--- !u!65 &129829948
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 129829942}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.0000019073486}
 --- !u!1 &130103289
 GameObject:
   m_ObjectHideFlags: 0
@@ -17334,7 +17511,10 @@ GameObject:
   - component: {fileID: 161158842}
   - component: {fileID: 161158844}
   - component: {fileID: 161158843}
-  m_Layer: 2
+  - component: {fileID: 161158847}
+  - component: {fileID: 161158846}
+  - component: {fileID: 161158845}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17412,6 +17592,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 161158841}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &161158845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161158841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0412\u0438\u043B\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &161158846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161158841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1052658898}
+  CompartmentIndex: 1
+--- !u!65 &161158847
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161158841}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &161520536
 GameObject:
   m_ObjectHideFlags: 0
@@ -19529,7 +19763,10 @@ GameObject:
   - component: {fileID: 181314026}
   - component: {fileID: 181314028}
   - component: {fileID: 181314027}
-  m_Layer: 2
+  - component: {fileID: 181314031}
+  - component: {fileID: 181314030}
+  - component: {fileID: 181314029}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19607,6 +19844,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 181314025}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &181314029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181314025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041B\u043E\u0436\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &181314030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181314025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 157060029}
+  CompartmentIndex: 2
+--- !u!65 &181314031
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 181314025}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &183373662
 GameObject:
   m_ObjectHideFlags: 0
@@ -21945,7 +22236,10 @@ GameObject:
   - component: {fileID: 206871368}
   - component: {fileID: 206871370}
   - component: {fileID: 206871369}
-  m_Layer: 2
+  - component: {fileID: 206871373}
+  - component: {fileID: 206871372}
+  - component: {fileID: 206871371}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22023,6 +22317,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 206871367}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &206871371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 206871367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0412\u0438\u043B\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &206871372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 206871367}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1710191122}
+  CompartmentIndex: 1
+--- !u!65 &206871373
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 206871367}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.00000047683716}
 --- !u!1 &207321314
 GameObject:
   m_ObjectHideFlags: 0
@@ -23726,7 +24074,10 @@ GameObject:
   - component: {fileID: 237645818}
   - component: {fileID: 237645820}
   - component: {fileID: 237645819}
-  m_Layer: 2
+  - component: {fileID: 237645823}
+  - component: {fileID: 237645822}
+  - component: {fileID: 237645821}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23804,6 +24155,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 237645817}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &237645821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 237645817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0414\u0435\u0440\u0435\u0432\u044F\u043D\u043D\u0430\u044F
+    \u043B\u043E\u043F\u0430\u0442\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &237645822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 237645817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 610263660}
+  CompartmentIndex: 3
+--- !u!65 &237645823
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 237645817}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &238708918
 GameObject:
   m_ObjectHideFlags: 0
@@ -24961,7 +25367,10 @@ GameObject:
   - component: {fileID: 248299446}
   - component: {fileID: 248299448}
   - component: {fileID: 248299447}
-  m_Layer: 2
+  - component: {fileID: 248299451}
+  - component: {fileID: 248299450}
+  - component: {fileID: 248299449}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25039,6 +25448,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 248299445}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &248299449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 248299445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041B\u043E\u0436\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &248299450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 248299445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 435102582}
+  CompartmentIndex: 2
+--- !u!65 &248299451
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 248299445}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &249510492
 GameObject:
   m_ObjectHideFlags: 0
@@ -40573,7 +41036,10 @@ GameObject:
   - component: {fileID: 413559196}
   - component: {fileID: 413559198}
   - component: {fileID: 413559197}
-  m_Layer: 2
+  - component: {fileID: 413559201}
+  - component: {fileID: 413559200}
+  - component: {fileID: 413559199}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40651,6 +41117,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 413559195}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &413559199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413559195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041B\u043E\u0436\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &413559200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413559195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 190259031}
+  CompartmentIndex: 2
+--- !u!65 &413559201
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 413559195}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &416256272
 GameObject:
   m_ObjectHideFlags: 0
@@ -41262,7 +41782,10 @@ GameObject:
   - component: {fileID: 424497572}
   - component: {fileID: 424497574}
   - component: {fileID: 424497573}
-  m_Layer: 2
+  - component: {fileID: 424497577}
+  - component: {fileID: 424497576}
+  - component: {fileID: 424497575}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41340,6 +41863,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 424497571}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &424497575
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 424497571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0414\u0435\u0440\u0435\u0432\u044F\u043D\u043D\u0430\u044F
+    \u043B\u043E\u043F\u0430\u0442\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &424497576
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 424497571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 190259031}
+  CompartmentIndex: 3
+--- !u!65 &424497577
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 424497571}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &426741915
 GameObject:
   m_ObjectHideFlags: 0
@@ -42331,9 +42909,10 @@ MonoBehaviour:
     + 3 \u041B\u041A\u041C \u0441 \u043B\u043E\u043F\u0430\u0442\u043A\u043E\u0439.\nE
     \u043F\u043E \u043F\u043E\u0440\u0446\u0438\u0438 \u2014 \u0441\u043D\u044F\u0442\u044C;
     \u0432\u044B\u043A\u043B\u044E\u0447\u0438\u0442\u044C \u043F\u0440\u0438\u0431\u043E\u0440
-    \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E\u0439 \u0440\u0443\u0447\u043A\u043E\u0439.\n\u0413\u043E\u0442\u043E\u0432\u043E\u0435
-    \u0431\u043B\u044E\u0434\u043E: \u0442\u043E\u043B\u044C\u043A\u043E \u0447\u0438\u0441\u0442\u0430\u044F
-    \u0433\u043E\u0442\u043E\u0432\u0430\u044F \u0435\u0434\u0430; \u0442\u0430\u0440\u0435\u043B\u043A\u0438
+    \u043E\u0442\u0434\u0435\u043B\u044C\u043D\u043E\u0439 \u0440\u0443\u0447\u043A\u043E\u0439.\n\u0417\u043E\u043D\u0430
+    \u0431\u043B\u044E\u0434\u0430: \u043B\u044E\u0431\u0430\u044F \u0435\u0434\u0430;
+    \u043A\u0430\u0447\u0435\u0441\u0442\u0432\u043E \u043E\u0446\u0435\u043D\u0438\u043C
+    \u043F\u0440\u0438 \u043F\u043E\u0434\u0430\u0447\u0435. \u0422\u0430\u0440\u0435\u043B\u043A\u0438
     \u043F\u043E\u0437\u0436\u0435.\n\u0421\u043E\u043B\u044C/\u043C\u0430\u0441\u043B\u043E:
     E \u0432\u0437\u044F\u0442\u044C \u0438\u0437 \u043B\u043E\u0442\u043A\u0430,
     \u041B\u041A\u041C \u043F\u043E \u043A\u043E\u043D\u043A\u0440\u0435\u0442\u043D\u043E\u0439
@@ -49101,7 +49680,10 @@ GameObject:
   - component: {fileID: 506053097}
   - component: {fileID: 506053099}
   - component: {fileID: 506053098}
-  m_Layer: 2
+  - component: {fileID: 506053102}
+  - component: {fileID: 506053101}
+  - component: {fileID: 506053100}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -49179,6 +49761,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 506053096}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &506053100
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 506053096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041B\u043E\u0436\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &506053101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 506053096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 789904317}
+  CompartmentIndex: 2
+--- !u!65 &506053102
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 506053096}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &506132399
 GameObject:
   m_ObjectHideFlags: 0
@@ -50640,7 +51276,10 @@ GameObject:
   - component: {fileID: 518082997}
   - component: {fileID: 518082999}
   - component: {fileID: 518082998}
-  m_Layer: 2
+  - component: {fileID: 518083002}
+  - component: {fileID: 518083001}
+  - component: {fileID: 518083000}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50718,6 +51357,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 518082996}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &518083000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 518082996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0412\u0438\u043B\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &518083001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 518082996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 157060029}
+  CompartmentIndex: 1
+--- !u!65 &518083002
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 518082996}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &518436958
 GameObject:
   m_ObjectHideFlags: 0
@@ -55667,7 +56360,10 @@ GameObject:
   - component: {fileID: 571266613}
   - component: {fileID: 571266615}
   - component: {fileID: 571266614}
-  m_Layer: 2
+  - component: {fileID: 571266618}
+  - component: {fileID: 571266617}
+  - component: {fileID: 571266616}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55745,6 +56441,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 571266612}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &571266616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 571266612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041D\u043E\u0436"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &571266617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 571266612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1812723112}
+  CompartmentIndex: 0
+--- !u!65 &571266618
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 571266612}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &571960134
 GameObject:
   m_ObjectHideFlags: 0
@@ -61909,7 +62659,10 @@ GameObject:
   - component: {fileID: 646388169}
   - component: {fileID: 646388171}
   - component: {fileID: 646388170}
-  m_Layer: 2
+  - component: {fileID: 646388174}
+  - component: {fileID: 646388173}
+  - component: {fileID: 646388172}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61987,6 +62740,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 646388168}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &646388172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 646388168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0412\u0438\u043B\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &646388173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 646388168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 845082787}
+  CompartmentIndex: 1
+--- !u!65 &646388174
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 646388168}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.00000023841858}
 --- !u!1 &646512257
 GameObject:
   m_ObjectHideFlags: 0
@@ -64187,6 +64994,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
   Drawer: {fileID: 435102582}
+  CompartmentIndex: -1
 --- !u!65 &662880044
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -70242,7 +71050,10 @@ GameObject:
   - component: {fileID: 722440988}
   - component: {fileID: 722440990}
   - component: {fileID: 722440989}
-  m_Layer: 2
+  - component: {fileID: 722440993}
+  - component: {fileID: 722440992}
+  - component: {fileID: 722440991}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70320,6 +71131,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 722440987}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &722440991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722440987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041D\u043E\u0436"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &722440992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722440987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1405461999}
+  CompartmentIndex: 0
+--- !u!65 &722440993
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722440987}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &723673035
 GameObject:
   m_ObjectHideFlags: 0
@@ -74085,7 +74950,10 @@ GameObject:
   - component: {fileID: 762214791}
   - component: {fileID: 762214793}
   - component: {fileID: 762214792}
-  m_Layer: 2
+  - component: {fileID: 762214796}
+  - component: {fileID: 762214795}
+  - component: {fileID: 762214794}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74163,6 +75031,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 762214790}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &762214794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 762214790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041B\u043E\u0436\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &762214795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 762214790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 2064227442}
+  CompartmentIndex: 2
+--- !u!65 &762214796
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 762214790}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0.0000009536743}
 --- !u!1 &765411148
 GameObject:
   m_ObjectHideFlags: 0
@@ -79609,6 +80531,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
   Drawer: {fileID: 1710191122}
+  CompartmentIndex: -1
 --- !u!65 &811317309
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -81437,6 +82360,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
   Drawer: {fileID: 1405461999}
+  CompartmentIndex: -1
 --- !u!65 &823179622
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -83270,7 +84194,10 @@ GameObject:
   - component: {fileID: 842539458}
   - component: {fileID: 842539460}
   - component: {fileID: 842539459}
-  m_Layer: 2
+  - component: {fileID: 842539463}
+  - component: {fileID: 842539462}
+  - component: {fileID: 842539461}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83348,6 +84275,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 842539457}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &842539461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 842539457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041D\u043E\u0436"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &842539462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 842539457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 435102582}
+  CompartmentIndex: 0
+--- !u!65 &842539463
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 842539457}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &843495441
 GameObject:
   m_ObjectHideFlags: 0
@@ -85829,7 +86810,10 @@ GameObject:
   - component: {fileID: 867794935}
   - component: {fileID: 867794937}
   - component: {fileID: 867794936}
-  m_Layer: 2
+  - component: {fileID: 867794940}
+  - component: {fileID: 867794939}
+  - component: {fileID: 867794938}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85907,6 +86891,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 867794934}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &867794938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 867794934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0412\u0438\u043B\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &867794939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 867794934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 789904317}
+  CompartmentIndex: 1
+--- !u!65 &867794940
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 867794934}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &867863392
 GameObject:
   m_ObjectHideFlags: 0
@@ -93671,6 +94709,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
   Drawer: {fileID: 789904317}
+  CompartmentIndex: -1
 --- !u!65 &952417303
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -94603,7 +95642,10 @@ GameObject:
   - component: {fileID: 964546780}
   - component: {fileID: 964546782}
   - component: {fileID: 964546781}
-  m_Layer: 2
+  - component: {fileID: 964546785}
+  - component: {fileID: 964546784}
+  - component: {fileID: 964546783}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94681,6 +95723,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 964546779}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &964546783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964546779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0412\u0438\u043B\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &964546784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964546779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1405461999}
+  CompartmentIndex: 1
+--- !u!65 &964546785
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964546779}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &964567099
 GameObject:
   m_ObjectHideFlags: 0
@@ -101279,7 +102375,10 @@ GameObject:
   - component: {fileID: 1042422359}
   - component: {fileID: 1042422361}
   - component: {fileID: 1042422360}
-  m_Layer: 2
+  - component: {fileID: 1042422364}
+  - component: {fileID: 1042422363}
+  - component: {fileID: 1042422362}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101357,6 +102456,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1042422358}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1042422362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1042422358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041D\u043E\u0436"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1042422363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1042422358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 2064227442}
+  CompartmentIndex: 0
+--- !u!65 &1042422364
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1042422358}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1042565338
 GameObject:
   m_ObjectHideFlags: 0
@@ -103826,6 +104979,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
   Drawer: {fileID: 1812723112}
+  CompartmentIndex: -1
 --- !u!65 &1069573461
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -104246,6 +105400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
   Drawer: {fileID: 1052658898}
+  CompartmentIndex: -1
 --- !u!65 &1077070033
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -110464,7 +111619,10 @@ GameObject:
   - component: {fileID: 1136805674}
   - component: {fileID: 1136805676}
   - component: {fileID: 1136805675}
-  m_Layer: 2
+  - component: {fileID: 1136805679}
+  - component: {fileID: 1136805678}
+  - component: {fileID: 1136805677}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -110542,6 +111700,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1136805673}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1136805677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1136805673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041B\u043E\u0436\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1136805678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1136805673}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1710191122}
+  CompartmentIndex: 2
+--- !u!65 &1136805679
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1136805673}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1137416939
 GameObject:
   m_ObjectHideFlags: 0
@@ -111680,6 +112892,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
   Drawer: {fileID: 157060029}
+  CompartmentIndex: -1
 --- !u!65 &1145778242
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -112107,7 +113320,10 @@ GameObject:
   - component: {fileID: 1157259852}
   - component: {fileID: 1157259854}
   - component: {fileID: 1157259853}
-  m_Layer: 2
+  - component: {fileID: 1157259857}
+  - component: {fileID: 1157259856}
+  - component: {fileID: 1157259855}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -112185,6 +113401,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1157259851}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1157259855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1157259851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0414\u0435\u0440\u0435\u0432\u044F\u043D\u043D\u0430\u044F
+    \u043B\u043E\u043F\u0430\u0442\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1157259856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1157259851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1812723112}
+  CompartmentIndex: 3
+--- !u!65 &1157259857
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1157259851}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.0000009536743}
 --- !u!1 &1157407466
 GameObject:
   m_ObjectHideFlags: 0
@@ -114170,7 +115441,10 @@ GameObject:
   - component: {fileID: 1185047938}
   - component: {fileID: 1185047940}
   - component: {fileID: 1185047939}
-  m_Layer: 2
+  - component: {fileID: 1185047943}
+  - component: {fileID: 1185047942}
+  - component: {fileID: 1185047941}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114248,6 +115522,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1185047937}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1185047941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1185047937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041B\u043E\u0436\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1185047942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1185047937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1812723112}
+  CompartmentIndex: 2
+--- !u!65 &1185047943
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1185047937}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1186497364
 GameObject:
   m_ObjectHideFlags: 0
@@ -114526,7 +115854,10 @@ GameObject:
   - component: {fileID: 1188538562}
   - component: {fileID: 1188538564}
   - component: {fileID: 1188538563}
-  m_Layer: 2
+  - component: {fileID: 1188538567}
+  - component: {fileID: 1188538566}
+  - component: {fileID: 1188538565}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114604,6 +115935,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1188538561}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1188538565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188538561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0414\u0435\u0440\u0435\u0432\u044F\u043D\u043D\u0430\u044F
+    \u043B\u043E\u043F\u0430\u0442\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1188538566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188538561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1405461999}
+  CompartmentIndex: 3
+--- !u!65 &1188538567
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188538561}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1189146521
 GameObject:
   m_ObjectHideFlags: 0
@@ -115898,7 +117284,10 @@ GameObject:
   - component: {fileID: 1208888405}
   - component: {fileID: 1208888407}
   - component: {fileID: 1208888406}
-  m_Layer: 2
+  - component: {fileID: 1208888410}
+  - component: {fileID: 1208888409}
+  - component: {fileID: 1208888408}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -115976,6 +117365,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1208888404}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1208888408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1208888404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041D\u043E\u0436"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1208888409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1208888404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 789904317}
+  CompartmentIndex: 0
+--- !u!65 &1208888410
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1208888404}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.0000038146973}
 --- !u!1 &1209513930
 GameObject:
   m_ObjectHideFlags: 0
@@ -119586,7 +121029,10 @@ GameObject:
   - component: {fileID: 1239809388}
   - component: {fileID: 1239809390}
   - component: {fileID: 1239809389}
-  m_Layer: 2
+  - component: {fileID: 1239809393}
+  - component: {fileID: 1239809392}
+  - component: {fileID: 1239809391}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119664,6 +121110,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1239809387}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1239809391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239809387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041B\u043E\u0436\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1239809392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239809387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 610263660}
+  CompartmentIndex: 2
+--- !u!65 &1239809393
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239809387}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.00000047683716}
 --- !u!1 &1240073448
 GameObject:
   m_ObjectHideFlags: 0
@@ -120120,7 +121620,10 @@ GameObject:
   - component: {fileID: 1244272973}
   - component: {fileID: 1244272975}
   - component: {fileID: 1244272974}
-  m_Layer: 2
+  - component: {fileID: 1244272978}
+  - component: {fileID: 1244272977}
+  - component: {fileID: 1244272976}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120198,6 +121701,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1244272972}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1244272976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244272972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041D\u043E\u0436"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1244272977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244272972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 610263660}
+  CompartmentIndex: 0
+--- !u!65 &1244272978
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244272972}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1244321710
 GameObject:
   m_ObjectHideFlags: 0
@@ -121160,7 +122717,10 @@ GameObject:
   - component: {fileID: 1252357531}
   - component: {fileID: 1252357533}
   - component: {fileID: 1252357532}
-  m_Layer: 2
+  - component: {fileID: 1252357536}
+  - component: {fileID: 1252357535}
+  - component: {fileID: 1252357534}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121238,6 +122798,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1252357530}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1252357534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252357530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0412\u0438\u043B\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1252357535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252357530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 2064227442}
+  CompartmentIndex: 1
+--- !u!65 &1252357536
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252357530}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0.0000009536743}
 --- !u!1 &1253229032
 GameObject:
   m_ObjectHideFlags: 0
@@ -122003,7 +123617,10 @@ GameObject:
   - component: {fileID: 1262153773}
   - component: {fileID: 1262153775}
   - component: {fileID: 1262153774}
-  m_Layer: 2
+  - component: {fileID: 1262153778}
+  - component: {fileID: 1262153777}
+  - component: {fileID: 1262153776}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -122081,6 +123698,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1262153772}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1262153776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1262153772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041D\u043E\u0436"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1262153777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1262153772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 190259031}
+  CompartmentIndex: 0
+--- !u!65 &1262153778
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1262153772}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1263475873
 GameObject:
   m_ObjectHideFlags: 0
@@ -132886,7 +134557,10 @@ GameObject:
   - component: {fileID: 1377738899}
   - component: {fileID: 1377738901}
   - component: {fileID: 1377738900}
-  m_Layer: 2
+  - component: {fileID: 1377738904}
+  - component: {fileID: 1377738903}
+  - component: {fileID: 1377738902}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132964,6 +134638,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1377738898}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1377738902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377738898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0414\u0435\u0440\u0435\u0432\u044F\u043D\u043D\u0430\u044F
+    \u043B\u043E\u043F\u0430\u0442\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1377738903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377738898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 435102582}
+  CompartmentIndex: 3
+--- !u!65 &1377738904
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377738898}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1377996848
 GameObject:
   m_ObjectHideFlags: 0
@@ -136210,7 +137939,10 @@ GameObject:
   - component: {fileID: 1414050041}
   - component: {fileID: 1414050043}
   - component: {fileID: 1414050042}
-  m_Layer: 2
+  - component: {fileID: 1414050046}
+  - component: {fileID: 1414050045}
+  - component: {fileID: 1414050044}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136288,6 +138020,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1414050040}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1414050044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414050040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041B\u043E\u0436\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1414050045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414050040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1405461999}
+  CompartmentIndex: 2
+--- !u!65 &1414050046
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414050040}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.0000038146973}
 --- !u!1 &1417021273
 GameObject:
   m_ObjectHideFlags: 0
@@ -138282,7 +140068,10 @@ GameObject:
   - component: {fileID: 1435326184}
   - component: {fileID: 1435326186}
   - component: {fileID: 1435326185}
-  m_Layer: 2
+  - component: {fileID: 1435326189}
+  - component: {fileID: 1435326188}
+  - component: {fileID: 1435326187}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -138360,6 +140149,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1435326183}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1435326187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435326183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041D\u043E\u0436"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1435326188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435326183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 845082787}
+  CompartmentIndex: 0
+--- !u!65 &1435326189
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435326183}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.00000023841858}
 --- !u!1 &1436815593
 GameObject:
   m_ObjectHideFlags: 0
@@ -141587,7 +143430,10 @@ GameObject:
   - component: {fileID: 1488076263}
   - component: {fileID: 1488076265}
   - component: {fileID: 1488076264}
-  m_Layer: 2
+  - component: {fileID: 1488076268}
+  - component: {fileID: 1488076267}
+  - component: {fileID: 1488076266}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -141665,6 +143511,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1488076262}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1488076266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488076262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0412\u0438\u043B\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1488076267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488076262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 190259031}
+  CompartmentIndex: 1
+--- !u!65 &1488076268
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1488076262}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.0000019073486}
 --- !u!1 &1490775403
 GameObject:
   m_ObjectHideFlags: 0
@@ -145073,7 +146973,10 @@ GameObject:
   - component: {fileID: 1528098483}
   - component: {fileID: 1528098485}
   - component: {fileID: 1528098484}
-  m_Layer: 2
+  - component: {fileID: 1528098488}
+  - component: {fileID: 1528098487}
+  - component: {fileID: 1528098486}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145151,6 +147054,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1528098482}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1528098486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528098482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0412\u0438\u043B\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1528098487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528098482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 610263660}
+  CompartmentIndex: 1
+--- !u!65 &1528098488
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528098482}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.00000047683716}
 --- !u!1 &1528105865
 GameObject:
   m_ObjectHideFlags: 0
@@ -148199,7 +150156,10 @@ GameObject:
   - component: {fileID: 1570200223}
   - component: {fileID: 1570200225}
   - component: {fileID: 1570200224}
-  m_Layer: 2
+  - component: {fileID: 1570200228}
+  - component: {fileID: 1570200227}
+  - component: {fileID: 1570200226}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -148277,6 +150237,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1570200222}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1570200226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1570200222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041D\u043E\u0436"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1570200227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1570200222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 157060029}
+  CompartmentIndex: 0
+--- !u!65 &1570200228
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1570200222}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1572142533
 GameObject:
   m_ObjectHideFlags: 0
@@ -150150,6 +152164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
   Drawer: {fileID: 610263660}
+  CompartmentIndex: -1
 --- !u!65 &1595109274
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -154776,7 +156791,10 @@ GameObject:
   - component: {fileID: 1649252357}
   - component: {fileID: 1649252359}
   - component: {fileID: 1649252358}
-  m_Layer: 2
+  - component: {fileID: 1649252362}
+  - component: {fileID: 1649252361}
+  - component: {fileID: 1649252360}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -154854,6 +156872,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1649252356}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1649252360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649252356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041B\u043E\u0436\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1649252361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649252356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1904017723}
+  CompartmentIndex: 2
+--- !u!65 &1649252362
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649252356}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1649820654
 GameObject:
   m_ObjectHideFlags: 0
@@ -155190,6 +157262,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
   Drawer: {fileID: 190259031}
+  CompartmentIndex: -1
 --- !u!65 &1650768188
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -162340,6 +164413,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
   Drawer: {fileID: 1904017723}
+  CompartmentIndex: -1
 --- !u!65 &1720203726
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -164907,7 +166981,10 @@ GameObject:
   - component: {fileID: 1753331284}
   - component: {fileID: 1753331286}
   - component: {fileID: 1753331285}
-  m_Layer: 2
+  - component: {fileID: 1753331289}
+  - component: {fileID: 1753331288}
+  - component: {fileID: 1753331287}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -164985,6 +167062,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1753331283}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1753331287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1753331283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0414\u0435\u0440\u0435\u0432\u044F\u043D\u043D\u0430\u044F
+    \u043B\u043E\u043F\u0430\u0442\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1753331288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1753331283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 157060029}
+  CompartmentIndex: 3
+--- !u!65 &1753331289
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1753331283}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.00000047683716}
 --- !u!1 &1753973464
 GameObject:
   m_ObjectHideFlags: 0
@@ -166064,7 +168196,10 @@ GameObject:
   - component: {fileID: 1760893249}
   - component: {fileID: 1760893251}
   - component: {fileID: 1760893250}
-  m_Layer: 2
+  - component: {fileID: 1760893254}
+  - component: {fileID: 1760893253}
+  - component: {fileID: 1760893252}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -166142,6 +168277,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1760893248}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1760893252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760893248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041B\u043E\u0436\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1760893253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760893248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1052658898}
+  CompartmentIndex: 2
+--- !u!65 &1760893254
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760893248}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1760978545
 GameObject:
   m_ObjectHideFlags: 0
@@ -176945,7 +179134,10 @@ GameObject:
   - component: {fileID: 1887352346}
   - component: {fileID: 1887352348}
   - component: {fileID: 1887352347}
-  m_Layer: 2
+  - component: {fileID: 1887352351}
+  - component: {fileID: 1887352350}
+  - component: {fileID: 1887352349}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177023,6 +179215,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1887352345}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1887352349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1887352345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041D\u043E\u0436"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1887352350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1887352345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1052658898}
+  CompartmentIndex: 0
+--- !u!65 &1887352351
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1887352345}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1887601079
 GameObject:
   m_ObjectHideFlags: 0
@@ -178027,7 +180273,10 @@ GameObject:
   - component: {fileID: 1895219818}
   - component: {fileID: 1895219820}
   - component: {fileID: 1895219819}
-  m_Layer: 2
+  - component: {fileID: 1895219823}
+  - component: {fileID: 1895219822}
+  - component: {fileID: 1895219821}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -178105,6 +180354,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1895219817}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1895219821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895219817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041D\u043E\u0436"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1895219822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895219817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1904017723}
+  CompartmentIndex: 0
+--- !u!65 &1895219823
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1895219817}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1896306610
 GameObject:
   m_ObjectHideFlags: 0
@@ -180995,7 +183298,10 @@ GameObject:
   - component: {fileID: 1922154506}
   - component: {fileID: 1922154508}
   - component: {fileID: 1922154507}
-  m_Layer: 2
+  - component: {fileID: 1922154511}
+  - component: {fileID: 1922154510}
+  - component: {fileID: 1922154509}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -181073,6 +183379,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1922154505}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1922154509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922154505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0412\u0438\u043B\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1922154510
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922154505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1812723112}
+  CompartmentIndex: 1
+--- !u!65 &1922154511
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922154505}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.0000019073486}
 --- !u!1 &1923636441
 GameObject:
   m_ObjectHideFlags: 0
@@ -182960,7 +185320,10 @@ GameObject:
   - component: {fileID: 1944250589}
   - component: {fileID: 1944250591}
   - component: {fileID: 1944250590}
-  m_Layer: 2
+  - component: {fileID: 1944250594}
+  - component: {fileID: 1944250593}
+  - component: {fileID: 1944250592}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183038,6 +185401,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1944250588}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1944250592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1944250588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041B\u043E\u0436\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &1944250593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1944250588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 845082787}
+  CompartmentIndex: 2
+--- !u!65 &1944250594
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1944250588}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.00000047683716}
 --- !u!1 &1944467367
 GameObject:
   m_ObjectHideFlags: 0
@@ -190248,7 +192665,10 @@ GameObject:
   - component: {fileID: 2025162628}
   - component: {fileID: 2025162630}
   - component: {fileID: 2025162629}
-  m_Layer: 2
+  - component: {fileID: 2025162633}
+  - component: {fileID: 2025162632}
+  - component: {fileID: 2025162631}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190326,6 +192746,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2025162627}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2025162631
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025162627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u041D\u043E\u0436"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &2025162632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025162627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1710191122}
+  CompartmentIndex: 0
+--- !u!65 &2025162633
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025162627}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.00000023841858}
 --- !u!1 &2026775513
 GameObject:
   m_ObjectHideFlags: 0
@@ -194516,7 +196990,10 @@ GameObject:
   - component: {fileID: 2073790853}
   - component: {fileID: 2073790855}
   - component: {fileID: 2073790854}
-  m_Layer: 2
+  - component: {fileID: 2073790858}
+  - component: {fileID: 2073790857}
+  - component: {fileID: 2073790856}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -194594,6 +197071,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2073790852}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2073790856
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073790852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0414\u0435\u0440\u0435\u0432\u044F\u043D\u043D\u0430\u044F
+    \u043B\u043E\u043F\u0430\u0442\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &2073790857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073790852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1052658898}
+  CompartmentIndex: 3
+--- !u!65 &2073790858
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2073790852}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0.0000009536743}
 --- !u!1 &2075244927
 GameObject:
   m_ObjectHideFlags: 0
@@ -196726,7 +199258,10 @@ GameObject:
   - component: {fileID: 2094787565}
   - component: {fileID: 2094787567}
   - component: {fileID: 2094787566}
-  m_Layer: 2
+  - component: {fileID: 2094787570}
+  - component: {fileID: 2094787569}
+  - component: {fileID: 2094787568}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -196804,6 +199339,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2094787564}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2094787568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094787564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0414\u0435\u0440\u0435\u0432\u044F\u043D\u043D\u0430\u044F
+    \u043B\u043E\u043F\u0430\u0442\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &2094787569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094787564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1904017723}
+  CompartmentIndex: 3
+--- !u!65 &2094787570
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094787564}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.0000019073486}
 --- !u!1 &2095154310
 GameObject:
   m_ObjectHideFlags: 0
@@ -198913,7 +201503,10 @@ GameObject:
   - component: {fileID: 2112597557}
   - component: {fileID: 2112597559}
   - component: {fileID: 2112597558}
-  m_Layer: 2
+  - component: {fileID: 2112597562}
+  - component: {fileID: 2112597561}
+  - component: {fileID: 2112597560}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -198991,6 +201584,60 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2112597556}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2112597560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2112597556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0412\u0438\u043B\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &2112597561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2112597556}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 1904017723}
+  CompartmentIndex: 1
+--- !u!65 &2112597562
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2112597556}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: -0.0000019073486}
 --- !u!1 &2113543753
 GameObject:
   m_ObjectHideFlags: 0
@@ -199180,7 +201827,10 @@ GameObject:
   - component: {fileID: 2114813303}
   - component: {fileID: 2114813305}
   - component: {fileID: 2114813304}
-  m_Layer: 2
+  - component: {fileID: 2114813308}
+  - component: {fileID: 2114813307}
+  - component: {fileID: 2114813306}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -199258,6 +201908,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2114813302}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2114813306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2114813302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0414\u0435\u0440\u0435\u0432\u044F\u043D\u043D\u0430\u044F
+    \u043B\u043E\u043F\u0430\u0442\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &2114813307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2114813302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 845082787}
+  CompartmentIndex: 3
+--- !u!65 &2114813308
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2114813302}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2115909665
 GameObject:
   m_ObjectHideFlags: 0
@@ -201134,7 +203839,10 @@ GameObject:
   - component: {fileID: 2136065008}
   - component: {fileID: 2136065010}
   - component: {fileID: 2136065009}
-  m_Layer: 2
+  - component: {fileID: 2136065013}
+  - component: {fileID: 2136065012}
+  - component: {fileID: 2136065011}
+  m_Layer: 0
   m_Name: Cell Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -201212,6 +203920,61 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2136065007}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2136065011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2136065007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57f4062289d0e734ea31f6325785410a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Player.PrototypeInteractable
+  DisplayName: "\u042F\u0447\u0435\u0439\u043A\u0430: \u0414\u0435\u0440\u0435\u0432\u044F\u043D\u043D\u0430\u044F
+    \u043B\u043E\u043F\u0430\u0442\u043A\u0430"
+  IsPlayerStation: 0
+  Team: 0
+  FocusPoint: {fileID: 0}
+  InteractionDistanceOverride: 0
+  Description: "\u041F\u041A\u041C \u2014 \u0432\u0435\u0440\u043D\u0443\u0442\u044C
+    \u0441\u0432\u043E\u0439 \u0438\u043D\u0441\u0442\u0440\u0443\u043C\u0435\u043D\u0442"
+--- !u!114 &2136065012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2136065007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd570a975fdd1740b610e36d42ddb8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Ingredients.ToolDrawerTarget
+  Drawer: {fileID: 789904317}
+  CompartmentIndex: 3
+--- !u!65 &2136065013
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2136065007}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.9999998, y: 1, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2136527828
 GameObject:
   m_ObjectHideFlags: 0

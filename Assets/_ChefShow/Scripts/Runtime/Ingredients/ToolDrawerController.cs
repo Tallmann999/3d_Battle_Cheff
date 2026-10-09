@@ -47,6 +47,12 @@ namespace ChefShow.Ingredients
                     if (tool == null || tool.Drawer != drawer || tool.Kind != (KitchenToolKind)(i + 1)
                         || tool.Body == null || tool.PickupCollider == null || tool.GetComponent<PrototypeInteractable>() == null)
                         return "Не настроены физические инструменты ящика " + drawer.StationId;
+                    var bottom = drawer.Compartments[i] == null ? null : drawer.Compartments[i].Find("Cell Bottom");
+                    var cell = bottom == null ? null : bottom.GetComponent<ToolDrawerTarget>();
+                    var collider = bottom == null ? null : bottom.GetComponent<BoxCollider>();
+                    if (cell == null || cell.Drawer != drawer || cell.CompartmentIndex != i || collider == null
+                        || !collider.isTrigger || bottom.GetComponent<PrototypeInteractable>() == null)
+                        return "Не настроена ячейка возврата " + drawer.StationId + "/" + i;
                 }
             }
             return null;
@@ -127,6 +133,32 @@ namespace ChefShow.Ingredients
             return consumed;
         }
 
+        // Called before food cancellation/focus exit so a single RMB has one owner.
+        public bool ReturnAimedTool()
+        {
+            if (equipped == null) return false;
+            bootstrap.Player.RefreshTarget();
+            var target = bootstrap.Player.Target;
+            var cell = target == null ? null : target.GetComponent<ToolDrawerTarget>();
+            var stored = target == null ? null : target.GetComponent<KitchenTool>();
+            int index = cell != null ? cell.CompartmentIndex
+                : stored != null && stored.Placement == KitchenToolPlacement.Stored ? (int)stored.Kind - 1 : -1;
+            if (index < 0 || index > 3) return false;
+            var drawer = cell != null ? cell.Drawer : stored.Drawer;
+            if (!Own(drawer)) Notify("Это ячейка другого участника.");
+            else if (!drawer.CanTakeTools) Notify("Сначала полностью откройте ящик.");
+            else if (equipped.Drawer != drawer || (int)equipped.Kind - 1 != index)
+                Notify("Наведите на свою ячейку: " + Name(Equipped) + ".");
+            else
+            {
+                var previous = Equipped;
+                equipped.ReturnHome(); equipped = null; message = null;
+                bootstrap.Inventory.PresentFoodHand(false, LeftFoodHand);
+                Publish(previous);
+            }
+            return true;
+        }
+
         private static ToolDrawer DrawerTarget(PrototypeInteractable target)
         {
             if (target == null) return null;
@@ -144,6 +176,15 @@ namespace ChefShow.Ingredients
         public string Describe(PrototypeInteractable target)
         {
             if (message != null && bootstrap.Run.Clock.SimulationTime < messageUntil) return message;
+            var cell = target == null ? null : target.GetComponent<ToolDrawerTarget>();
+            if (cell != null && cell.CompartmentIndex >= 0 && equipped != null)
+            {
+                if (!Own(cell.Drawer)) return "Ячейка другого участника";
+                if (!cell.Drawer.CanTakeTools) return "Сначала откройте ящик";
+                return cell.Drawer == equipped.Drawer && cell.CompartmentIndex == (int)equipped.Kind - 1
+                    ? "ПКМ — Положить " + Accusative(Equipped) + " · E — закрыть ящик"
+                    : "Ячейка: " + Name((KitchenToolKind)(cell.CompartmentIndex + 1));
+            }
             var drawer = DrawerTarget(target);
             if (drawer != null) return Own(drawer) ? "E — " + (drawer.IsOpen ? "Закрыть ящик" : "Открыть ящик") : "Ящик другого участника";
             var tool = target == null ? null : target.GetComponent<KitchenTool>();
@@ -156,7 +197,7 @@ namespace ChefShow.Ingredients
         }
 
         public string Summary => Equipped == KitchenToolKind.None ? "Правая рука: продукт / свободна"
-            : "Правая рука: " + Name(Equipped) + " · G — уронить";
+            : "Правая рука: " + Name(Equipped) + " · ПКМ по своей ячейке — положить · G — уронить";
         public static string Name(KitchenToolKind kind) => kind == KitchenToolKind.Knife ? "Нож"
             : kind == KitchenToolKind.Fork ? "Вилка" : kind == KitchenToolKind.Spoon ? "Ложка"
             : kind == KitchenToolKind.Spatula ? "Деревянная лопатка" : "Нет";

@@ -113,15 +113,37 @@ namespace ChefShow.Tests
                 Assert.That(state.Version,Is.EqualTo(version)); Assert.That(state.Held,Is.SameAs(source));
                 config.DosesPerPress=0; Assert.That(config.Validate(),Is.Not.Null); Assert.Throws<InvalidOperationException>(()=>config.Capture());
                 config.DosesPerPress=1; config.OilIngredientId=config.SaltIngredientId; Assert.That(config.Validate(),Is.Not.Null);
-                Assert.Throws<ArgumentException>(()=>new CookingSettings(3,30,45,60,.5f,1,2,3,new[]{"beef"},new[]{"potato"},0));
+                Assert.Throws<ArgumentException>(()=>new CookingSettings(3,30,45,60,.5f,1,2,3,0));
             }
             finally { UnityEngine.Object.DestroyImmediate(salt); UnityEngine.Object.DestroyImmediate(unknown); }
+        }
+        [Test] public void EverySingleFoodCanEnterEitherCookerWithoutChangingPreparationOrIdentity()
+        {
+            foreach (var id in new[] { "beef", "potato", "carrot", "onion", "egg", "cheese", "flour", "butter", "sugar", "apple" })
+            {
+                var definition = Ingredient(id);
+                try
+                {
+                    foreach (var kind in new[] { CookerKind.Pan, CookerKind.Pot })
+                    {
+                        var food = Hand(definition); var before = food.Snapshot();
+                        Assert.That(state.TryPlaceCooker(kind, out var reason), Is.True, id + ": " + reason);
+                        Assert.That(state.Cooker(kind).Single(), Is.SameAs(food));
+                        Assert.That(food.Preparation, Is.EqualTo(before.Preparation));
+                        Assert.That(food.Id, Is.EqualTo(before.Id)); Assert.That(food.Quantity, Is.EqualTo(1));
+                        state.TryTakeCooker(kind, 0, out _); state.TryRemove(false, out _);
+                    }
+                    Assert.That(state.CookingRules.Accepts((CookerKind)99, definition), Is.False);
+                }
+                finally { UnityEngine.Object.DestroyImmediate(definition); }
+            }
         }
         [Test] public void CapacityAndCompatibilityRejectWithoutLosingTheHeldFood()
         {
             var package=Hand(carton); int version=state.Version;
             Assert.That(state.TryPlaceCooker(CookerKind.Pan,out _),Is.False);Assert.That(state.Held,Is.SameAs(package));Assert.That(state.Version,Is.EqualTo(version));state.TryRemove(false,out _);
-            var whole=Hand(potato);Assert.That(state.TryPlaceCooker(CookerKind.Pot,out _),Is.False);Assert.That(state.Held,Is.SameAs(whole));state.TryRemove(false,out _);
+            var whole=Hand(potato);Assert.That(state.TryPlaceCooker(CookerKind.Pot,out _),Is.True);
+            Assert.That(whole.Preparation,Is.EqualTo(PreparationState.Whole));state.TryTakeCooker(CookerKind.Pot,0,out _);state.TryRemove(false,out _);
             for(int i=0;i<3;i++){Add(beef,CookerKind.Pan);Add(potato,CookerKind.Pot,true);}
             var fourth=Hand(beef);version=state.Version;Assert.That(state.TryPlaceCooker(CookerKind.Pan,out _),Is.False);
             Assert.That(state.Held,Is.SameAs(fourth));Assert.That(state.Version,Is.EqualTo(version));Assert.That(state.Cooker(CookerKind.Pan).Count,Is.EqualTo(3));
@@ -170,11 +192,11 @@ namespace ChefShow.Tests
         [Test] public void CapturedProfilesAreIndependentAndHigherHeatRunsFaster()
         {
             var pan=Add(beef,CookerKind.Pan);var pot=Add(potato,CookerKind.Pot,true);
-            config.ReadySeconds=1000;config.PanIngredients[0]="changed";state.TryCycleHeat(CookerKind.Pan,out _);
+            config.ReadySeconds=1000;config.LowRate=7;state.TryCycleHeat(CookerKind.Pan,out _);
             state.TryCycleHeat(CookerKind.Pot,out _);state.TryCycleHeat(CookerKind.Pot,out _);state.TryCycleHeat(CookerKind.Pot,out _);
             run.Tick(10);Assert.That(pan.HeatProgress,Is.EqualTo(5.5f).Within(.001f));Assert.That(pot.HeatProgress,Is.EqualTo(17.5f).Within(.001f));
             Assert.That(state.CookingRules.Ready,Is.EqualTo(30));Assert.That(state.CookingRules.Accepts(CookerKind.Pan,beef),Is.True);
-            Assert.Throws<ArgumentException>(()=>new CookingSettings(3,30,20,60,.5f,1,2,3,new[]{"beef"},new[]{"potato"}));
+            Assert.Throws<ArgumentException>(()=>new CookingSettings(3,30,20,60,.5f,1,2,3));
         }
     }
 }

@@ -26,10 +26,12 @@ namespace ChefShow.Inventory
         {
             if (!CookerActive(kind, out reason)) return false;
             if (Held == null) { reason = "Сначала возьмите продукт."; return false; }
-            if (Held.PackedIngredient != null || Held.Ingredient.IsDoseContainer || !cooking.Accepts(kind, Held.Ingredient))
-            { reason = "Этот продукт не подходит для прибора. Упаковки откройте в лотке."; return false; }
-            if (kind == CookerKind.Pot && Held.Preparation != PreparationState.Chopped)
-            { reason = "Для гарнира сначала нарежьте продукт на доске."; return false; }
+            if (Held.PackedIngredient != null)
+            { reason = "Это закрытая упаковка. Откройте её ЛКМ в лотке."; return false; }
+            if (Held.Ingredient.IsDoseContainer)
+            { reason = "Контейнер остаётся в руке. ЛКМ по еде добавляет одну дозу."; return false; }
+            if (!cooking.Accepts(kind, Held.Ingredient))
+            { reason = "В прибор можно положить отдельный продукт."; return false; }
             var list = cookers[(int)kind];
             if (list.Count >= cooking.Capacity) { reason = "Прибор заполнен: " + cooking.Capacity + "/" + cooking.Capacity + "."; return false; }
             var food = Held; food.Location = PortionLocation.Appliance; food.SocketIndex = (int)kind;

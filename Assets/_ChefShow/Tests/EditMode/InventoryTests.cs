@@ -218,23 +218,35 @@ namespace ChefShow.Tests
         }
 
         [Test]
-        public void ReadyDishAreaRejectsRawChoppedPackagesAndDirtyFoodWithoutLosingHeldItem()
+        public void DishAreaAcceptsExperimentalFoodWithoutFixingItAndRejectsPackagesAndContainers()
         {
             Move(BasketPlacement.Carried); Fill(potato, 1); Fill(sack, 1); Move(BasketPlacement.Station); Unload();
-            state.TryTakeTray(0, out _); var food=state.Held; int version=state.Version;
-            Assert.That(state.TryPlaceSocket(1, out _), Is.False); Assert.That(state.Held, Is.SameAs(food));
-            Assert.That(state.Version, Is.EqualTo(version)); Assert.That(state.Socket(1), Is.Null);
-            state.TryPlaceSocket(0, out _); for(int i=0;i<6;i++) state.TryChop(KitchenToolKind.Knife, out _);
-            state.TryTakeSocket(0, out _); Assert.That(state.TryPlaceSocket(1, out _), Is.False);
-            Assert.That(food.Preparation, Is.EqualTo(PreparationState.Chopped));
-            typeof(FoodPortion).GetProperty(nameof(FoodPortion.Cooking)).SetValue(food, CookState.Cooked);
+            state.TryTakeTray(0, out _); var food = state.Held; var snapshot = food.Snapshot();
+            Assert.That(state.TryPlaceSocket(1, out _), Is.True);
+            Assert.That(food.Cooking, Is.EqualTo(CookState.Raw));
+            state.TryTakeSocket(1, out _); state.TryPlaceSocket(0, out _);
+            for (int i = 0; i < 6; i++) state.TryChop(KitchenToolKind.Knife, out _);
+            state.TryTakeSocket(0, out _);
+            typeof(FoodPortion).GetProperty(nameof(FoodPortion.Cooking)).SetValue(food, CookState.Burned);
             typeof(FoodPortion).GetProperty(nameof(FoodPortion.Contaminated)).SetValue(food, true);
-            Assert.That(state.TryPlaceSocket(1, out _), Is.False); Assert.That(state.Held, Is.SameAs(food));
-            typeof(FoodPortion).GetProperty(nameof(FoodPortion.Contaminated)).SetValue(food, false);
-            Assert.That(state.TryPlaceSocket(1, out _), Is.True); Assert.That(state.Socket(1), Is.SameAs(food));
-            state.TryTakeTray(0, out _); var package=state.Held;
-            Assert.That(state.TryPlaceSocket(1, out _), Is.False); Assert.That(state.Held, Is.SameAs(package));
-            Assert.That(InventoryState.IsReadyForServing(package), Is.False); state.TryCancelHeld(out _); Conserved();
+            Assert.That(state.TryPlaceSocket(1, out _), Is.True);
+            Assert.That(food.Contaminated, Is.True); Assert.That(food.Cooking, Is.EqualTo(CookState.Burned));
+            Assert.That(food.Id, Is.EqualTo(snapshot.Id)); Assert.That(food.ChopPresses, Is.EqualTo(6));
+            Assert.That(snapshot.Cooking, Is.EqualTo(CookState.Raw)); Assert.That(snapshot.Contaminated, Is.False);
+            state.TryTakeSocket(1, out _); state.TryPutInTray(out _);
+            state.TryTakeTray(0, out _); var package = state.Held; int version = state.Version;
+            Assert.That(state.TryPlaceSocket(1, out var reason), Is.False); Assert.That(reason, Does.Contain("Упаковки"));
+            Assert.That(state.Held, Is.SameAs(package)); Assert.That(state.Version, Is.EqualTo(version));
+            Assert.That(InventoryState.CanPlaceOnServingSurface(package), Is.False); state.TryCancelHeld(out _);
+            var salt = ScriptableObject.CreateInstance<IngredientDefinition>(); salt.Id="salt"; salt.IsDoseContainer=true;
+            try
+            {
+                Move(BasketPlacement.Carried); Fill(salt, 1); Move(BasketPlacement.Station); Unload();
+                state.TryTakeTray(2, out _); var source=state.Held;
+                Assert.That(state.TryPlaceSocket(1, out _), Is.False); Assert.That(state.Held, Is.SameAs(source));
+                state.TryCancelHeld(out _); Conserved();
+            }
+            finally { UnityEngine.Object.DestroyImmediate(salt); }
         }
 
         [Test]

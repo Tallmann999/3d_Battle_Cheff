@@ -169,6 +169,10 @@ CookingController направляет Primary на дозирование то�
 
 T-034: Edit25/25, Play24/24 PASS. После TestRunner EditorOptions1 точечно восстановлено 0; ошибок Console нет. Миска/духовка и judging ещё впереди.
 
-## Подготовленная поправка 2026-10-09 (ещё не применена)
+## Реализованная поправка D-025/D-026 — 2026-10-09
 
-D-025 разделяет возможность переноса еды и соответствие рецепту. D-026 требует обработать ПКМ-возврат инструмента раньше возврата еды/выхода камеры из фокуса; цели — существующие ячейки ящика. Текущий игровой код пока прежний: патч вне Assets, ожидается остановка авторского Play. История последнего прибора пока недостаточна для будущих рецептов с последовательной варкой/жаркой; полный журнал способов — следующий срез F-006.
+CookingSettings.Accepts проверяет вид прибора и отдельный пищевой ingredient без Contents/IsDoseContainer; списки рецепта и обязательная нарезка Pot удалены из переноса. TryPlaceCooker отдельно сообщает о пакете/контейнере, сохраняет capacity/access/таймер. CanPlaceOnServingSurface разрешает съедобную порцию независимо от качества; IsReadyForServing остаётся отдельным качественным признаком. История последовательных способов/смеси ещё требуют расширения F-006.
+
+GameBootstrap.Player.CancelInteraction сначала вызывает ToolDrawerController.ReturnAimedTool, затем Inventory.CancelHeld; потреблённый ПКМ не отменяет продукт/фокус. ToolDrawerTarget.CompartmentIndex=-1 для панели/дна,0…3 для Cell Bottom. В пустой ячейке trigger/PrototypeInteractable сохранены; занятая ячейка определяется исходным KitchenTool. Own/open-ready/home-kind проверки предотвращают потери. Возвращается тот же объект, после него еда показывается справа. HUD выбирает [E]/[ПКМ] и русский текст над прицелом.
+
+Native InstallToolReturns добавил48×3 компонентов на существующие Cell Bottom каждой сцены; новые игровые GameObjects/Transforms не создавались. Все2248 исходных GameObjects и2248 Transform/RectTransform записи каждой сцены сохранены; all original fileIDs present. GUID/геометрия/камера/HideFlags прежние. **EditMode 26/26 и Play Mode 27/27 PASS**; T-035. [Edit XML](../TestResults/free-cooking-editmode-final.xml), [Play XML](../TestResults/free-cooking-playmode-final.xml), [Edit proof](../TestResults/free-cooking-edit-proof.json). Временные TestRunner EditorOptions восстановлены0, AutoPauseTrue.

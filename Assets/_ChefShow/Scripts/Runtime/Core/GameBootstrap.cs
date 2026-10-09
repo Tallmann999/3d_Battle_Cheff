@@ -83,6 +83,7 @@ namespace ChefShow.Core
                 if (toolError != null || Inventory == null)
                 { Debug.LogError("Chef Show: " + (toolError ?? "Ящику нужен инвентарь."), this); enabled = false; return; }
                 Tools.Initialize(this, input);
+                Player.CancelInteraction = () => Tools.ReturnAimedTool() || Inventory.CancelHeld();
             }
             if (Preparation != null)
             {

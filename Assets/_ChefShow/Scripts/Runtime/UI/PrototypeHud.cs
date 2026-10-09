@@ -55,11 +55,14 @@ namespace ChefShow.UI
                 Context.text = "Пробный таймер завершён. Esc → Начать выпуск заново.";
             if (InteractionKey != null)
             {
-                bool show = !paused && run.RemainingSeconds > 0 && Context.text.StartsWith("E — ");
+                bool rightClick = Context.text.StartsWith("ПКМ — ");
+                bool show = !paused && run.RemainingSeconds > 0 && (rightClick || Context.text.StartsWith("E — "));
                 InteractionKey.enabled = show;
                 if (show)
                 {
-                    Context.text = Context.text.Substring(4);
+                    InteractionKey.text = rightClick ? "[ПКМ]" : "[E]";
+                    InteractionKey.rectTransform.sizeDelta = new Vector2(rightClick ? 76 : 32, 26);
+                    Context.text = Context.text.Substring(rightClick ? 6 : 4);
                     InteractionKey.color = new Color(1, .88f, .32f, .45f + .55f * (.5f + .5f * Mathf.Sin(Time.unscaledTime * 5)));
                 }
             }

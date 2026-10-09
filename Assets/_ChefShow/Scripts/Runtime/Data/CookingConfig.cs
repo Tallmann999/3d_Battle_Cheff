@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using ChefShow.Cooking;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -18,8 +17,6 @@ namespace ChefShow.Data
         [Min(.01f)] public float MediumRate = 1;
         [Min(.01f)] public float HighRate = 1.75f;
         [Range(0, 10)] public int PotStirs = 3;
-        public string[] PanIngredients = { "beef", "carrot", "onion" };
-        public string[] PotIngredients = { "potato", "carrot", "onion" };
         [Header("Дискретные дозы; контейнер остаётся в руке")]
         public string SaltIngredientId = "salt";
         public string OilIngredientId = "oil";
@@ -41,8 +38,6 @@ namespace ChefShow.Data
                 || !(LowRate < MediumRate && MediumRate < HighRate)) return "Скорости должны возрастать: слабый < средний < сильный.";
             if (!Positive(TableWidth) || TableWidth < 3.2f || !Positive(TableDepth) || TableDepth < 2.1f || !Positive(ApplianceInteractionDistance)
                 || ApplianceInteractionDistance > 5) return "Проверьте ширину/глубину стола и дистанцию приборов (до 5 м).";
-            if (PanIngredients == null || PotIngredients == null || PanIngredients.Length == 0 || PotIngredients.Length == 0
-                || PanIngredients.Concat(PotIngredients).Any(string.IsNullOrWhiteSpace)) return "Нужны ID продуктов для обоих приборов.";
             if (DosesPerPress < 1 || DosesPerPress > 10 || string.IsNullOrWhiteSpace(SaltIngredientId)
                 || string.IsNullOrWhiteSpace(OilIngredientId) || SaltIngredientId == OilIngredientId)
                 return "Проверьте разные ID соли/масла и число доз (1–10).";
@@ -53,7 +48,7 @@ namespace ChefShow.Data
         {
             var error = Validate(); if (error != null) throw new InvalidOperationException(error);
             return new CookingSettings(Capacity, ReadySeconds, OvercookedSeconds, BurnedSeconds,
-                LowRate, MediumRate, HighRate, PotStirs, PanIngredients, PotIngredients,
+                LowRate, MediumRate, HighRate, PotStirs,
                 DosesPerPress, SaltIngredientId, OilIngredientId);
         }
     }
