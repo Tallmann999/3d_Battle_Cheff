@@ -55,3 +55,7 @@ MCP — Editor-пакет и локальный процесс, поэтому �
 ## Результат настройки
 
 2026-10-06: Python MCP 10.0.0 запущен, endpoint и список MCP resources проверены. Конфигурация Codex добавлена. После Refresh мост подключился к `Unity_3D_Battle_Cheff@2c173f3a9cfcaaec`, Unity 6000.2.14f1. Через настоящий MCP проверены editor state, selection, активная сохранённая сцена и Hierarchy; выполнены Editor-команда пространственной правки, добавление URP Camera Data и сохранение сцены. Управление окном не использовалось. Проверки запущены через MCP: EditMode 5/5, Play Mode 4/4 PASS. Редактор возвращён в Edit Mode с рабочей сценой. Новый кадр: `TestResults/layout-overview.png`. Техническое соединение и текущий пространственный срез проверены; полный gameplay ещё не реализован.
+
+## Системный proxy и локальный MCP — 9 октября 2026
+
+Если /health отвечает 200 напрямую, а Python SDK на /mcp получает 503, проверьте обход системного proxy только для localhost. Рабочий способ этого сеанса: `$env:NO_PROXY='127.0.0.1,localhost'` перед вызовом клиента. Не менять глобальный proxy, не перезапускать Editor/службу без отдельной причины. `execute_code` принимает JSON action/code; `execute_custom_tool` — tool_name/parameters для иной команды. На 9 октября соединение/preflight/native-save/tests проверены без управления окном.

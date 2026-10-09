@@ -51,6 +51,31 @@ namespace ChefShow.Inventory
             heat[(int)kind] = (HeatLevel)(((int)heat[(int)kind] + 1) % 4); Version++;
             run.Events.Publish(new CookingChanged(run, "heat_changed", kind, heat[(int)kind], null, CookState.Raw)); return true;
         }
+        public bool TryApplySeasoning(CookerKind kind, int index, out string reason)
+        {
+            if (!CookerActive(kind, out reason)) return false;
+            SeasoningKind seasoning;
+            if (Held == null || Held.PackedIngredient != null || !cooking.TrySeasoning(Held.Ingredient, out seasoning))
+            { reason = "Возьмите соль или масло из лотка: E."; return false; }
+            if (seasoning == SeasoningKind.Oil && kind != CookerKind.Pan)
+            { reason = "Масло добавляется только в сковороду."; return false; }
+            var list = cookers[(int)kind];
+            if (index < 0 || index >= list.Count)
+            { reason = "Наведите прицел на конкретную порцию в приборе."; return false; }
+            var food = list[index]; var source = Held;
+            int current = seasoning == SeasoningKind.Salt ? food.SaltDoses : food.OilDoses;
+            if (current > int.MaxValue - cooking.DosesPerPress)
+            { reason = "Больше доз добавить нельзя."; return false; }
+            if (seasoning == SeasoningKind.Salt) food.SaltDoses += cooking.DosesPerPress;
+            else food.OilDoses += cooking.DosesPerPress;
+            food.Contaminated |= source.Contaminated;
+            food.RecordOperation("seasoning_applied", run.Clock.SimulationTime);
+            source.RecordOperation("seasoning_dispensed", run.Clock.SimulationTime);
+            Version++;
+            // Commit first; callbacks cannot alter the independent fact.
+            run.Events.Publish(new SeasoningApplied(run, kind, seasoning, cooking.DosesPerPress, food, source));
+            return true;
+        }
         public bool TryStir(CookerKind kind, KitchenToolKind tool, out string reason)
         {
             if (!CookerActive(kind, out reason)) return false;

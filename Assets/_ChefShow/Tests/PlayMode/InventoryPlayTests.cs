@@ -789,6 +789,94 @@ namespace ChefShow.Tests
             Assert.That(State.Held,Is.Null);Assert.That(State.Cooker(CookerKind.Pan).Count,Is.EqualTo(3));
         }
 
+        [UnityTest]
+        public IEnumerator RealInputsDoseSelectedPanFoodAndKeepCountersThroughServingTransfer()
+        {
+            yield return TakeBasket();
+            foreach(var id in new[]{"beef","beef","salt","oil"})
+            {
+                Teleport(new Vector3(Stock(id).x,.05f,10.3f)); yield return Aim(Stock(id)); yield return Press(Key.E);
+            }
+            yield return DockAndDump(); var pan=Appliance(CookerKind.Pan);
+            for(int i=0;i<2;i++)
+            { yield return Aim(TrayPoint(0)); yield return Press(Key.E); yield return Aim(pan.transform.position+Vector3.up*.025f); yield return Press(Key.E); }
+            Assert.That(State.Cooker(CookerKind.Pan).Count,Is.EqualTo(2));
+            var first=State.Cooker(CookerKind.Pan)[0]; var second=State.Cooker(CookerKind.Pan)[1];
+            var before=first.Snapshot(); var facts=new System.Collections.Generic.List<SeasoningApplied>();
+            using(bootstrap.Run.Events.Subscribe<SeasoningApplied>(f=>facts.Add(f)))
+            {
+                yield return Aim(TrayPoint(0)); yield return Press(Key.E); var salt=State.Held;
+                Assert.That(salt.Ingredient.Id,Is.EqualTo("salt")); yield return Aim(CookFoodPoint(pan,0));
+                Assert.That(bootstrap.Hud.Context.text,Does.Contain("ЛКМ — Добавить дозу соли"));
+                Assert.That(bootstrap.Hud.InteractionKey.enabled,Is.False);
+                InputSystem.QueueStateEvent(mouse,new MouseState().WithButton(MouseButton.Left));
+                for(int frame=0;frame<5;frame++) yield return null;
+                Assert.That(first.SaltDoses,Is.EqualTo(1),"Удержание не повторяет дозу.");
+                InputSystem.QueueStateEvent(mouse,new MouseState()); yield return null; yield return null;
+                yield return Click(); Assert.That(first.SaltDoses,Is.EqualTo(2)); Assert.That(second.SaltDoses,Is.Zero);
+                yield return Press(Key.E); Assert.That(State.Held,Is.SameAs(salt)); Assert.That(State.Cooker(CookerKind.Pan).Count,Is.EqualTo(2));
+                yield return Aim(CookFoodPoint(pan,1)); yield return Click(); Assert.That(second.SaltDoses,Is.EqualTo(1));
+                Assert.That(bootstrap.Hud.Context.text,Does.Contain("Соль: 1")); Capture("doses-salt.png");
+                yield return Aim(inventory.TrayDisplays[0].transform.parent.parent.position); yield return Press(Key.E);
+                Assert.That(State.Held,Is.Null); yield return Aim(TrayPoint(0)); yield return Press(Key.E);
+                var oil=State.Held; Assert.That(oil.Ingredient.Id,Is.EqualTo("oil"));
+                var own=GameObject.Find("Station_A1").GetComponent<ChefShow.Player.PrototypeInteractable>();
+                yield return Aim(own.FocusPoint.position); yield return Press(Key.E); yield return new WaitForSecondsRealtime(.25f);
+                Assert.That(bootstrap.Player.Focused,Is.True); yield return Aim(CookFoodPoint(pan,0)); yield return Click();
+                Assert.That(first.OilDoses,Is.EqualTo(1)); Assert.That(second.OilDoses,Is.Zero);
+                Assert.That(State.Held,Is.SameAs(oil)); Assert.That(oil.Quantity,Is.EqualTo(1));
+                Assert.That(bootstrap.Hud.Context.text,Does.Contain("Соль: 2 · Масло: 1")); Capture("doses-oil-focus.png");
+                Assert.That(facts.Count,Is.EqualTo(4)); Assert.That(facts[0].Food.SaltDoses,Is.EqualTo(1));
+                Assert.That(facts[0].Source.Id,Is.EqualTo(salt.Id)); Assert.That(before.SaltDoses+before.OilDoses,Is.Zero);
+                yield return HeatTwice(pan); bootstrap.Run.Tick(bootstrap.Cooking.Config.ReadySeconds); yield return null;
+                yield return Aim(inventory.TrayDisplays[0].transform.parent.parent.position); yield return Press(Key.E);
+                Assert.That(State.Held,Is.Null); yield return Aim(CookFoodPoint(pan,0)); yield return Press(Key.E);
+                Assert.That(State.Held,Is.SameAs(first)); yield return Aim(Socket(1)); yield return Press(Key.E);
+                Assert.That(State.Socket(1),Is.SameAs(first)); Assert.That(first.SaltDoses,Is.EqualTo(2)); Assert.That(first.OilDoses,Is.EqualTo(1));
+                Assert.That(first.Quantity,Is.EqualTo(1)); Assert.That(first.Id,Is.EqualTo(before.Id));
+                Assert.That(State.Tray.Count(p=>p.Ingredient.IsDoseContainer),Is.EqualTo(2));
+                Assert.That(State.Cooker(CookerKind.Pan).Single(),Is.SameAs(second));
+            }
+        }
+        [UnityTest]
+        public IEnumerator DoseInputsRejectOilPotForeignWallsPauseAndTimeoutThenReset()
+        {
+            var catalog=inventory.Catalog.Ingredients; State.TryMoveBasket(BasketPlacement.Carried,out _);
+            foreach(var id in new[]{"beef","potato","salt","oil"}) State.TryCollect(catalog.Single(d=>d.Id==id),out _);
+            State.TryMoveBasket(BasketPlacement.Station,out _); State.TryUnload(out _);
+            State.TryTakeTray(0,out _); State.TryPlaceCooker(CookerKind.Pan,out _);
+            State.TryTakeTray(0,out _); State.TryPlaceSocket(0,out _);
+            for(int i=0;i<6;i++) Assert.That(State.TryChop(KitchenToolKind.Knife,out _),Is.True);
+            State.TryTakeSocket(0,out _); State.TryPlaceCooker(CookerKind.Pot,out _); yield return null;
+            var pan=Appliance(CookerKind.Pan); var pot=Appliance(CookerKind.Pot);
+            Teleport(new Vector3(-9.7f,.05f,-6.25f)); yield return Aim(TrayPoint(1)); yield return Press(Key.E); var oil=State.Held;
+            Assert.That(oil.Ingredient.Id,Is.EqualTo("oil")); yield return Aim(CookFoodPoint(pot,0)); yield return Click();
+            Assert.That(State.Cooker(CookerKind.Pot)[0].OilDoses,Is.Zero); Assert.That(State.Held,Is.SameAs(oil));
+            Assert.That(bootstrap.Hud.Context.text,Does.Contain("только в сковороду"));
+            var foreign=Appliance(CookerKind.Pan,"B1"); Teleport(new Vector3(9.7f,.05f,-6.25f));
+            yield return Aim(foreign.transform.position+Vector3.up*.025f); yield return Click();
+            Assert.That(State.Cooker(CookerKind.Pan)[0].OilDoses,Is.Zero); Assert.That(State.Held,Is.SameAs(oil));
+            Teleport(new Vector3(-9.7f,.05f,-6.25f)); yield return Aim(CookFoodPoint(pan,0));
+            var wall=GameObject.CreatePrimitive(PrimitiveType.Cube);
+            try
+            {
+                var camera=bootstrap.Player.ViewCamera.transform; wall.transform.position=camera.position+camera.forward*.5f;
+                wall.transform.localScale=Vector3.one*.18f; Physics.SyncTransforms(); bootstrap.Player.RefreshTarget();
+                Assert.That(bootstrap.Player.Target,Is.Null); yield return Click(); Assert.That(State.Cooker(CookerKind.Pan)[0].OilDoses,Is.Zero);
+            }
+            finally { Object.Destroy(wall); } yield return null;
+            yield return Aim(CookFoodPoint(pan,0)); bootstrap.SetPaused(true); yield return Click();
+            Assert.That(State.Cooker(CookerKind.Pan)[0].OilDoses,Is.Zero); bootstrap.SetPaused(false);
+            yield return Cancel(); yield return Aim(TrayPoint(0)); yield return Press(Key.E);
+            Assert.That(State.Held.Ingredient.Id,Is.EqualTo("salt")); yield return Aim(CookFoodPoint(pot,0)); yield return Click();
+            Assert.That(State.Cooker(CookerKind.Pot)[0].SaltDoses,Is.EqualTo(1));
+            bootstrap.Run.SetRemaining(.01f); yield return new WaitForSecondsRealtime(.2f); yield return Click();
+            Assert.That(State.Cooker(CookerKind.Pot)[0].SaltDoses,Is.EqualTo(1));
+            var old=bootstrap.Run; bootstrap.RestartShow(); yield return null;
+            Assert.That(old.Disposed,Is.True); Assert.That(State.Portions,Is.Empty); Assert.That(State.Held,Is.Null);
+            Assert.That(State.Cooker(CookerKind.Pan).Concat(State.Cooker(CookerKind.Pot)),Is.Empty);
+        }
+
         private void Capture(string filename)
         {
             if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null) return;

@@ -39,6 +39,84 @@ namespace ChefShow.Tests
         { var p=Hand(ingredient,chopped); Assert.That(state.TryPlaceCooker(kind,out var reason),Is.True,reason); return p; }
         private void Medium(CookerKind kind)
         { Assert.That(state.TryCycleHeat(kind,out _),Is.True); Assert.That(state.TryCycleHeat(kind,out _),Is.True); }
+        [Test] public void DosesArePerPortionReusableAndPreserveTransfersAndIndependentFacts()
+        {
+            var salt=Ingredient("salt"); salt.CanUseBoard=false; salt.IsDoseContainer=true;
+            var oil=Ingredient("oil"); oil.CanUseBoard=false; oil.IsDoseContainer=true;
+            try
+            {
+                var first=Add(beef,CookerKind.Pan); var second=Add(beef,CookerKind.Pan);
+                var before=first.Snapshot(); var source=Hand(salt); var facts=new List<SeasoningApplied>();
+                using(run.Events.Subscribe<SeasoningApplied>(f=>{
+                    Assert.That(state.Held,Is.Not.Null); Assert.That(first.SaltDoses,Is.EqualTo(f.Food.SaltDoses));
+                    facts.Add(f);
+                }))
+                {
+                    Assert.That(state.TryApplySeasoning(CookerKind.Pan,0,out _),Is.True);
+                    config.DosesPerPress=4; config.SaltIngredientId="edited_during_run";
+                    Assert.That(state.TryApplySeasoning(CookerKind.Pan,0,out _),Is.True);
+                }
+                Assert.That(state.Held,Is.SameAs(source)); Assert.That(source.Quantity,Is.EqualTo(1));
+                Assert.That(first.SaltDoses,Is.EqualTo(2)); Assert.That(second.SaltDoses,Is.Zero);
+                Assert.That(before.SaltDoses,Is.Zero); Assert.That(facts[0].Food.SaltDoses,Is.EqualTo(1));
+                Assert.That(facts[0].Source.Id,Is.EqualTo(source.Id)); Assert.That(facts[0].AddedDoses,Is.EqualTo(1));
+                Assert.That(facts[0].RunId,Is.EqualTo(run.RunId)); Assert.That(facts[0].ActorId,Is.EqualTo("A1"));
+                Assert.That(state.TryRemove(false,out _),Is.True); source=Hand(oil);
+                Assert.That(state.TryApplySeasoning(CookerKind.Pan,0,out _),Is.True);
+                Assert.That(first.OilDoses,Is.EqualTo(1)); Assert.That(second.OilDoses,Is.Zero);
+                Assert.That(first.Cooking,Is.EqualTo(CookState.Raw)); Assert.That(first.HeatProgress,Is.Zero);
+                Assert.That(state.TryPlaceCooker(CookerKind.Pan,out _),Is.False); Assert.That(state.Held,Is.SameAs(source));
+                state.TryRemove(false,out _); state.TryTakeCooker(CookerKind.Pan,0,out _);
+                state.TryPutInTray(out _); state.TryTakeTray(0,out _); state.TryPlaceCooker(CookerKind.Pan,out _);
+                state.TryTakeCooker(CookerKind.Pan,1,out _); state.TryCancelHeld(out _);
+                Assert.That(first.SaltDoses,Is.EqualTo(2)); Assert.That(first.OilDoses,Is.EqualTo(1));
+                Assert.That(first.Id,Is.EqualTo(before.Id)); Assert.That(first.Quantity,Is.EqualTo(1));
+                Assert.That(first.Operations.Count(o=>o.Action=="seasoning_applied"),Is.EqualTo(3));
+                Assert.That(facts[0].Source.Location,Is.EqualTo(PortionLocation.Hand));
+                Assert.That(facts[0].Food.Operations.Count(o=>o.Action=="seasoning_applied"),Is.EqualTo(1));
+            }
+            finally { UnityEngine.Object.DestroyImmediate(salt); UnityEngine.Object.DestroyImmediate(oil); }
+        }
+        [Test] public void InvalidDoseTargetsPauseTimeoutAndDisposedRunRejectWithoutChanges()
+        {
+            var oil=Ingredient("oil"); oil.IsDoseContainer=true; oil.CanUseBoard=false;
+            try
+            {
+                var pan=Add(beef,CookerKind.Pan); var pot=Add(potato,CookerKind.Pot,true);
+                var source=Hand(oil); int version=state.Version;
+                Assert.That(state.TryApplySeasoning(CookerKind.Pot,0,out _),Is.False);
+                Assert.That(state.TryApplySeasoning(CookerKind.Pan,-1,out _),Is.False);
+                Assert.That(state.TryApplySeasoning(CookerKind.Pan,1,out _),Is.False);
+                Assert.That(state.TryApplySeasoning((CookerKind)25,0,out _),Is.False);
+                run.SetPaused(true); Assert.That(state.TryApplySeasoning(CookerKind.Pan,0,out _),Is.False); run.SetPaused(false);
+                Assert.That(state.Version,Is.EqualTo(version)); Assert.That(state.Held,Is.SameAs(source));
+                Assert.That(pot.OilDoses+pan.OilDoses,Is.Zero);
+                run.SetRemaining(0); Assert.That(state.TryApplySeasoning(CookerKind.Pan,0,out _),Is.False);
+                run.Dispose(); Assert.That(state.TryApplySeasoning(CookerKind.Pan,0,out _),Is.False);
+                Assert.That(state.Version,Is.EqualTo(version)); Assert.That(pan.OilDoses,Is.Zero);
+            }
+            finally { UnityEngine.Object.DestroyImmediate(oil); }
+        }
+        [Test] public void SaltKeepsContaminationBurnedStateAndValidatesCapturedSettings()
+        {
+            var salt=Ingredient("salt"); salt.IsDoseContainer=true; salt.CanUseBoard=false;
+            var unknown=Ingredient("pepper"); unknown.IsDoseContainer=true;
+            try
+            {
+                var food=Add(potato,CookerKind.Pot,true); Medium(CookerKind.Pot); run.Tick(60);
+                var source=Hand(salt); typeof(FoodPortion).GetProperty(nameof(FoodPortion.Contaminated)).SetValue(source,true);
+                Assert.That(state.TryApplySeasoning(CookerKind.Pot,0,out _),Is.True);
+                Assert.That(food.Contaminated,Is.True); Assert.That(food.SaltDoses,Is.EqualTo(1));
+                Assert.That(food.Cooking,Is.EqualTo(CookState.Burned)); Assert.That(food.HeatProgress,Is.EqualTo(60));
+                state.TryRemove(false,out _); source=Hand(unknown); int version=state.Version;
+                Assert.That(state.TryApplySeasoning(CookerKind.Pot,0,out _),Is.False);
+                Assert.That(state.Version,Is.EqualTo(version)); Assert.That(state.Held,Is.SameAs(source));
+                config.DosesPerPress=0; Assert.That(config.Validate(),Is.Not.Null); Assert.Throws<InvalidOperationException>(()=>config.Capture());
+                config.DosesPerPress=1; config.OilIngredientId=config.SaltIngredientId; Assert.That(config.Validate(),Is.Not.Null);
+                Assert.Throws<ArgumentException>(()=>new CookingSettings(3,30,45,60,.5f,1,2,3,new[]{"beef"},new[]{"potato"},0));
+            }
+            finally { UnityEngine.Object.DestroyImmediate(salt); UnityEngine.Object.DestroyImmediate(unknown); }
+        }
         [Test] public void CapacityAndCompatibilityRejectWithoutLosingTheHeldFood()
         {
             var package=Hand(carton); int version=state.Version;

@@ -28,6 +28,9 @@ MonoBehaviour:
   - potato
   - carrot
   - onion
+  SaltIngredientId: salt
+  OilIngredientId: oil
+  DosesPerPress: 1
   TableWidth: 3.6
   TableDepth: 2.3
   ApplianceInteractionDistance: 4.2

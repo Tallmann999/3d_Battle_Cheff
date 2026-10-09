@@ -68,8 +68,14 @@ namespace ChefShow.Cooking
                         }
                         else if (target.Kind != CookingTargetKind.HeatKnob)
                         {
-                            success = State.TryStir(target.Station.Kind, bootstrap.Tools.Equipped, out reason);
-                            if (success) StartStroke(target.Station);
+                            if (State.Held != null && State.Held.Ingredient.IsDoseContainer)
+                                success = State.TryApplySeasoning(target.Station.Kind,
+                                    target.Kind == CookingTargetKind.Food ? target.Index : -1, out reason);
+                            else
+                            {
+                                success = State.TryStir(target.Station.Kind, bootstrap.Tools.Equipped, out reason);
+                                if (success) StartStroke(target.Station);
+                            }
                         }
                         message = success ? null : reason; messageTarget = target; messageUntil = bootstrap.Run.Clock.SimulationTime + 2.5f;
                     }
@@ -113,15 +119,27 @@ namespace ChefShow.Cooking
             var kind = target.Station.Kind; var foods = State.Cooker(kind); var heat = State.Heat(kind);
             if (target.Kind == CookingTargetKind.HeatKnob) return "E — Нагрев: " + HeatName(heat) + " → " + HeatName((HeatLevel)(((int)heat + 1) % 4));
             string state = CookerName(kind) + " · " + HeatName(heat) + " · " + foods.Count + "/" + State.CookingRules.Capacity;
+            if (State.Held != null && State.Held.Ingredient.IsDoseContainer)
+            {
+                SeasoningKind seasoning;
+                if (!State.CookingRules.TrySeasoning(State.Held.Ingredient, out seasoning)) return "Этот контейнер не настроен для дозирования.";
+                if (seasoning == SeasoningKind.Oil && kind != CookerKind.Pan) return "Масло добавляется только в сковороду.";
+                if (target.Kind != CookingTargetKind.Food || target.Index >= foods.Count) return "ЛКМ — добавить дозу: наведите на конкретную еду\n" + state;
+                var selected = foods[target.Index];
+                return "ЛКМ — Добавить дозу " + (seasoning == SeasoningKind.Salt ? "соли" : "масла")
+                    + " (" + State.CookingRules.DosesPerPress + ") · " + InventoryController.FoodName(selected.Ingredient) + "\n" + Doses(selected);
+            }
             if (State.Held != null) return "E — Положить " + InventoryController.FoodName(State.Held.Ingredient) + " в прибор\n" + state;
             int index = target.Kind == CookingTargetKind.Food ? target.Index : 0;
             if (index >= foods.Count) return state + "\nE по ручке — переключить нагрев";
             var food = foods[index];
             return "E — Взять " + InventoryController.FoodName(food.Ingredient) + " · " + FoodState(food) + "\n"
                 + state + " · " + Mathf.FloorToInt(Mathf.Min(100, food.HeatProgress / State.CookingRules.Ready * 100)) + "%"
+                + " · " + Doses(food)
                 + (kind == CookerKind.Pot ? " · ЛКМ лопаткой: " + food.StirPresses + "/" + food.RequiredStirs : "")
                 + (kind == CookerKind.Pan && food.HeatProgress >= State.CookingRules.Ready * .85f && food.Cooking != CookState.Burned ? " · следите за нагревом" : "");
         }
+        private static string Doses(FoodPortion food) => "Соль: " + food.SaltDoses + " · Масло: " + food.OilDoses;
         public string Summary => "Сковорода: " + HeatName(State.Heat(CookerKind.Pan)) + " · " + State.Cooker(CookerKind.Pan).Count + "/" + State.CookingRules.Capacity
             + "   Кастрюля: " + HeatName(State.Heat(CookerKind.Pot)) + " · " + State.Cooker(CookerKind.Pot).Count + "/" + State.CookingRules.Capacity;
     }

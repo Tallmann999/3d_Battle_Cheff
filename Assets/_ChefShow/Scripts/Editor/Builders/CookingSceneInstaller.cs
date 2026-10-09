@@ -103,11 +103,11 @@ namespace ChefShow.Editor
             foreach (var text in bootstrap.Hud.GetComponentsInChildren<Text>(true).Where(t => t.name == "Controls"))
             {
                 Undo.RecordObject(text,"Cooking controls");
-                text.text = "WASD — ходьба · Shift — бег · мышь — обзор\nTab — корзина · E — взять / положить / нагрев\nЛКМ — нарезать / распаковать / мешать · G — уронить\nRMB — отмена · Q — задание · Esc — пауза";
+                text.text = "WASD — ходьба · Shift — бег · мышь — обзор\nTab — корзина · E — взять / положить / нагрев\nЛКМ — нарезать / распаковать / мешать / дозировать · G — уронить\nRMB — отмена · Q — задание · Esc — пауза";
                 EditorUtility.SetDirty(text);
             }
             Undo.RecordObject(bootstrap.Hud.TaskCard,"Cooking task");
-            bootstrap.Hud.TaskCard.text = "НАРЕЗКА И НАГРЕВ\nTab — корзина; E — собрать / выгрузить / перенести.\nНож + продукт на доске: 6 ЛКМ. Упаковка в лотке: 1 ЛКМ.\nE — положить в прибор; E по отдельной ручке — нагрев.\nСредний огонь: около 30 с; дальше переготовка и сгорание.\nГарнир: нарезанный картофель + 3 ЛКМ с лопаткой.\nE по порции — снять; выключить прибор отдельной ручкой.\nГотовое блюдо: только чистая готовая еда; тарелки позже.";
+            bootstrap.Hud.TaskCard.text = "НАРЕЗКА И НАГРЕВ\nTab — корзина; E — собрать / выгрузить / перенести.\nНож + продукт на доске: 6 ЛКМ. Упаковка в лотке: 1 ЛКМ.\nE — положить в прибор; E по отдельной ручке — нагрев.\nСредний огонь: около 30 с; дальше переготовка и сгорание.\nГарнир: нарезанный картофель + 3 ЛКМ с лопаткой.\nE по порции — снять; выключить прибор отдельной ручкой.\nГотовое блюдо: только чистая готовая еда; тарелки позже.\nСоль/масло: E взять из лотка, ЛКМ по конкретной еде — доза.";
             EditorUtility.SetDirty(bootstrap.Hud.TaskCard);
         }
         private static void ArrangeRows(Scene scene,PrototypeInteractable[] tables,float width)

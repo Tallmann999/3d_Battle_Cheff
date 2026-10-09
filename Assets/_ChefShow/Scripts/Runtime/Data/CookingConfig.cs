@@ -20,6 +20,11 @@ namespace ChefShow.Data
         [Range(0, 10)] public int PotStirs = 3;
         public string[] PanIngredients = { "beef", "carrot", "onion" };
         public string[] PotIngredients = { "potato", "carrot", "onion" };
+        [Header("Дискретные дозы; контейнер остаётся в руке")]
+        public string SaltIngredientId = "salt";
+        public string OilIngredientId = "oil";
+        [Range(1, 10), Tooltip("Доз на выбранную порцию за отдельный ЛКМ. Применяется при Restart.")]
+        public int DosesPerPress = 1;
         [Header("Геометрия и доступ к дальним приборам")]
         [FormerlySerializedAs("TableLength")]
         [Tooltip("Ширина перед участником (вдоль ряда / мировая Z).")]
@@ -38,6 +43,9 @@ namespace ChefShow.Data
                 || ApplianceInteractionDistance > 5) return "Проверьте ширину/глубину стола и дистанцию приборов (до 5 м).";
             if (PanIngredients == null || PotIngredients == null || PanIngredients.Length == 0 || PotIngredients.Length == 0
                 || PanIngredients.Concat(PotIngredients).Any(string.IsNullOrWhiteSpace)) return "Нужны ID продуктов для обоих приборов.";
+            if (DosesPerPress < 1 || DosesPerPress > 10 || string.IsNullOrWhiteSpace(SaltIngredientId)
+                || string.IsNullOrWhiteSpace(OilIngredientId) || SaltIngredientId == OilIngredientId)
+                return "Проверьте разные ID соли/масла и число доз (1–10).";
             return null;
         }
         private static bool Positive(float n) => n > 0 && !float.IsNaN(n) && !float.IsInfinity(n);
@@ -45,7 +53,8 @@ namespace ChefShow.Data
         {
             var error = Validate(); if (error != null) throw new InvalidOperationException(error);
             return new CookingSettings(Capacity, ReadySeconds, OvercookedSeconds, BurnedSeconds,
-                LowRate, MediumRate, HighRate, PotStirs, PanIngredients, PotIngredients);
+                LowRate, MediumRate, HighRate, PotStirs, PanIngredients, PotIngredients,
+                DosesPerPress, SaltIngredientId, OilIngredientId);
         }
     }
 }
