@@ -46,7 +46,7 @@ namespace ChefShow.Ingredients
             StopStroke(); message = null; messageTarget = null;
             foreach (var board in Boards) board.Present(null);
         }
-        public void Step(bool acceptInput, bool commandConsumed)
+        public bool Step(bool acceptInput, bool commandConsumed)
         {
             if (observedTool != bootstrap.Tools.EquippedObject || observedVersion != bootstrap.Run.Inventory.Version)
             {
@@ -54,21 +54,25 @@ namespace ChefShow.Ingredients
             }
             if (strokeTool != null && (strokeTool != bootstrap.Tools.EquippedObject || strokeTool.Placement != KitchenToolPlacement.Held))
             { strokeTool = null; strokeTime = -1; }
+            bool consumed = false;
             if (acceptInput && !commandConsumed)
             {
                 var map = input.FindActionMap(bootstrap.Player.Focused ? "Station" : "Gameplay", true);
-                if (map.FindAction("Primary", true).WasPressedThisFrame())
+                bool left = map.FindAction("Primary", true).WasPressedThisFrame();
+                bool right = map.FindAction("Secondary", true).WasPressedThisFrame();
+                if (left || right)
                 {
                     bootstrap.Player.RefreshTarget();
                     var board = bootstrap.Player.Target == null ? null : bootstrap.Player.Target.GetComponent<ChoppingBoard>();
-                    if (board != null)
+                    if (board != null && right)
                     {
+                        consumed = true;
                         string reason = "Это доска другого участника.";
                         bool success = board == own && bootstrap.Run.Inventory.TryChop(bootstrap.Tools.Equipped, out reason);
                         if (success) { message = null; StartStroke(board); }
                         else { message = reason; messageTarget = null; messageUntil = bootstrap.Run.Clock.SimulationTime + 2.5f; }
                     }
-                    else
+                    else if (right)
                     {
                         var item = bootstrap.Player.Target == null ? null : bootstrap.Player.Target.GetComponent<InventoryInteractable>();
                         if (item != null && item.Kind == InventoryTargetKind.TrayItem)
@@ -76,8 +80,9 @@ namespace ChefShow.Ingredients
                             string reason = "Это лоток другого участника.";
                             var state = bootstrap.Run.Inventory;
                             var package = item.Index >= 0 && item.Index < state.Tray.Count ? state.Tray[item.Index] : null;
-                            if (package != null && package.PackedIngredient != null)
+                            if (state.Held == null && package != null && package.PackedIngredient != null)
                             {
+                                consumed = true;
                                 bool success = item.StationId == bootstrap.Inventory.PlayerStationId && state.TryUnpack(item.Index, out reason);
                                 message = success ? "Распаковано: " + PackageContentsName(package) : reason; messageTarget = item;
                                 messageUntil = bootstrap.Run.Clock.SimulationTime + 2.5f;
@@ -88,7 +93,7 @@ namespace ChefShow.Ingredients
                 }
             }
             if (acceptInput) AnimateStroke(bootstrap.Run.Clock.Delta);
-            own.Present(bootstrap.Run.Inventory.Socket(0));
+            own.Present(bootstrap.Run.Inventory.Socket(0)); return consumed;
         }
         private void StartStroke(ChoppingBoard board)
         {
@@ -129,7 +134,7 @@ namespace ChefShow.Ingredients
                 var trayState = bootstrap.Run.Inventory;
                 var package = item.Index >= 0 && item.Index < trayState.Tray.Count ? trayState.Tray[item.Index] : null;
                 if (bootstrap.Run.Inventory.Held != null || package == null || package.PackedIngredient == null) return null;
-                return bootstrap.Inventory.Describe(target) + "\nЛКМ — открыть · " + PackageContentsName(package);
+                return bootstrap.Inventory.Describe(target) + "\nПКМ — открыть · " + PackageContentsName(package);
             }
             if (board != own) return "Доска другого участника";
             if (message != null && bootstrap.Run.Clock.SimulationTime < messageUntil) return message;
@@ -137,8 +142,8 @@ namespace ChefShow.Ingredients
             if (state.Held != null || food == null) return null;
             string take = bootstrap.Inventory.Describe(target);
             return take + "\n" + (food.Preparation == PreparationState.Chopped ? "Нарезано · можно перенести"
-                : bootstrap.Tools.Equipped == KitchenToolKind.Knife ? "ЛКМ — нарезать · " + food.ChopPresses + "/" + InventoryState.RequiredChopPresses
-                : "Для нарезки возьмите нож: E");
+                : bootstrap.Tools.Equipped == KitchenToolKind.Knife ? "ПКМ — нарезать · " + food.ChopPresses + "/" + InventoryState.RequiredChopPresses
+                : "Для нарезки возьмите нож: ПКМ");
         }
         private static string PackageContentsName(FoodPortion package)
         {

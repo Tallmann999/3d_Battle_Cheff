@@ -92,7 +92,7 @@ namespace ChefShow.Editor
                 drawer.StationId = station.name.Substring("Station_".Length);
                 var target = Undo.AddComponent<PrototypeInteractable>(front.gameObject);
                 target.DisplayName = "Ящик с инструментами";
-                target.Description = "E — открыть / закрыть ящик";
+                target.Description = "ЛКМ — открыть / закрыть ящик";
                 // Сохраняем исходную лицевую панель, цвет, габариты и Collider.
                 var group = Node("Tool Drawer Contents", front, new Vector3(front.position.x - sign * .18f, .7f, front.position.z));
                 var tray = Node("Sliding Tray", group, group.position);
@@ -280,7 +280,7 @@ namespace ChefShow.Editor
                 var bottomPrompt = bottom.GetComponent<PrototypeInteractable>();
                 if (bottomPrompt == null) bottomPrompt = Undo.AddComponent<PrototypeInteractable>(bottom);
                 Undo.RecordObject(bottomPrompt, "Drawer bottom prompt"); bottomPrompt.DisplayName = "Ящик с инструментами";
-                bottomPrompt.Description = "E — открыть / закрыть ящик";
+                bottomPrompt.Description = "ЛКМ — открыть / закрыть ящик";
                 EditorUtility.SetDirty(bottomCollider); EditorUtility.SetDirty(bottomTarget); EditorUtility.SetDirty(bottomPrompt);
                 var panelCollider = drawer.GetComponent<BoxCollider>();
                 Undo.RecordObject(panelCollider, "Raycastable drawer panel"); panelCollider.isTrigger = true; panelCollider.enabled = true;
@@ -301,7 +301,7 @@ namespace ChefShow.Editor
                     tool.Body.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
                     var target = root.GetComponent<PrototypeInteractable>(); if (target == null) target = Undo.AddComponent<PrototypeInteractable>(root);
                     Undo.RecordObject(target, "Tool prompt"); target.DisplayName = ToolDrawerController.Name(tool.Kind);
-                    target.Description = "E — взять в правую руку · G — уронить";
+                    target.Description = "ПКМ — взять в правую руку · G — уронить";
                     EditorUtility.SetDirty(tool); EditorUtility.SetDirty(tool.Body); EditorUtility.SetDirty(tool.PickupCollider); EditorUtility.SetDirty(target);
                 }
                 EditorUtility.SetDirty(panelCollider);

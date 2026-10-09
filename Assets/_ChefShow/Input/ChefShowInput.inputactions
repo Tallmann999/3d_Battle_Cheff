@@ -86,6 +86,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Secondary",
+                    "type": "Button",
+                    "id": "d60d8834-7e7f-4dc1-aa1d-8a49ab5bbb87",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -169,7 +178,7 @@
                 {
                     "name": "",
                     "id": "ce10620b-6307-4acc-8c4d-cecd5a45cde1",
-                    "path": "<Keyboard>/e",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -224,11 +233,22 @@
                 {
                     "name": "",
                     "id": "3a74eb0c-b0b2-4f09-b393-1279ab86c7ce",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Keyboard>/backspace",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "13168391-9bda-478f-beaa-c60ffb9b0065",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Secondary",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -300,6 +320,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Secondary",
+                    "type": "Button",
+                    "id": "ac1bc6b5-1140-4148-916e-ad07b014b3a2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -317,7 +346,7 @@
                 {
                     "name": "",
                     "id": "cd971719-ff54-4fcc-a2f0-8b63a84184dd",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Keyboard>/backspace",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -339,7 +368,7 @@
                 {
                     "name": "",
                     "id": "c438bb82-cf76-4dc8-aeb4-7b00ae0d7030",
-                    "path": "<Keyboard>/e",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -377,6 +406,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "DropBasket",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a2fb0979-9e8a-4aac-af2e-f07f2bc900f6",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Secondary",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -69,6 +69,8 @@ namespace ChefShow.Editor
                 Require(bootstrap.Preparation.Validate(bootstrap.Inventory) == null, bootstrap.Preparation.Validate(bootstrap.Inventory));
             if (bootstrap.Cooking != null)
                 Require(bootstrap.Cooking.Validate(bootstrap.Inventory) == null, bootstrap.Cooking.Validate(bootstrap.Inventory));
+            if(bootstrap.Serving!=null) Require(bootstrap.Serving.Validate()==null,bootstrap.Serving.Validate());
+            if(bootstrap.Mixing!=null) Require(bootstrap.Mixing.Validate()==null,bootstrap.Mixing.Validate());
             Require(All<Text>().All(t => t.font != null), "Отсутствует шрифт UI.");
             foreach (var text in All<Text>()) PrototypeSceneBuilder.RequireCyrillic(text.font);
             Require(Shader.Find("Universal Render Pipeline/Lit") != null, "URP shader не найден.");

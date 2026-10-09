@@ -44,10 +44,12 @@ namespace ChefShow.Inventory
         public int OilDoses { get; }
         public bool Contaminated { get; }
         public PortionLocation Location { get; }
+        public IReadOnlyList<FoodPortionSnapshot> Components { get; }
         public IReadOnlyList<FoodOrigin> OriginComponents { get; }
         public IReadOnlyList<FoodOperation> Operations { get; }
         internal FoodPortionSnapshot(FoodPortion portion)
         {
+            Components=System.Array.AsReadOnly(portion.Components.ToArray());
             Id = portion.Id; IngredientId = portion.Ingredient.Id; Quantity = portion.Quantity;
             PackedIngredientId = portion.PackedIngredient == null ? null : portion.PackedIngredient.Id;
             PackedQuantity = portion.PackedQuantity;
@@ -62,6 +64,8 @@ namespace ChefShow.Inventory
 
     public sealed class FoodPortion
     {
+        private readonly List<FoodPortionSnapshot> components=new List<FoodPortionSnapshot>();
+        public IReadOnlyList<FoodPortionSnapshot> Components => components.AsReadOnly();
         private readonly List<FoodOrigin> origins = new List<FoodOrigin>();
         private readonly List<FoodOperation> operations = new List<FoodOperation>();
         public string Id { get; }
@@ -96,6 +100,13 @@ namespace ChefShow.Inventory
             origins.Clear(); origins.Add(new FoodOrigin(package.Id, Ingredient.Id, Quantity));
             operations.AddRange(package.operations);
             Contaminated = package.Contaminated;
+        }
+        internal void InheritMixture(IReadOnlyList<FoodPortion> inputs)
+        {
+            origins.Clear(); foreach(var food in inputs)
+            { components.Add(food.Snapshot()); origins.AddRange(food.origins); operations.AddRange(food.operations); Contaminated|=food.Contaminated; }
+            Quantity=inputs.Sum(p=>p.Quantity);SaltDoses=inputs.Sum(p=>p.SaltDoses);OilDoses=inputs.Sum(p=>p.OilDoses);Preparation=PreparationState.Mixed;
+            if(inputs.Any(p=>p.Cooking==CookState.Burned))Cooking=CookState.Burned;
         }
         internal void RecordOperation(string action, float time)
             => operations.Add(new FoodOperation(action, time, Location, Preparation));

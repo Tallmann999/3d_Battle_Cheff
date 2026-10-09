@@ -20,6 +20,8 @@ namespace ChefShow.Core
         public FirstPersonRig Player;
         public PrototypeHud Hud;
         public InventoryController Inventory;
+        public ServingController Serving;
+        public ChefShow.Cooking.MixingController Mixing;
         public ToolDrawerController Tools;
         public PreparationController Preparation;
         public ChefShow.Cooking.CookingController Cooking;
@@ -83,7 +85,7 @@ namespace ChefShow.Core
                 if (toolError != null || Inventory == null)
                 { Debug.LogError("Chef Show: " + (toolError ?? "Ящику нужен инвентарь."), this); enabled = false; return; }
                 Tools.Initialize(this, input);
-                Player.CancelInteraction = () => Tools.ReturnAimedTool() || Inventory.CancelHeld();
+                Player.CancelInteraction = Inventory.CancelHeld;
             }
             if (Preparation != null)
             {
@@ -97,6 +99,10 @@ namespace ChefShow.Core
                 if (cookingError != null || Tools == null) { Debug.LogError("Chef Show: " + (cookingError ?? "Готовке нужны инструменты."), this); enabled = false; return; }
                 Cooking.Initialize(this, input);
             }
+            if(Mixing!=null)
+            {var mixError=Mixing.Validate();if(mixError!=null){Debug.LogError(mixError,this);enabled=false;return;}Mixing.Initialize(this,input);}
+            if (Serving != null)
+            { var servingError=Serving.Validate(); if(servingError!=null){Debug.LogError(servingError,this);enabled=false;return;} Serving.Initialize(this,input); }
             Hud.Resume.onClick.AddListener(() => SetPaused(false));
             Hud.Restart.onClick.AddListener(RestartShow);
             Hud.DebugRestart.onClick.AddListener(RestartShow);
@@ -133,11 +139,13 @@ namespace ChefShow.Core
             Player.Step(Run.Clock, gameplay);
             bool toolCommand = Tools != null && Tools.Step(gameplay);
             bool cookCommand = Cooking != null && Cooking.Step(gameplay, toolCommand);
-            if (Preparation != null) Preparation.Step(gameplay, toolCommand || cookCommand);
-            if (Inventory != null) Inventory.Step(gameplay, toolCommand || cookCommand);
+            bool mixCommand=Mixing!=null && Mixing.Step(gameplay,toolCommand || cookCommand);
+            bool servingCommand = Serving != null && Serving.Step(gameplay, toolCommand || cookCommand || mixCommand);
+            bool preparationCommand = Preparation != null && Preparation.Step(gameplay, toolCommand || cookCommand || servingCommand || mixCommand);
+            if (Inventory != null) Inventory.Step(gameplay, toolCommand || cookCommand || preparationCommand || servingCommand || mixCommand);
             UpdateMaps();
             bool task = !paused && input.FindAction((Player.Focused ? "Station" : "Gameplay") + "/Task", true).IsPressed();
-            Hud.Present(Run, Player, paused, debug, task, Inventory, Tools, Preparation, Cooking);
+            Hud.Present(Run, Player, paused, debug, task, Inventory, Tools, Preparation, Cooking, Serving, Mixing);
         }
 
         public void SetPaused(bool value)
@@ -162,6 +170,8 @@ namespace ChefShow.Core
             if (Tools != null) Tools.ResetPresentation();
             if (Preparation != null) Preparation.ResetPresentation();
             if (Cooking != null) Cooking.ResetPresentation();
+            if (Serving != null) Serving.ResetPresentation();
+            if(Mixing!=null)Mixing.ResetPresentation();
             Player.SetSensitivity(sensitivity);
             UpdateMaps();
             Run.Events.Publish(new RunStarted(Run.RunId, Run.Seed));

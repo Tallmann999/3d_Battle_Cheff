@@ -215,8 +215,8 @@ namespace ChefShow.Editor
             foreach (string name in new[] { "Gameplay", "Station" })
             {
                 var map = asset.FindActionMap(name, true);
-                Add("Interact", "<Keyboard>/e"); Add("Primary", "<Mouse>/leftButton");
-                Add("Basket", "<Keyboard>/tab"); Add("DropBasket", "<Keyboard>/g"); Add("Cancel", "<Mouse>/rightButton");
+                Add("Interact", "<Keyboard>/f"); Add("Secondary", "<Mouse>/rightButton"); Add("Primary", "<Mouse>/leftButton");
+                Add("Basket", "<Keyboard>/tab"); Add("DropBasket", "<Keyboard>/g"); Add("Cancel", "<Keyboard>/backspace");
                 var task = map.FindAction("Task", true);
                 for (int i = 0; i < task.bindings.Count; i++)
                     if (task.bindings[i].path == "<Keyboard>/tab") task.ChangeBinding(i).WithPath("<Keyboard>/q");

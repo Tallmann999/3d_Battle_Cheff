@@ -23,6 +23,11 @@ MonoBehaviour:
   SaltIngredientId: salt
   OilIngredientId: oil
   DosesPerPress: 1
+  MixingCapacity: 6
+  MixSeconds: 3
+  OvenReadySeconds: 45
+  OvenOvercookedSeconds: 60
+  OvenBurnedSeconds: 75
   TableWidth: 3.6
   TableDepth: 2.3
   ApplianceInteractionDistance: 4.2

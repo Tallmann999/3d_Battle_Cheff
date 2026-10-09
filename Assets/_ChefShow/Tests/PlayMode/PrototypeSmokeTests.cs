@@ -165,12 +165,12 @@ namespace ChefShow.Tests
                 Assert.That(bootstrap.Player.Target, Is.Null);
                 Object.Destroy(blocker);
                 yield return null;
-                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.E));
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F));
                 yield return null;
                 yield return null;
                 Assert.That(bootstrap.Player.Focused, Is.True);
                 InputSystem.QueueStateEvent(keyboard, new KeyboardState());
-                InputSystem.QueueStateEvent(mouse, new MouseState().WithButton(MouseButton.Right));
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F));
                 yield return null;
                 yield return null;
                 Assert.That(bootstrap.Player.Focused, Is.False);

@@ -8,8 +8,11 @@ namespace ChefShow.Inventory
     // Inventory remains the only owner of portions, including food in appliances.
     public sealed partial class InventoryState
     {
-        private readonly List<FoodPortion>[] cookers = { new List<FoodPortion>(), new List<FoodPortion>() };
-        private readonly HeatLevel[] heat = new HeatLevel[2];
+        private readonly List<FoodPortion>[] cookers = { new List<FoodPortion>(), new List<FoodPortion>(), new List<FoodPortion>() };
+        private readonly HeatLevel[] heat = new HeatLevel[3];
+        public bool OvenDoorOpen { get; private set; } = true;
+        public bool TryToggleOvenDoor(out string reason)
+        { if(!CookerActive(CookerKind.Oven,out reason))return false;OvenDoorOpen=!OvenDoorOpen;Version++;return true; }
         private CookingSettings cooking;
         private int originFoodIndex;
         public bool CookingEnabled => cooking != null;
@@ -25,15 +28,16 @@ namespace ChefShow.Inventory
         public bool TryPlaceCooker(CookerKind kind, out string reason)
         {
             if (!CookerActive(kind, out reason)) return false;
+            if(kind==CookerKind.Oven && !OvenDoorOpen){reason="Откройте дверцу духовки.";return false;}
             if (Held == null) { reason = "Сначала возьмите продукт."; return false; }
             if (Held.PackedIngredient != null)
-            { reason = "Это закрытая упаковка. Откройте её ЛКМ в лотке."; return false; }
+            { reason = "Это закрытая упаковка. Откройте её ПКМ в лотке."; return false; }
             if (Held.Ingredient.IsDoseContainer)
             { reason = "Контейнер остаётся в руке. ЛКМ по еде добавляет одну дозу."; return false; }
             if (!cooking.Accepts(kind, Held.Ingredient))
             { reason = "В прибор можно положить отдельный продукт."; return false; }
             var list = cookers[(int)kind];
-            if (list.Count >= cooking.Capacity) { reason = "Прибор заполнен: " + cooking.Capacity + "/" + cooking.Capacity + "."; return false; }
+            if (list.Count >= cooking.CapacityFor(kind)) { reason = "Прибор заполнен: " + cooking.CapacityFor(kind) + "/" + cooking.CapacityFor(kind) + "."; return false; }
             var food = Held; food.Location = PortionLocation.Appliance; food.SocketIndex = (int)kind;
             if (kind == CookerKind.Pot) food.RequiredStirs = Math.Max(food.RequiredStirs, cooking.PotStirs);
             list.Add(food); Held = null; Fact("ingredient_transferred", food); return true;
@@ -41,6 +45,7 @@ namespace ChefShow.Inventory
         public bool TryTakeCooker(CookerKind kind, int index, out string reason)
         {
             if (!CookerActive(kind, out reason) || !FreeHand(out reason)) return false;
+            if(kind==CookerKind.Oven && !OvenDoorOpen){reason="Откройте дверцу духовки.";return false;}
             var list = cookers[(int)kind];
             if (index < 0 || index >= list.Count) { reason = "В приборе нет этой порции."; return false; }
             Held = list[index]; list.RemoveAt(index); origin = PortionLocation.Appliance;
@@ -56,9 +61,10 @@ namespace ChefShow.Inventory
         public bool TryApplySeasoning(CookerKind kind, int index, out string reason)
         {
             if (!CookerActive(kind, out reason)) return false;
+            if(kind==CookerKind.Oven && !OvenDoorOpen){reason="Откройте дверцу духовки.";return false;}
             SeasoningKind seasoning;
             if (Held == null || Held.PackedIngredient != null || !cooking.TrySeasoning(Held.Ingredient, out seasoning))
-            { reason = "Возьмите соль или масло из лотка: E."; return false; }
+            { reason = "Возьмите соль или масло из лотка: ЛКМ."; return false; }
             if (seasoning == SeasoningKind.Oil && kind != CookerKind.Pan)
             { reason = "Масло добавляется только в сковороду."; return false; }
             var list = cookers[(int)kind];
@@ -81,9 +87,10 @@ namespace ChefShow.Inventory
         public bool TryStir(CookerKind kind, KitchenToolKind tool, out string reason)
         {
             if (!CookerActive(kind, out reason)) return false;
+            if(kind==CookerKind.Oven){reason="Духовка печёт в форме; перемешивайте в миске.";return false;}
             if (Held != null) { reason = "Сначала положите продукт из руки."; return false; }
-            if (tool != KitchenToolKind.Spatula) { reason = "Возьмите деревянную лопатку: E."; return false; }
-            if (Heat(kind) == HeatLevel.Off) { reason = "Сначала включите нагрев отдельной ручкой: E."; return false; }
+            if (tool != KitchenToolKind.Spatula) { reason = "Возьмите деревянную лопатку: ЛКМ."; return false; }
+            if (Heat(kind) == HeatLevel.Off) { reason = "Сначала включите нагрев отдельной ручкой: ЛКМ."; return false; }
             var facts = new List<CookingChanged>();
             foreach (var food in cookers[(int)kind])
             {
@@ -101,14 +108,14 @@ namespace ChefShow.Inventory
         {
             if (cooking == null || delta <= 0 || run.Disposed || run.Clock.Paused) return;
             var facts = new List<CookingChanged>(); bool changed = false;
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 3; i++)
             {
-                var kind = (CookerKind)i; float rate = cooking.Rate(heat[i]); if (rate == 0) continue;
+                var kind = (CookerKind)i; if(kind==CookerKind.Oven && OvenDoorOpen)continue; float rate = cooking.Rate(heat[i]); if (rate == 0) continue;
                 foreach (var food in cookers[i])
                 {
                     if (food.Cooking == CookState.Burned) continue;
                     var previous = food.Cooking; bool start = food.HeatProgress == 0;
-                    food.HeatProgress = Math.Min(cooking.Burned, food.HeatProgress + delta * rate);
+                    food.HeatProgress = Math.Min(kind==CookerKind.Oven?cooking.OvenBurned:cooking.Burned, food.HeatProgress + delta * rate);
                     food.LastCooker = kind; Recalculate(food, kind); changed = true;
                     if (start) { food.RecordOperation("cook_started", run.Clock.SimulationTime); facts.Add(new CookingChanged(run, "cook_started", kind, heat[i], food, previous)); }
                     if (food.Cooking != previous)
@@ -125,9 +132,11 @@ namespace ChefShow.Inventory
         private void Recalculate(FoodPortion food, CookerKind kind)
         {
             if (food.Cooking == CookState.Burned) return;
-            food.Cooking = food.HeatProgress >= cooking.Burned ? CookState.Burned
-                : food.HeatProgress < cooking.Ready || (kind == CookerKind.Pot && food.StirPresses < food.RequiredStirs) ? CookState.Cooking
-                : food.HeatProgress >= cooking.Overcooked ? CookState.Overcooked : CookState.Cooked;
+            float burned=kind==CookerKind.Oven?cooking.OvenBurned:cooking.Burned;
+            float over=kind==CookerKind.Oven?cooking.OvenOvercooked:cooking.Overcooked;
+            food.Cooking = food.HeatProgress >= burned ? CookState.Burned
+                : food.HeatProgress < cooking.ReadyFor(kind) || (kind == CookerKind.Pot && food.StirPresses < food.RequiredStirs) ? CookState.Cooking
+                : food.HeatProgress >= over ? CookState.Overcooked : CookState.Cooked;
         }
     }
 }

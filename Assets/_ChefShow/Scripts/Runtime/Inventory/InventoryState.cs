@@ -7,7 +7,7 @@ using ChefShow.Ingredients;
 
 namespace ChefShow.Inventory
 {
-    public enum PortionLocation { Basket, Tray, Hand, Station, Returned, Trash, Unpacked, Appliance }
+    public enum PortionLocation { Basket, Tray, Hand, Station, Returned, Trash, Unpacked, Appliance, MixingBowl, Mixed }
     public enum StationSocketKind { Board, WorkSurface }
     public enum BasketPlacement { Pantry, Carried, Station, Floor }
 
@@ -46,7 +46,7 @@ namespace ChefShow.Inventory
         public IReadOnlyList<FoodPortion> Tray => tray.AsReadOnly();
         public IReadOnlyList<FoodPortion> Portions => portions.AsReadOnly();
         public FoodPortion Held { get; private set; }
-        public FoodPortion Socket(int index) => index >= 0 && index < sockets.Length ? sockets[index] : null;
+        public FoodPortion Socket(int index) => index == 1 ? served.LastOrDefault() : index >= 0 && index < sockets.Length ? sockets[index] : null;
         public InventoryState(PrototypeRun owner, int basketCapacity, int trayCapacity, ChefShow.Cooking.CookingSettings cookingSettings = null)
         {
             if (basketCapacity < 1 || trayCapacity < 1) throw new ArgumentOutOfRangeException(nameof(basketCapacity));
@@ -148,9 +148,9 @@ namespace ChefShow.Inventory
         {
             if (!Active(out reason)) return false;
             if (Held != null) { reason = "Сначала положите продукт из руки."; return false; }
-            if (tool != KitchenToolKind.Knife) { reason = "Возьмите нож из ящика: E."; return false; }
+            if (tool != KitchenToolKind.Knife) { reason = "Возьмите нож из ящика: ЛКМ."; return false; }
             var portion = Socket((int)StationSocketKind.Board);
-            if (portion == null) { reason = "Положите продукт на доску: E."; return false; }
+            if (portion == null) { reason = "Положите продукт на доску: ЛКМ."; return false; }
             if (!portion.Ingredient.CanUseBoard || portion.PackedIngredient != null || portion.Ingredient.IsDoseContainer)
             { reason = "Этот продукт нельзя нарезать."; return false; }
             if (portion.ChopPresses >= RequiredChopPresses || portion.Preparation != PreparationState.Whole)
@@ -180,6 +180,7 @@ namespace ChefShow.Inventory
         }
         public bool TryTakeSocket(int index, out string reason)
         {
+            if (index == 1) return TryTakeServing(served.Count - 1, out reason);
             if (!FreeHand(out reason)) return false;
             if (index < 0 || index >= sockets.Length || sockets[index] == null) { reason = "Рабочее место пусто."; return false; }
             Held = sockets[index]; sockets[index] = null; origin = PortionLocation.Station; originIndex = index;
@@ -187,6 +188,7 @@ namespace ChefShow.Inventory
         }
         public bool TryPlaceSocket(int index, out string reason)
         {
+            if (index == 1) return TryPlaceServing(out reason);
             if (!Active(out reason)) return false;
             if (Held == null) { reason = "Сначала возьмите продукт из лотка."; return false; }
             if (index < 0 || index >= sockets.Length) { reason = "Неизвестное рабочее место."; return false; }
@@ -216,8 +218,12 @@ namespace ChefShow.Inventory
             if (!Active(out reason)) return false;
             if (Held == null) { reason = "В руке нет продукта."; return false; }
             var portion = Held;
-            if (origin == PortionLocation.Appliance)
-            { var list = cookers[originIndex]; list.Insert(Math.Min(originFoodIndex, list.Count), portion); portion.SocketIndex = originIndex; }
+            if(origin==PortionLocation.MixingBowl)
+            { if(bowl.Count>=cooking.MixingCapacity){reason="Миска заполнена.";return false;} bowl.Insert(Math.Min(originIndex,bowl.Count),portion);MixProgress=0; }
+            else if (origin == PortionLocation.Appliance)
+            { if(originIndex==(int)ChefShow.Cooking.CookerKind.Oven && !OvenDoorOpen){reason="Сначала откройте духовку.";return false;} var list = cookers[originIndex]; list.Insert(Math.Min(originFoodIndex, list.Count), portion); portion.SocketIndex = originIndex; }
+            else if (origin == PortionLocation.Station && originIndex == 1)
+            { if(SubmittedDish != null) { reason="Блюдо уже подано; положите продукт в лоток."; return false; } served.Insert(Math.Min(originFoodIndex,served.Count),portion); portion.SocketIndex=1; }
             else if (origin == PortionLocation.Station) { sockets[originIndex] = portion; portion.SocketIndex = originIndex; }
             else { var source = origin == PortionLocation.Basket ? basket : tray; source.Insert(Math.Min(originIndex, source.Count), portion); }
             portion.Location = origin; Held = null; Fact("ingredient_transferred", portion); return true;

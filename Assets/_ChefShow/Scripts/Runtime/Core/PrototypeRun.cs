@@ -50,6 +50,7 @@ namespace ChefShow.Core
             float delta = Clock.Tick(accepted);
             Inventory.TickCooking(delta);
             RemainingSeconds = Math.Max(0, RemainingSeconds - delta);
+            if (RemainingSeconds <= 0) Inventory.SubmitAtTimeup();
         }
 
         public void SetPaused(bool paused)

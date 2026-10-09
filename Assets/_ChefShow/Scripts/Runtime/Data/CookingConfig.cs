@@ -22,6 +22,12 @@ namespace ChefShow.Data
         public string OilIngredientId = "oil";
         [Range(1, 10), Tooltip("Доз на выбранную порцию за отдельный ЛКМ. Применяется при Restart.")]
         public int DosesPerPress = 1;
+        [Header("Миска и отдельная духовка D-032")]
+        [Range(1,6)] public int MixingCapacity=6;
+        [Min(.1f)] public float MixSeconds=3;
+        [Min(1)] public float OvenReadySeconds=45;
+        [Min(1)] public float OvenOvercookedSeconds=60;
+        [Min(1)] public float OvenBurnedSeconds=75;
         [Header("Геометрия и доступ к дальним приборам")]
         [FormerlySerializedAs("TableLength")]
         [Tooltip("Ширина перед участником (вдоль ряда / мировая Z).")]
@@ -41,6 +47,7 @@ namespace ChefShow.Data
             if (DosesPerPress < 1 || DosesPerPress > 10 || string.IsNullOrWhiteSpace(SaltIngredientId)
                 || string.IsNullOrWhiteSpace(OilIngredientId) || SaltIngredientId == OilIngredientId)
                 return "Проверьте разные ID соли/масла и число доз (1–10).";
+            if(MixingCapacity<1 || MixingCapacity>6 || !Positive(MixSeconds) || !Positive(OvenReadySeconds) || !Positive(OvenOvercookedSeconds) || !Positive(OvenBurnedSeconds) || !(OvenReadySeconds<OvenOvercookedSeconds && OvenOvercookedSeconds<OvenBurnedSeconds)) return "Проверьте вместимость миски и пороги духовки.";
             return null;
         }
         private static bool Positive(float n) => n > 0 && !float.IsNaN(n) && !float.IsInfinity(n);
@@ -49,7 +56,7 @@ namespace ChefShow.Data
             var error = Validate(); if (error != null) throw new InvalidOperationException(error);
             return new CookingSettings(Capacity, ReadySeconds, OvercookedSeconds, BurnedSeconds,
                 LowRate, MediumRate, HighRate, PotStirs,
-                DosesPerPress, SaltIngredientId, OilIngredientId);
+                DosesPerPress, SaltIngredientId, OilIngredientId,MixingCapacity,MixSeconds,OvenReadySeconds,OvenOvercookedSeconds,OvenBurnedSeconds);
         }
     }
 }

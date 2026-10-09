@@ -30,7 +30,7 @@ namespace ChefShow.Ingredients
         private float messageUntil;
         public KitchenTool EquippedObject => equipped;
         public KitchenToolKind Equipped => equipped == null ? KitchenToolKind.None : equipped.Kind;
-        public bool FoodInLeftHand => equipped != null;
+        public bool FoodInLeftHand => true;
 
         public string Validate()
         {
@@ -76,7 +76,7 @@ namespace ChefShow.Ingredients
             equipped = null; message = null;
             foreach (var tool in tools) tool.ReturnHome();
             foreach (var drawer in Drawers) drawer.ShowOpen(false);
-            bootstrap.Inventory.PresentFoodHand(false, LeftFoodHand);
+            bootstrap.Inventory.PresentFoodHand(true, LeftFoodHand);
             Physics.SyncTransforms();
         }
 
@@ -100,19 +100,21 @@ namespace ChefShow.Ingredients
                     equipped.Drop(bootstrap.Inventory.WorldRoot, bootstrap.Player.ViewCamera.transform);
                     equipped = null; Publish(previous); consumed = true;
                 }
-                else if (map.FindAction("Interact", true).WasPressedThisFrame())
+                else if (map.FindAction("Primary", true).WasPressedThisFrame() || map.FindAction("Secondary", true).WasPressedThisFrame())
                 {
                     bootstrap.Player.RefreshTarget();
                     var target = bootstrap.Player.Target;
+                    bool left = map.FindAction("Primary", true).WasPressedThisFrame();
+                    if (!left && target!=null && target.GetComponent<ToolDrawerTarget>()!=null && ReturnAimedTool()) return true;
                     var drawer = DrawerTarget(target);
                     var tool = target == null ? null : target.GetComponent<KitchenTool>();
-                    if (drawer != null)
+                    if (left && drawer != null)
                     {
                         consumed = true;
                         if (Own(drawer)) drawer.AnimateOpen(!drawer.IsOpen);
                         else Notify("Это ящик другого участника.");
                     }
-                    else if (tool != null)
+                    else if (!left && tool != null)
                     {
                         consumed = true;
                         if (!Own(tool.Drawer)) Notify("Это инструмент другого участника.");
@@ -153,7 +155,7 @@ namespace ChefShow.Ingredients
             {
                 var previous = Equipped;
                 equipped.ReturnHome(); equipped = null; message = null;
-                bootstrap.Inventory.PresentFoodHand(false, LeftFoodHand);
+                bootstrap.Inventory.PresentFoodHand(true, LeftFoodHand);
                 Publish(previous);
             }
             return true;
@@ -182,21 +184,21 @@ namespace ChefShow.Ingredients
                 if (!Own(cell.Drawer)) return "Ячейка другого участника";
                 if (!cell.Drawer.CanTakeTools) return "Сначала откройте ящик";
                 return cell.Drawer == equipped.Drawer && cell.CompartmentIndex == (int)equipped.Kind - 1
-                    ? "ПКМ — Положить " + Accusative(Equipped) + " · E — закрыть ящик"
+                    ? "ПКМ — Положить " + Accusative(Equipped) + " · ЛКМ — закрыть ящик"
                     : "Ячейка: " + Name((KitchenToolKind)(cell.CompartmentIndex + 1));
             }
             var drawer = DrawerTarget(target);
-            if (drawer != null) return Own(drawer) ? "E — " + (drawer.IsOpen ? "Закрыть ящик" : "Открыть ящик") : "Ящик другого участника";
+            if (drawer != null) return Own(drawer) ? "ЛКМ — " + (drawer.IsOpen ? "Закрыть ящик" : "Открыть ящик") : "Ящик другого участника";
             var tool = target == null ? null : target.GetComponent<KitchenTool>();
             if (tool == null) return null;
             if (!Own(tool.Drawer)) return "Инструмент другого участника";
             if (tool.Placement == KitchenToolPlacement.Stored && !tool.Drawer.CanTakeTools) return "Сначала откройте ящик";
             if (bootstrap.Run.Inventory.Held != null && bootstrap.Run.Inventory.Placement == BasketPlacement.Carried)
                 return "Левую руку занимает корзина. Поставьте её Tab.";
-            return "E — Взять " + Accusative(tool.Kind);
+            return "ПКМ — Взять " + Accusative(tool.Kind);
         }
 
-        public string Summary => Equipped == KitchenToolKind.None ? "Правая рука: продукт / свободна"
+        public string Summary => Equipped == KitchenToolKind.None ? "Правая рука свободна · ПКМ — взять инструмент"
             : "Правая рука: " + Name(Equipped) + " · ПКМ по своей ячейке — положить · G — уронить";
         public static string Name(KitchenToolKind kind) => kind == KitchenToolKind.Knife ? "Нож"
             : kind == KitchenToolKind.Fork ? "Вилка" : kind == KitchenToolKind.Spoon ? "Ложка"

@@ -15,7 +15,7 @@ using UnityEngine.TestTools;
 
 namespace ChefShow.Tests
 {
-    public sealed class InventoryPlayTests
+    public sealed partial class InventoryPlayTests
     {
         private GameBootstrap bootstrap;
         private InventoryController inventory;
@@ -74,20 +74,31 @@ namespace ChefShow.Tests
             if (exactPoint) Assert.That(Vector3.Angle(point - camera.position, camera.forward), Is.LessThan(0.3f),
                 "Наведение камеры: цель=" + point + " камера=" + camera.position + " взгляд=" + camera.forward + " объект=" + bootstrap.Player.Target?.name);
         }
+        // Legacy scenarios now use the current hand mapping; new tests use raw buttons.
         private IEnumerator Press(Key key)
         {
-            InputSystem.QueueStateEvent(keyboard, new KeyboardState(key)); yield return null; yield return null;
-            InputSystem.QueueStateEvent(keyboard, new KeyboardState()); yield return null; yield return null;
+            if(key==Key.E)
+            {
+                bootstrap.Player.RefreshTarget();var aimed=bootstrap.Player.Target;
+                if(aimed!=null && aimed.CanFocus(bootstrap.Config.PlayerTeam) && aimed.GetComponent<InventoryInteractable>()==null) {yield return Press(Key.F);yield break;}
+                yield return HandClick(aimed!=null && aimed.GetComponent<KitchenTool>()!=null);yield break;
+            }
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState(key));yield return null;yield return null;
+            InputSystem.QueueStateEvent(keyboard,new KeyboardState());yield return null;yield return null;
         }
         private IEnumerator Click()
         {
-            InputSystem.QueueStateEvent(mouse, new MouseState().WithButton(MouseButton.Left)); yield return null; yield return null;
-            InputSystem.QueueStateEvent(mouse, new MouseState()); yield return null; yield return null;
+            bootstrap.Player.RefreshTarget();var aimed=bootstrap.Player.Target;
+            bool work=aimed!=null && (aimed.GetComponent<ChoppingBoard>()!=null || aimed.GetComponent<CookingTarget>()!=null || aimed.GetComponent<InventoryInteractable>()?.Kind==InventoryTargetKind.TrayItem);
+            yield return HandClick(work && (State.Held==null || !State.Held.Ingredient.IsDoseContainer));
         }
         private IEnumerator Cancel()
         {
-            InputSystem.QueueStateEvent(mouse, new MouseState().WithButton(MouseButton.Right)); yield return null; yield return null;
-            InputSystem.QueueStateEvent(mouse, new MouseState()); yield return null; yield return null;
+            bootstrap.Player.RefreshTarget();var aimed=bootstrap.Player.Target;
+            if(bootstrap.Tools.EquippedObject!=null && aimed!=null && (aimed.GetComponent<ToolDrawerTarget>()!=null || aimed.GetComponent<KitchenTool>()!=null)) yield return HandClick(true);
+            else if(State.Held!=null)yield return Press(Key.Backspace);
+            else if(bootstrap.Player.Focused)yield return Press(Key.F);
+            else yield return Press(Key.Backspace);
         }
         private Vector3 Stock(string id) => GameObject.Find("Stock_" + id).transform.position;
         private Vector3 Socket(int index) => inventory.SocketDisplays[index].transform.parent.position;
@@ -304,7 +315,7 @@ namespace ChefShow.Tests
                 ownNpc.enabled = false; Physics.SyncTransforms();
                 var clock = new GameClock();
                 actions.FindActionMap("Gameplay", true).Enable();
-                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.E)); yield return null;
+                InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.F)); yield return null;
                 clock.Tick(.02f); rig.Step(clock, true);
                 Assert.That(rig.Focused, Is.True);
                 actions.FindActionMap("Gameplay", true).Disable(); actions.FindActionMap("Station", true).Enable();
@@ -422,7 +433,7 @@ namespace ChefShow.Tests
             Assert.That(bootstrap.Hud.InteractionKey.enabled, Is.True);
             yield return Press(Key.E); var id = State.Held.Id;
             var originalParent = inventory.HeldDisplay.transform.parent;
-            Assert.That(inventory.FoodInLeftHand, Is.False);
+            Assert.That(inventory.FoodInLeftHand, Is.True);
             yield return OpenDrawer(drawer); var knife = Tool(drawer, 0);
             yield return AimTool(knife); yield return Press(Key.E);
             Assert.That(State.Held.Id, Is.EqualTo(id)); Assert.That(State.Portions.Count, Is.EqualTo(1));
@@ -476,29 +487,18 @@ namespace ChefShow.Tests
         [UnityTest]
         public IEnumerator BasketLeftHandConflictRejectsWithoutLosingFoodOrTool()
         {
-            var tools = bootstrap.Tools; var drawer = tools.Drawers.Single(d => d.StationId == inventory.PlayerStationId);
-            yield return TakeBasket(); yield return Aim(Stock("potato")); yield return Press(Key.E); yield return DockAndDump();
-            yield return OpenDrawer(drawer);
-            yield return Aim(inventory.BasketCollider.bounds.center + Vector3.up * inventory.BasketCollider.bounds.extents.y * .7f);
-            Assert.That(bootstrap.Player.Target?.GetComponent<InventoryInteractable>()?.Kind, Is.EqualTo(InventoryTargetKind.Basket), "Basket aim=" + bootstrap.Player.Target?.name);
-            yield return Press(Key.Tab);
-            Assert.That(State.Placement, Is.EqualTo(BasketPlacement.Carried));
-            yield return Aim(TrayPoint(0)); yield return Press(Key.E); var id = State.Held.Id;
-            var knife = Tool(drawer, 0); yield return AimTool(knife); yield return Press(Key.E);
-            Assert.That(tools.Equipped, Is.EqualTo(KitchenToolKind.None)); Assert.That(State.Held.Id, Is.EqualTo(id));
-            Assert.That(tools.Describe(bootstrap.Player.Target), Does.Contain("корзина"));
-            yield return Cancel();
-            yield return Aim(TrayPoint(0)); yield return Press(Key.Tab); Assert.That(State.Placement, Is.EqualTo(BasketPlacement.Station));
-            yield return AimTool(knife); yield return Press(Key.E); Assert.That(tools.EquippedObject, Is.SameAs(knife),
-                "held=" + State.Held?.Id + " basket=" + State.Placement + " drawer=" + drawer.IsOpen + " ready=" + drawer.CanTakeTools
-                + " target=" + bootstrap.Player.Target?.name + " paused=" + bootstrap.IsPaused + " reason=" + tools.Describe(bootstrap.Player.Target));
-            yield return Aim(inventory.BasketCollider.bounds.center + Vector3.up * inventory.BasketCollider.bounds.extents.y * .7f);
-            Assert.That(bootstrap.Player.Target?.GetComponent<InventoryInteractable>()?.Kind, Is.EqualTo(InventoryTargetKind.Basket), "Basket aim=" + bootstrap.Player.Target?.name);
-            yield return Press(Key.Tab);
-            yield return Aim(TrayPoint(0)); yield return Press(Key.E);
-            Assert.That(State.Held, Is.Null); Assert.That(State.Tray[0].Id, Is.EqualTo(id)); Assert.That(tools.EquippedObject, Is.SameAs(knife));
-            yield return Press(Key.Tab); Assert.That(State.Placement, Is.EqualTo(BasketPlacement.Station));
-            yield return Press(Key.E); Assert.That(State.Held.Id, Is.EqualTo(id)); Assert.That(inventory.FoodInLeftHand, Is.True);
+            var drawer=bootstrap.Tools.Drawers.Single(d=>d.StationId==inventory.PlayerStationId);
+            yield return TakeBasket();yield return Aim(Stock("potato"));yield return Press(Key.E);yield return DockAndDump();
+            var food=State.Tray[0];yield return OpenDrawer(drawer);yield return Aim(TrayPoint(0));yield return HandClick();
+            yield return Aim(inventory.BasketCollider.bounds.center+Vector3.up*.1f);yield return Press(Key.Tab);
+            Assert.That(State.Placement,Is.EqualTo(BasketPlacement.Station));Assert.That(State.Held,Is.SameAs(food));
+            yield return Aim(inventory.TrayDisplays[0].transform.parent.parent.position);yield return HandClick();
+            yield return Aim(inventory.BasketCollider.bounds.center+Vector3.up*.1f);yield return Press(Key.Tab);
+            Assert.That(State.Placement,Is.EqualTo(BasketPlacement.Carried));yield return Aim(TrayPoint(0));yield return HandClick();
+            Assert.That(State.Held,Is.Null);Assert.That(State.Tray[0],Is.SameAs(food));
+            var knife=Tool(drawer,0);yield return AimTool(knife);yield return HandClick(true);Assert.That(bootstrap.Tools.EquippedObject,Is.SameAs(knife));
+            yield return Aim(inventory.StationDock.parent.position);yield return Press(Key.Tab);yield return Aim(TrayPoint(0));yield return HandClick();
+            Assert.That(State.Held,Is.SameAs(food));Assert.That(inventory.FoodInLeftHand,Is.True);
         }
 
         [UnityTest]
@@ -537,25 +537,25 @@ namespace ChefShow.Tests
             }
         }
         [UnityTest]
-        public IEnumerator ECollectsAndTransfersWhileSixClicksCutOneBeefPortionInNormalAndFocus()
+        public IEnumerator MouseCollectsAndTransfersWhileSixRightClicksCutOneBeefPortionInNormalAndFocus()
         {
             Assert.That(bootstrap.Preparation.Validate(inventory), Is.Null);
             yield return TakeBasket(); yield return Aim(Stock("beef"));
             Assert.That(bootstrap.Hud.Context.text, Is.EqualTo("Взять говядину в корзину"));
             Assert.That(bootstrap.Hud.InteractionKey.enabled, Is.True);
-            yield return Click(); Assert.That(State.Basket.Count, Is.Zero, "ЛКМ больше не подбирает продукты.");
+            yield return RawKeyE(); Assert.That(State.Basket.Count, Is.Zero, "E больше не подбирает продукты.");
             yield return Press(Key.E); Assert.That(State.Basket.Count, Is.EqualTo(1)); yield return DockAndDump();
-            yield return Aim(TrayPoint(0)); yield return Click(); Assert.That(State.Held, Is.Null);
+            yield return Aim(TrayPoint(0)); yield return RawKeyE(); Assert.That(State.Held, Is.Null);
             yield return Press(Key.E); var food = State.Held; string id = food.Id;
             var drawer = bootstrap.Tools.Drawers.Single(d => d.StationId == inventory.PlayerStationId);
             yield return OpenDrawer(drawer); yield return AimTool(Tool(drawer, 0)); yield return Press(Key.E);
             Assert.That(inventory.FoodInLeftHand, Is.True); Assert.That(State.Held.Id, Is.EqualTo(id));
             yield return Aim(Socket(0)); yield return Press(Key.E);
-            Assert.That(bootstrap.Hud.Context.text, Does.Contain("ЛКМ — нарезать · 0/6"));
+            Assert.That(bootstrap.Hud.Context.text, Does.Contain("ПКМ — нарезать · 0/6"));
             var facts = new System.Collections.Generic.List<PreparationChanged>();
             using (bootstrap.Run.Events.Subscribe<PreparationChanged>(facts.Add))
             {
-                InputSystem.QueueStateEvent(mouse, new MouseState().WithButton(MouseButton.Left)); yield return null; yield return null;
+                InputSystem.QueueStateEvent(mouse, new MouseState().WithButton(MouseButton.Right)); yield return null; yield return null;
                 Assert.That(food.ChopPresses, Is.EqualTo(1));
                 var knife = bootstrap.Tools.EquippedObject; var frozen = knife.transform.position;
                 bootstrap.SetPaused(true); yield return new WaitForSecondsRealtime(.1f);
@@ -567,7 +567,7 @@ namespace ChefShow.Tests
                 Capture("chopping-progress.png");
                 yield return Press(Key.E); Assert.That(State.Held.Id, Is.EqualTo(id));
                 Assert.That(inventory.HeldDisplay.CutPieces.Count(r => r.enabled), Is.EqualTo(4));
-                yield return Aim(Socket(1)); yield return Press(Key.E); yield return Click();
+                yield return Aim(Socket(1)); yield return Press(Key.E); yield return HandClick(true);
                 Assert.That(State.Held, Is.Null); Assert.That(State.Socket(1), Is.SameAs(food));
                 Assert.That(food.ChopPresses, Is.EqualTo(3), "Выкладка не продолжает нарезку и не исправляет сырьё.");
                 Assert.That(food.Cooking, Is.EqualTo(CookState.Raw)); yield return Press(Key.E);
@@ -639,10 +639,10 @@ namespace ChefShow.Tests
                 yield return Aim(TrayPoint(1)); yield return Press(Key.E); Assert.That(State.Held, Is.SameAs(carton));
                 yield return Aim(Socket(1)); yield return Press(Key.E);
                 Assert.That(State.Held, Is.SameAs(carton)); Assert.That(State.Socket(1), Is.Null);
-                Assert.That(bootstrap.Hud.Context.text, Does.Contain("Готовое блюдо"));
+                Assert.That(bootstrap.Hud.Context.text, Does.Contain("Упаковки"));
                 var tray=inventory.TrayDisplays[0].GetComponentInParent<InventoryInteractable>().transform.parent;
                 yield return Aim(tray.position); yield return Press(Key.E); Assert.That(State.Tray[1], Is.SameAs(carton));
-                yield return Aim(TrayPoint(1)); Assert.That(bootstrap.Hud.Context.text, Does.Contain("ЛКМ — открыть"));
+                yield return Aim(TrayPoint(1)); Assert.That(bootstrap.Hud.Context.text, Does.Contain("ПКМ — открыть"));
                 Assert.That(bootstrap.Hud.Context.text, Does.Contain("6 яиц")); Capture("tray-carton-ready.png");
                 yield return Click(); Assert.That(State.Tray.Count, Is.EqualTo(7)); Assert.That(State.Socket(1), Is.Null);
                 Assert.That(State.Tray.Skip(1).Take(6).All(p=>p.Ingredient.Id=="egg" && p.Quantity==1), Is.True);
@@ -766,10 +766,10 @@ namespace ChefShow.Tests
             var station=GameObject.Find("Station_A1").GetComponent<ChefShow.Player.PrototypeInteractable>();
             yield return Aim(station.FocusPoint.position);yield return Press(Key.E);yield return new WaitForSecondsRealtime(.25f);
             Assert.That(bootstrap.Player.Focused,Is.True);yield return AimCell(drawer,0);
-            Assert.That(bootstrap.Hud.Context.text,Is.EqualTo("Положить нож · E — закрыть ящик"));Assert.That(bootstrap.Hud.InteractionKey.text,Is.EqualTo("[ПКМ]"));
+            Assert.That(bootstrap.Hud.Context.text,Is.EqualTo("Положить нож · ЛКМ — закрыть ящик"));Assert.That(bootstrap.Hud.InteractionKey.text,Is.EqualTo("ПКМ"));
             yield return Cancel();Assert.That(bootstrap.Tools.EquippedObject,Is.Null);
             Assert.That(knife.Placement,Is.EqualTo(KitchenToolPlacement.Stored));Assert.That(knife.transform.parent,Is.SameAs(drawer.Compartments[0]));
-            Assert.That(State.Held,Is.SameAs(food));Assert.That(bootstrap.Player.Focused,Is.True);Assert.That(inventory.FoodInLeftHand,Is.False);
+            Assert.That(State.Held,Is.SameAs(food));Assert.That(bootstrap.Player.Focused,Is.True);Assert.That(inventory.FoodInLeftHand,Is.True);
             yield return AimTool(knife);yield return Press(Key.E);Assert.That(bootstrap.Tools.EquippedObject,Is.SameAs(knife));
             Assert.That(State.Held,Is.SameAs(food));Capture("free-cooking-tool-return.png");
         }
@@ -780,9 +780,10 @@ namespace ChefShow.Tests
             yield return Aim(TrayPoint(0));yield return Press(Key.E);var food=State.Held;
             var drawer=bootstrap.Tools.Drawers.Single(d=>d.StationId==inventory.PlayerStationId);yield return OpenDrawer(drawer);
             yield return AimTool(Tool(drawer,0));yield return Press(Key.E);
-            // Occupied foreign-type compartment targets its real stored tool.
-            yield return AimTool(Tool(drawer,1));yield return Cancel();
-            Assert.That(bootstrap.Tools.Equipped,Is.EqualTo(KitchenToolKind.Knife));Assert.That(State.Held,Is.SameAs(food));
+            // A real stored tool swaps hands; the former instance returns to its original cell.
+            yield return AimTool(Tool(drawer,1));yield return HandClick(true);
+            Assert.That(bootstrap.Tools.Equipped,Is.EqualTo(KitchenToolKind.Fork));Assert.That(State.Held,Is.SameAs(food));Assert.That(Tool(drawer,0).Placement,Is.EqualTo(KitchenToolPlacement.Stored));
+            yield return AimTool(Tool(drawer,0));yield return HandClick(true);
             yield return AimCell(drawer,0);drawer.AnimateOpen(false);yield return Cancel();
             Assert.That(bootstrap.Tools.Equipped,Is.EqualTo(KitchenToolKind.Knife));Assert.That(State.Held,Is.SameAs(food));
             drawer.ShowOpen(true);
@@ -908,14 +909,14 @@ namespace ChefShow.Tests
             {
                 yield return Aim(TrayPoint(0)); yield return Press(Key.E); var salt=State.Held;
                 Assert.That(salt.Ingredient.Id,Is.EqualTo("salt")); yield return Aim(CookFoodPoint(pan,0));
-                Assert.That(bootstrap.Hud.Context.text,Does.Contain("ЛКМ — Добавить дозу соли"));
-                Assert.That(bootstrap.Hud.InteractionKey.enabled,Is.False);
+                Assert.That(bootstrap.Hud.Context.text,Does.Contain("Добавить дозу соли"));
+                Assert.That(bootstrap.Hud.InteractionKey.enabled,Is.True);
                 InputSystem.QueueStateEvent(mouse,new MouseState().WithButton(MouseButton.Left));
                 for(int frame=0;frame<5;frame++) yield return null;
                 Assert.That(first.SaltDoses,Is.EqualTo(1),"Удержание не повторяет дозу.");
                 InputSystem.QueueStateEvent(mouse,new MouseState()); yield return null; yield return null;
                 yield return Click(); Assert.That(first.SaltDoses,Is.EqualTo(2)); Assert.That(second.SaltDoses,Is.Zero);
-                yield return Press(Key.E); Assert.That(State.Held,Is.SameAs(salt)); Assert.That(State.Cooker(CookerKind.Pan).Count,Is.EqualTo(2));
+                yield return RawKeyE(); Assert.That(State.Held,Is.SameAs(salt)); Assert.That(State.Cooker(CookerKind.Pan).Count,Is.EqualTo(2));
                 yield return Aim(CookFoodPoint(pan,1)); yield return Click(); Assert.That(second.SaltDoses,Is.EqualTo(1));
                 Assert.That(bootstrap.Hud.Context.text,Does.Contain("Соль: 1")); Capture("doses-salt.png");
                 yield return Aim(inventory.TrayDisplays[0].transform.parent.parent.position); yield return Press(Key.E);

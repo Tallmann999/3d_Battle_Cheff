@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ChefShow.Cooking
 {
-    public enum CookingTargetKind { Vessel, Food, HeatKnob }
+    public enum CookingTargetKind { Vessel, Food, HeatKnob, Door }
     public sealed class CookingStation : MonoBehaviour
     {
         public string StationId;
@@ -14,6 +14,9 @@ namespace ChefShow.Cooking
         public Transform StirPoint;
         public Renderer HeatIndicator;
         public Renderer[] Smoke;
+        public Transform Door;
+        public Quaternion DoorClosedRotation=Quaternion.identity;
+        public Quaternion DoorOpenRotation=Quaternion.Euler(0,0,80);
         private MaterialPropertyBlock block;
         public void Present(InventoryState state, bool own)
         {
@@ -25,7 +28,8 @@ namespace ChefShow.Cooking
                 Food[i].GetComponentInParent<CookingTarget>().GetComponent<BoxCollider>().enabled = occupied;
             }
             var level = own ? state.Heat(Kind) : HeatLevel.Off;
-            Status.text = CookingController.HeatName(level);
+            if(Door!=null)Door.localRotation=own && !state.OvenDoorOpen?DoorClosedRotation:DoorOpenRotation;
+            Status.text = CookingController.HeatName(level)+(Kind==CookerKind.Oven? (own && !state.OvenDoorOpen?" · закрыта":" · открыта"):"");
             block = block ?? new MaterialPropertyBlock();
             block.SetColor("_BaseColor", level == HeatLevel.Off ? new Color(.18f,.22f,.25f)
                 : Color.Lerp(new Color(1,.63f,.18f), new Color(1,.16f,.03f), (int)level / 3f));

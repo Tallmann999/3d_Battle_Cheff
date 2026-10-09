@@ -90,7 +90,7 @@ namespace ChefShow.Editor
                         target.DisplayName = "Станция " + id;
                         target.IsPlayerStation = own;
                         target.Team = team;
-                        target.Description = own ? "E — фокус станции" : "Станция другого участника. Только осмотр.";
+                        target.Description = own ? "F — фокус станции" : "Станция другого участника. Только осмотр.";
                         Label(id + (own ? " · ВЫ" : ""), station.transform, new Vector3(sign * 0.1f, TableHeightUpdate.LabelLocalY, 0), Quaternion.Euler(0, -sign * 90, 0), 0.025f);
                         if (own) continue;
                         var npc = GameObject.CreatePrimitive(PrimitiveType.Capsule);
@@ -230,7 +230,7 @@ namespace ChefShow.Editor
             hud.Context = Text("Context", root.transform, new Vector2(350, -570), new Vector2(800, 80), 24, "", TextAnchor.MiddleCenter);
             Text("Crosshair", root.transform, new Vector2(620, -340), new Vector2(40, 40), 32, "+", TextAnchor.MiddleCenter);
             Text("Controls", root.transform, new Vector2(20, -630), new Vector2(1100, 75), 20,
-                "WASD — ходьба · мышь — обзор · Shift — бег\nE — фокус своей станции · RMB — выйти · Tab — задание · Esc — пауза · F1 — debug", TextAnchor.UpperLeft);
+                "WASD — ходьба · мышь — обзор · Shift — бег\nF — фокус своей станции · F — выйти · Tab — задание · Esc — пауза · F1 — debug", TextAnchor.UpperLeft);
             hud.TaskCard = Text("Task Card", root.transform, new Vector2(320, -160), new Vector2(650, 250), 26,
                 "Первый технический этап\nОсмотрите две команды, кладовую и дегустационный стол.\nГотовка и настоящий раунд появятся на следующем срезе.", TextAnchor.MiddleCenter);
             hud.PausePanel = Panel("Pause", root.transform);
@@ -374,11 +374,11 @@ namespace ChefShow.Editor
                 .With("Left", "<Keyboard>/a").With("Right", "<Keyboard>/d");
             game.AddAction("Look", InputActionType.Value, "<Mouse>/delta", expectedControlLayout: "Vector2");
             game.AddAction("Sprint", InputActionType.Button, "<Keyboard>/leftShift");
-            game.AddAction("Interact", InputActionType.Button, "<Keyboard>/e");
+            game.AddAction("Interact", InputActionType.Button, "<Keyboard>/f");
             game.AddAction("Task", InputActionType.Button, "<Keyboard>/tab");
             var station = asset.AddActionMap("Station");
             station.AddAction("Look", InputActionType.Value, "<Mouse>/delta", expectedControlLayout: "Vector2");
-            station.AddAction("Cancel", InputActionType.Button, "<Mouse>/rightButton");
+            station.AddAction("Cancel", InputActionType.Button, "<Keyboard>/backspace");
             station.AddAction("Task", InputActionType.Button, "<Keyboard>/tab");
             var ui = asset.AddActionMap("UI");
             ui.AddAction("Point", InputActionType.PassThrough, "<Mouse>/position", expectedControlLayout: "Vector2");

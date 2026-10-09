@@ -96,20 +96,14 @@ namespace ChefShow.Editor
             cooking.Stations = stations.ToArray();
             InstallHud(bootstrap);
             EditorUtility.SetDirty(cooking); EditorUtility.SetDirty(bootstrap);
+            HandServingInstaller.AddToScene(scene); MixingOvenInstaller.AddToScene(scene);
             Physics.SyncTransforms(); error=cooking.Validate(bootstrap.Inventory); if(error!=null) throw new InvalidOperationException(error);
         }
         public static void InstallHud(GameBootstrap bootstrap)
         {
-            foreach (var text in bootstrap.Hud.GetComponentsInChildren<Text>(true).Where(t => t.name == "Controls"))
-            {
-                Undo.RecordObject(text,"Cooking controls");
-                text.text = "WASD — ходьба · Shift — бег · мышь — обзор\nTab — корзина · E — взять / положить / нагрев\nЛКМ — нарезать / распаковать / мешать / дозировать · G — уронить\nПКМ — инструмент в ячейку / отмена · Q — задание · Esc — пауза";
-                EditorUtility.SetDirty(text);
-            }
-            Undo.RecordObject(bootstrap.Hud.TaskCard,"Cooking task");
-            bootstrap.Hud.TaskCard.text = "НАРЕЗКА И НАГРЕВ\nTab — корзина; E — собрать / выгрузить / перенести.\nНож + продукт на доске: 6 ЛКМ. Упаковка в лотке: 1 ЛКМ.\nE — положить в прибор; E по отдельной ручке — нагрев.\nСредний огонь: около 30 с; дальше переготовка и сгорание.\nГарнир: нарезанный картофель + 3 ЛКМ с лопаткой.\nE по порции — снять; выключить прибор отдельной ручкой.\nЗона блюда: любая еда; качество оценим при подаче. Тарелки позже.\nСоль/масло: E взять из лотка, ЛКМ по конкретной еде — доза.";
-            EditorUtility.SetDirty(bootstrap.Hud.TaskCard);
+            HandServingInstaller.UpdateHud(bootstrap);
         }
+
         private static void ArrangeRows(Scene scene,PrototypeInteractable[] tables,float width)
         {
             // Keep station 1 and each actor's offset; retain the existing 20 cm gaps.

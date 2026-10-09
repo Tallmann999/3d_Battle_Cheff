@@ -28,13 +28,13 @@ namespace ChefShow.Cooking
         {
             if (inventory == null || Config == null) return "Готовке нужны инвентарь и конфиг.";
             var error = Config.Validate(); if (error != null) return error;
-            if (Stations == null || Stations.Length != 24 || Stations.Any(s => s == null)
-                || Stations.Select(s => s.StationId + "/" + s.Kind).Distinct().Count() != 24) return "Нужны 24 уникальных прибора на 12 станциях.";
+            if (Stations == null || Stations.Length != 36 || Stations.Any(s => s == null)
+                || Stations.Select(s => s.StationId + "/" + s.Kind).Distinct().Count() != 36) return "Нужны 36 уникальных приборов на 12 станциях.";
             foreach (var station in Stations)
-                if (station.Food == null || station.Food.Length != 3 || station.Status == null || station.StirPoint == null
+                if (station.Food == null || station.Food.Length != (station.Kind==CookerKind.Oven?1:3) || station.Status == null || station.StirPoint == null
                     || station.HeatIndicator == null || station.Smoke == null || station.Smoke.Length != 3
                     || station.Food.Any(v => v == null || v.Visual == null || v.CutPieces == null || v.CutPieces.Length != 7)) return "Не заполнены ссылки прибора " + station.StationId;
-            if (Stations.Count(s => s.StationId == inventory.PlayerStationId) != 2) return "Нет двух приборов участника игрока.";
+            if (Stations.Count(s => s.StationId == inventory.PlayerStationId) != 3) return "Нет трёх приборов участника игрока.";
             return null;
         }
         public void Initialize(GameBootstrap owner, InputActionAsset actions)
@@ -49,8 +49,8 @@ namespace ChefShow.Cooking
             if (acceptInput && !commandConsumed)
             {
                 var map = input.FindActionMap(bootstrap.Player.Focused ? "Station" : "Gameplay", true);
-                bool interact = map.FindAction("Interact", true).WasPressedThisFrame();
-                bool primary = map.FindAction("Primary", true).WasPressedThisFrame();
+                bool interact = map.FindAction("Primary", true).WasPressedThisFrame();
+                bool primary = map.FindAction("Secondary", true).WasPressedThisFrame();
                 if (interact || primary)
                 {
                     bootstrap.Player.RefreshTarget();
@@ -61,17 +61,15 @@ namespace ChefShow.Cooking
                         if (target.Station.StationId != bootstrap.Inventory.PlayerStationId) reason = "Это прибор другого участника.";
                         else if (interact)
                         {
-                            if (target.Kind == CookingTargetKind.HeatKnob) success = State.TryCycleHeat(target.Station.Kind, out reason);
+                            if(target.Kind==CookingTargetKind.Door) success=State.TryToggleOvenDoor(out reason);
+                            else if (target.Kind == CookingTargetKind.HeatKnob) success = State.TryCycleHeat(target.Station.Kind, out reason);
+                            else if (State.Held != null && State.Held.Ingredient.IsDoseContainer) success = State.TryApplySeasoning(target.Station.Kind, target.Kind == CookingTargetKind.Food ? target.Index : -1, out reason);
                             else if (State.Held != null) success = State.TryPlaceCooker(target.Station.Kind, out reason);
                             else if (bootstrap.Tools.FoodInLeftHand && State.Placement == BasketPlacement.Carried) reason = "Сначала поставьте корзину Tab.";
                             else success = State.TryTakeCooker(target.Station.Kind, target.Kind == CookingTargetKind.Food ? target.Index : 0, out reason);
                         }
-                        else if (target.Kind != CookingTargetKind.HeatKnob)
+                        else if (target.Kind != CookingTargetKind.HeatKnob && target.Kind!=CookingTargetKind.Door)
                         {
-                            if (State.Held != null && State.Held.Ingredient.IsDoseContainer)
-                                success = State.TryApplySeasoning(target.Station.Kind,
-                                    target.Kind == CookingTargetKind.Food ? target.Index : -1, out reason);
-                            else
                             {
                                 success = State.TryStir(target.Station.Kind, bootstrap.Tools.Equipped, out reason);
                                 if (success) StartStroke(target.Station);
@@ -108,7 +106,7 @@ namespace ChefShow.Cooking
             strokeTool = null; strokeTime = -1;
         }
         public static string HeatName(HeatLevel level) => level == HeatLevel.Off ? "Выкл." : level == HeatLevel.Low ? "Слабый" : level == HeatLevel.Medium ? "Средний" : "Сильный";
-        public static string CookerName(CookerKind kind) => kind == CookerKind.Pan ? "Сковорода" : "Кастрюля";
+        public static string CookerName(CookerKind kind) => kind == CookerKind.Pan ? "Сковорода" : kind==CookerKind.Pot?"Кастрюля":"Духовка";
         public static string FoodState(FoodPortion food) => food.Cooking == CookState.Burned ? "СГОРЕЛО" : food.Cooking == CookState.Overcooked ? "Переготовлено"
             : food.Cooking == CookState.Cooked ? "Готово" : food.Cooking == CookState.Raw ? "Сырое" : "Готовится";
         public string Describe(PrototypeInteractable aimed)
@@ -117,8 +115,9 @@ namespace ChefShow.Cooking
             if (target.Station.StationId != bootstrap.Inventory.PlayerStationId) return "Прибор другого участника";
             if (message != null && messageTarget == target && bootstrap.Run.Clock.SimulationTime < messageUntil) return message;
             var kind = target.Station.Kind; var foods = State.Cooker(kind); var heat = State.Heat(kind);
-            if (target.Kind == CookingTargetKind.HeatKnob) return "E — Нагрев: " + HeatName(heat) + " → " + HeatName((HeatLevel)(((int)heat + 1) % 4));
-            string state = CookerName(kind) + " · " + HeatName(heat) + " · " + foods.Count + "/" + State.CookingRules.Capacity;
+            if(target.Kind==CookingTargetKind.Door)return "ЛКМ — "+(State.OvenDoorOpen?"Закрыть":"Открыть")+" дверцу духовки";
+            if (target.Kind == CookingTargetKind.HeatKnob) return "ЛКМ — Нагрев: " + HeatName(heat) + " → " + HeatName((HeatLevel)(((int)heat + 1) % 4));
+            string state = CookerName(kind) + " · " + HeatName(heat) + " · " + foods.Count + "/" + State.CookingRules.CapacityFor(kind);
             if (State.Held != null && State.Held.Ingredient.IsDoseContainer)
             {
                 SeasoningKind seasoning;
@@ -129,18 +128,20 @@ namespace ChefShow.Cooking
                 return "ЛКМ — Добавить дозу " + (seasoning == SeasoningKind.Salt ? "соли" : "масла")
                     + " (" + State.CookingRules.DosesPerPress + ") · " + InventoryController.FoodName(selected.Ingredient) + "\n" + Doses(selected);
             }
-            if (State.Held != null) return "E — Положить " + InventoryController.FoodName(State.Held.Ingredient) + " в прибор\n" + state;
+            if(kind==CookerKind.Oven && !State.OvenDoorOpen)return "Духовка закрыта · откройте дверцу левой рукой\n"+state;
+            if (State.Held != null) return "ЛКМ — Положить " + InventoryController.FoodName(State.Held.Ingredient) + " в прибор\n" + state;
             int index = target.Kind == CookingTargetKind.Food ? target.Index : 0;
-            if (index >= foods.Count) return state + "\nE по ручке — переключить нагрев";
+            if (index >= foods.Count) return state + "\nЛКМ по ручке — переключить нагрев";
             var food = foods[index];
-            return "E — Взять " + InventoryController.FoodName(food.Ingredient) + " · " + FoodState(food) + "\n"
-                + state + " · " + Mathf.FloorToInt(Mathf.Min(100, food.HeatProgress / State.CookingRules.Ready * 100)) + "%"
+            return "ЛКМ — Взять " + InventoryController.FoodName(food.Ingredient) + " · " + FoodState(food) + "\n"
+                + state + " · " + Mathf.FloorToInt(Mathf.Min(100, food.HeatProgress / State.CookingRules.ReadyFor(kind) * 100)) + "%"
                 + " · " + Doses(food)
-                + (kind == CookerKind.Pot ? " · ЛКМ лопаткой: " + food.StirPresses + "/" + food.RequiredStirs : "")
+                + (kind == CookerKind.Pot ? " · ПКМ лопаткой: " + food.StirPresses + "/" + food.RequiredStirs : "")
                 + (kind == CookerKind.Pan && food.HeatProgress >= State.CookingRules.Ready * .85f && food.Cooking != CookState.Burned ? " · следите за нагревом" : "");
         }
         private static string Doses(FoodPortion food) => "Соль: " + food.SaltDoses + " · Масло: " + food.OilDoses;
         public string Summary => "Сковорода: " + HeatName(State.Heat(CookerKind.Pan)) + " · " + State.Cooker(CookerKind.Pan).Count + "/" + State.CookingRules.Capacity
-            + "   Кастрюля: " + HeatName(State.Heat(CookerKind.Pot)) + " · " + State.Cooker(CookerKind.Pot).Count + "/" + State.CookingRules.Capacity;
+            + "   Кастрюля: " + HeatName(State.Heat(CookerKind.Pot)) + " · " + State.Cooker(CookerKind.Pot).Count + "/" + State.CookingRules.Capacity
+            + "\nДуховка: " + HeatName(State.Heat(CookerKind.Oven)) + " · " + (State.OvenDoorOpen?"открыта":"закрыта");
     }
 }

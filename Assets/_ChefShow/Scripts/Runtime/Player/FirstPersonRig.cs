@@ -33,7 +33,7 @@ namespace ChefShow.Player
         private float focusYaw, focusPitch, focusBaseYaw;
         public Func<bool> CancelInteraction;
         public bool Focused { get; private set; }
-        [Range(75, 89)] public float MaxDownPitch = 85;
+        [Range(75, 89)] public float MaxDownPitch = 89;
         public PrototypeInteractable Target { get; private set; }
         public Camera ViewCamera => viewCamera;
         public float ExtendedInteractionDistance { get; set; }
@@ -99,6 +99,7 @@ namespace ChefShow.Player
             {
                 if (CancelInteraction?.Invoke() != true && Focused) ExitFocus();
             }
+            else if (Focused && map.FindAction("Interact", true).WasPressedThisFrame()) ExitFocus();
             else if (!Focused && map.FindAction("Interact", true).WasPressedThisFrame()
                 && Target != null && Target.GetComponent<InventoryInteractable>() == null && Target.CanFocus(config.PlayerTeam)) EnterFocus();
         }
