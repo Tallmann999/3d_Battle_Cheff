@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed6ebac890d1983409385114b43500b5, type: 3}
   m_Name: KitchenLayoutConfig
   m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Data.KitchenLayoutConfig
-  ArenaWidth: 28
-  ArenaDepth: 38
+  ArenaWidth: 37.4
+  ArenaDepth: 53.1
+  ArenaCenterZ: -3.25
   OvenScale: 2
   OvenWallClearance: 0.25
   DishwareTableX: 11.65

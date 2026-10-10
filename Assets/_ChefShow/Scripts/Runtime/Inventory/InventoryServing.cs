@@ -10,14 +10,15 @@ namespace ChefShow.Inventory
     {
         public IReadOnlyList<FoodPortionSnapshot> Portions { get; }
         public ChefShow.Data.DishwareSnapshot Dishware {get;}
-        public float FillRatio=>Quantity/(float)Dishware.NominalCapacity;
+        public float FillRatio=>Dishware==null?0:Quantity/(float)Dishware.NominalCapacity;
+        public int PresentationPenalty {get;}
         public int SaltDoses { get; }
         public int OilDoses { get; }
         public int Quantity => Portions.Sum(p => p.Quantity);
         public bool Contaminated { get; }
         internal DishSnapshot(InventoryState state)
         {
-            Dishware=state.CurrentDishware;
+            Dishware=state.CurrentDishware;PresentationPenalty=state.PresentationPenalty;
             Portions = Array.AsReadOnly(state.Served.Select(p => p.Snapshot()).ToArray());
             SaltDoses = state.PlateSaltDoses; OilDoses = state.PlateOilDoses; Contaminated = state.PlateContaminated;
         }
@@ -48,6 +49,7 @@ namespace ChefShow.Inventory
         public bool TryPlaceServing(out string reason)
         {
             if (!PlateActive(out reason)) return false;
+            if(CurrentDishware==null){reason="Сначала поставьте посуду на место блюда.";return false;}
             if (!CanPlaceOnServingSurface(Held)) { reason="Упаковки и контейнеры остаются в лотке. На тарелку можно класть еду."; return false; }
             var food=Held; Held=null; food.Location=PortionLocation.Station; food.SocketIndex=1;
             served.Add(food); Fact("food_plated",food); run.Events.Publish(new DishChanged(run,"food_plated",this)); return true;

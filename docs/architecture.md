@@ -216,3 +216,11 @@ DishwareConfig и пять DishwareDefinition — сохранённые Scripta
 DishwareController обслуживает ЛКМ до Cooking/Mixing/Serving/Preparation/Inventory с consumed-guard; действие на источнике не проходит дальше. 60 источников и Held Dishware сохранены в сцене, DishwareView меняет существующие sphere/rim renderers. Исходная Plate сохранена; формы разных видов собираются из плоской сферы и 12 частей бортика. Материалы источников — настоящие assets, цвета видны после переоткрытия сцены. Переполнение не уничтожает еду, существующие 48 FoodDisplay показывают горку.
 
 KitchenLayoutConfig задаёт стены/масштаб духовок; CompactKitchenInstaller и DishwareInstaller работают адресно через Editor API с preflight/Undo/backup/Validate/save обеих сцен. Автоматической генерации кухни при Play и HideFlags нет.
+
+## Контракты D-035/D-036
+
+RemoveInstalledDishware атомарно архивирует Served как Trash, очищает общие приправы/загрязнение, снимает CurrentDishware и увеличивает PresentationPenalty до callbacks. TryTakePlacedDishware оставляет профиль в HeldDishware; TryPlaceDishware штрафует только при существующей CurrentDishware. Nullable CurrentDishware/DishSnapshot.Dishware и FillRatio0 позволяют пустую автоподачу; без посуды еда отклоняется. Snapshot.PresentationPenalty — неизменяемый вычет для F-010.
+
+ServingController различает Submit, порцию Index≥0 и посуду Index<0. ServingStation показывает штраф и управляет сохранёнными SubmitButton/SubmitLight; MaterialPropertyBlock даёт эмиссию после SubmittedDish, Point Light красный. Ненулевая базовая эмиссия сохраняет URP keyword, runtime доSubmit задаёт0. Restart сбрасывает данные/свет. Порядок ввода/consumed guard сохранён.
+
+KitchenLayoutConfig.ArenaCenterZ задаёт асимметричные торцы. SubmissionRulesInstaller работает адресно с backup/preflight/Undo/Validate/save без rebuild; generated WorkSurface подняты до tabletop+.03, рабочие позы автора сохранены. Edit43/Play35/материал1 PASS, результаты в implementation-log.

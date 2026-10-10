@@ -19,11 +19,11 @@ namespace ChefShow.Editor
             var arena=roots.Single(r=>r.name=="Arena").transform;
             foreach(Transform item in arena)
             {
-                if(item.name=="Floor")Scale(item,new Vector3(cfg.ArenaWidth,.3f,cfg.ArenaDepth));
+                if(item.name=="Floor"){Undo.RecordObject(item,"Room center");item.position=new Vector3(0,item.position.y,cfg.ArenaCenterZ);Scale(item,new Vector3(cfg.ArenaWidth,.3f,cfg.ArenaDepth));}
                 else if(item.name=="Side Wall")
-                {Undo.RecordObject(item,"Move side walls");item.position=new Vector3(Mathf.Sign(item.position.x)*cfg.ArenaWidth/2,item.position.y,0);Scale(item,new Vector3(.3f,5,cfg.ArenaDepth));}
+                {Undo.RecordObject(item,"Move side walls");item.position=new Vector3(Mathf.Sign(item.position.x)*cfg.ArenaWidth/2,item.position.y,cfg.ArenaCenterZ);Scale(item,new Vector3(.3f,5,cfg.ArenaDepth));}
                 else if(item.name=="Back Wall" || item.name=="Front Wall")
-                {Undo.RecordObject(item,"Move end walls");item.position=new Vector3(0,item.position.y,(item.name=="Back Wall"?1:-1)*cfg.ArenaDepth/2);Scale(item,new Vector3(cfg.ArenaWidth,5,.3f));}
+                {Undo.RecordObject(item,"Move end walls");item.position=new Vector3(0,item.position.y,cfg.ArenaCenterZ+(item.name=="Back Wall"?1:-1)*cfg.ArenaDepth/2);Scale(item,new Vector3(cfg.ArenaWidth,5,.3f));}
             }
             Undo.RecordObject(b.Config,"Compact arena dimensions");b.Config.ArenaWidth=cfg.ArenaWidth;b.Config.ArenaDepth=cfg.ArenaDepth;EditorUtility.SetDirty(b.Config);
             foreach(var oven in b.Cooking.Stations.Where(c=>c.Kind==CookerKind.Oven))

@@ -225,7 +225,7 @@ namespace ChefShow.Inventory
             else if (origin == PortionLocation.Appliance)
             { if(originIndex==(int)ChefShow.Cooking.CookerKind.Oven && !OvenDoorOpen){reason="Сначала откройте духовку.";return false;} var list = cookers[originIndex]; list.Insert(Math.Min(originFoodIndex, list.Count), portion); portion.SocketIndex = originIndex; }
             else if (origin == PortionLocation.Station && originIndex == 1)
-            { if(SubmittedDish != null) { reason="Блюдо уже подано; положите продукт в лоток."; return false; } served.Insert(Math.Min(originFoodIndex,served.Count),portion); portion.SocketIndex=1; }
+            { if(SubmittedDish != null || CurrentDishware==null) { reason="На месте блюда нет доступной посуды; положите продукт в лоток."; return false; } served.Insert(Math.Min(originFoodIndex,served.Count),portion); portion.SocketIndex=1; }
             else if (origin == PortionLocation.Station) { sockets[originIndex] = portion; portion.SocketIndex = originIndex; }
             else { var source = origin == PortionLocation.Basket ? basket : tray; source.Insert(Math.Min(originIndex, source.Count), portion); }
             portion.Location = origin; Held = null; Fact("ingredient_transferred", portion); return true;

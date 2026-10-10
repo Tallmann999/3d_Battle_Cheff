@@ -66,8 +66,8 @@ namespace ChefShow.Tests
             Assert.That(State.Bowl.Count,Is.EqualTo(1),"progress="+State.MixProgress+" target="+bootstrap.Player.Target?.name+" HUD="+bootstrap.Hud.Context.text);
             var mixed=State.Bowl.Single();Assert.That(mixed.Quantity,Is.EqualTo(4));Assert.That(mixed.Components.Select(c=>c.Id),Is.EquivalentTo(ids));
             yield return Aim(bowl.Food[0].Visual.bounds.center);yield return HandClick();Assert.That(State.Held,Is.SameAs(mixed));
-            var oven=Appliance(CookerKind.Oven,"A1");Assert.That(oven.transform.position.x,Is.EqualTo(-12.86f).Within(.01f));
-            Teleport(new Vector3(-10.7f,.05f,-6.25f));yield return Aim(oven.transform.Find("Bake Form").position);yield return HandClick();Assert.That(State.Cooker(CookerKind.Oven).Single(),Is.SameAs(mixed));
+            var oven=Appliance(CookerKind.Oven,"A1");Assert.That(oven.transform.position.x,Is.EqualTo(-17.56f).Within(.01f));
+            Teleport(new Vector3(oven.transform.position.x+2.16f,.05f,-6.25f));yield return Aim(oven.transform.Find("Bake Form").position);yield return HandClick();Assert.That(State.Cooker(CookerKind.Oven).Single(),Is.SameAs(mixed));
             yield return Aim(oven.transform.Find("Heat Knob").position);yield return HandClick();yield return HandClick();bootstrap.Run.Clock.SetSpeed(20);
             yield return new WaitForSecondsRealtime(.15f);Assert.That(mixed.HeatProgress,Is.Zero);bootstrap.Run.Clock.SetSpeed(1);
             yield return Aim(oven.transform.Find("Door Handle").position);yield return HandClick();Assert.That(State.OvenDoorOpen,Is.False);
@@ -79,7 +79,7 @@ namespace ChefShow.Tests
         [UnityTest] public IEnumerator OvenBurnsVisiblyFreezesOnPauseAndResetOpensAllDoors()
         {
             yield return MouseTrip("egg");yield return Aim(TrayPoint(0));yield return HandClick();var egg=State.Held;var oven=Appliance(CookerKind.Oven,"A1");
-            Teleport(new Vector3(-10.7f,.05f,-6.25f));yield return Aim(oven.transform.Find("Bake Form").position);yield return HandClick();
+            Teleport(new Vector3(oven.transform.position.x+2.16f,.05f,-6.25f));yield return Aim(oven.transform.Find("Bake Form").position);yield return HandClick();
             yield return Aim(oven.transform.Find("Heat Knob").position);yield return HandClick();yield return HandClick();yield return Aim(oven.transform.Find("Door Handle").position);yield return HandClick();
             bootstrap.SetPaused(true);var frozen=egg.HeatProgress;yield return new WaitForSecondsRealtime(.15f);Assert.That(egg.HeatProgress,Is.EqualTo(frozen));bootstrap.SetPaused(false);
             bootstrap.Run.Clock.SetSpeed(30);float deadline=Time.realtimeSinceStartup+4;while(egg.Cooking!=CookState.Burned && Time.realtimeSinceStartup<deadline)yield return null;bootstrap.Run.Clock.SetSpeed(1);

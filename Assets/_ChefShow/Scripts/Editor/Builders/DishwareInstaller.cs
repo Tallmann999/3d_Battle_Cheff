@@ -85,8 +85,8 @@ namespace ChefShow.Editor
             Undo.RecordObject(b,"Dishware controller");b.Dishware=controller;
             Undo.RecordObject(b.Hud.Status.rectTransform,"Dishware hand status");b.Hud.Status.rectTransform.sizeDelta=new Vector2(b.Hud.Status.rectTransform.sizeDelta.x,250);
             Undo.RecordObject(b.Hud.TaskCard,"Dishware instructions");
-            if(!b.Hud.TaskCard.text.Contains("ПОСУДА"))b.Hud.TaskCard.text+="\nПОСУДА: длинный стол за участниками. ЛКМ взять слева / поставить на блюдо.\nСмена тарелки сохраняет еду и дозы. Переполнение — горка.\nЛКМ по общему столу / Backspace возвращает посуду; цвет не даёт очков.";
-            EditorUtility.SetDirty(b.Hud.TaskCard);EditorUtility.SetDirty(b);EditorUtility.SetDirty(controller);Physics.SyncTransforms();
+            if(!b.Hud.TaskCard.text.Contains("ПОСУДА"))b.Hud.TaskCard.text+="\nПОСУДА: длинный стол за участниками. ЛКМ взять слева / поставить на блюдо.\nСмена установленной посуды: еда удаляется, презентабельность −1. Переполнение — горка.\nЛКМ по общему столу / Backspace возвращает посуду; цвет не даёт очков.";
+            EditorUtility.SetDirty(b.Hud.TaskCard);EditorUtility.SetDirty(b);EditorUtility.SetDirty(controller);SubmissionRulesInstaller.AddButtonsToScene(scene);Physics.SyncTransforms();
         }
         private static DishwareDefinition Definition(string folder,string id,string name,int capacity,float diameter,float depth,bool liquid,Color color)
         {

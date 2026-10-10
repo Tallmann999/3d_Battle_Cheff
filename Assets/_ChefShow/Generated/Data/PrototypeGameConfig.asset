@@ -20,7 +20,7 @@ MonoBehaviour:
   RunSpeed: 5
   LookSensitivity: 0.09
   InteractionDistance: 3.1
-  ArenaWidth: 28
-  ArenaDepth: 38
+  ArenaWidth: 37.4
+  ArenaDepth: 53.1
   BasketCapacity: 10
   TrayCapacity: 24

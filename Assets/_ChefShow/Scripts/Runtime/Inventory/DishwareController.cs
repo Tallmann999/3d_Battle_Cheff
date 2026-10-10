@@ -58,6 +58,7 @@ namespace ChefShow.Inventory
             if(target.Team!=bootstrap.Run.PlayerTeam)return "Посуда другой команды";
             if(message!=null && messageTarget==aimed && bootstrap.Run.Clock.SimulationTime<until)return message;
             if(State.HeldDishware!=null)return "ЛКМ — Вернуть посуду на общий стол";
+            if(State.SubmittedDish!=null)return "Блюдо подано · посуда заблокирована";
             var p=profiles[target];return "ЛКМ — Взять "+p.DisplayName+"\nНоминал "+p.NominalCapacity+" · "+(p.SupportsLiquid?"глубокая":"плоская")+" · переполнение с горкой";
         }
     }

@@ -100,6 +100,7 @@ namespace ChefShow.Tests
             else if(bootstrap.Player.Focused)yield return Press(Key.F);
             else yield return Press(Key.Backspace);
         }
+        private Vector3 ServingFoodPoint(int index=0)=>bootstrap.Serving.Stations.Single(t=>t.StationId==inventory.PlayerStationId).Food[index].GetComponent<BoxCollider>().bounds.center;
         private Vector3 Stock(string id) => GameObject.Find("Stock_" + id).transform.position;
         private Vector3 Socket(int index) => inventory.SocketDisplays[index].transform.parent.position;
         private Vector3 TrayPoint(int index)
@@ -207,7 +208,7 @@ namespace ChefShow.Tests
             yield return Aim(Socket(0)); yield return Press(Key.E);
             yield return Aim(Socket(1)); yield return Press(Key.E);
             Assert.That(State.Socket(1)?.Id, Is.EqualTo(id)); Assert.That(State.Held, Is.Null);
-            yield return Press(Key.E); Assert.That(State.Held?.Id, Is.EqualTo(id));
+            yield return Aim(ServingFoodPoint());yield return Press(Key.E); Assert.That(State.Held?.Id, Is.EqualTo(id));
             var tray = inventory.TrayDisplays[0].GetComponentInParent<InventoryInteractable>().transform.parent;
             yield return Aim(tray.position); yield return Press(Key.E);
             Assert.That(State.Tray.Last().Id, Is.EqualTo(id));
@@ -262,10 +263,10 @@ namespace ChefShow.Tests
             Assert.That(State.Held?.Id, Is.EqualTo(id));
             yield return Aim(Socket(1)); yield return Press(Key.E);
             Assert.That(State.Socket(1)?.Id, Is.EqualTo(id)); Assert.That(State.Held, Is.Null);
-            yield return Press(Key.E); Assert.That(State.Held?.Id, Is.EqualTo(id));
+            yield return Aim(ServingFoodPoint());yield return Press(Key.E); Assert.That(State.Held?.Id, Is.EqualTo(id));
             yield return Cancel(); Assert.That(State.Socket(1)?.Id, Is.EqualTo(id));
             Assert.That(bootstrap.Player.Focused, Is.True);
-            yield return Press(Key.E); yield return Aim(Socket(0)); yield return Press(Key.E);
+            yield return Aim(ServingFoodPoint());yield return Press(Key.E); yield return Aim(Socket(0)); yield return Press(Key.E);
             Assert.That(State.Socket(0)?.Id, Is.EqualTo(id));
             bootstrap.SetPaused(true);
             var frozen = camera.transform.localPosition; float frozenFov = camera.fieldOfView;
@@ -570,7 +571,7 @@ namespace ChefShow.Tests
                 yield return Aim(Socket(1)); yield return Press(Key.E); yield return HandClick(true);
                 Assert.That(State.Held, Is.Null); Assert.That(State.Socket(1), Is.SameAs(food));
                 Assert.That(food.ChopPresses, Is.EqualTo(3), "Выкладка не продолжает нарезку и не исправляет сырьё.");
-                Assert.That(food.Cooking, Is.EqualTo(CookState.Raw)); yield return Press(Key.E);
+                Assert.That(food.Cooking, Is.EqualTo(CookState.Raw)); yield return Aim(ServingFoodPoint());yield return Press(Key.E);
                 var tray = inventory.TrayDisplays[0].GetComponentInParent<InventoryInteractable>().transform.parent;
                 yield return Aim(tray.position); yield return Press(Key.E); yield return Aim(TrayPoint(0)); yield return Click();
                 Assert.That(food.ChopPresses, Is.EqualTo(3)); yield return Press(Key.E);
@@ -669,7 +670,7 @@ namespace ChefShow.Tests
                 yield return Press(Key.E); yield return Aim(Socket(1)); yield return Press(Key.E);
                 Assert.That(State.Held,Is.Null); Assert.That(State.Socket(1),Is.SameAs(potato));
                 Assert.That(potato.Cooking,Is.EqualTo(CookState.Raw));
-                yield return Press(Key.E);yield return Cancel();
+                yield return Aim(ServingFoodPoint());yield return Press(Key.E);yield return Cancel();
                 Assert.That(State.Socket(1),Is.SameAs(potato)); Assert.That(facts[1].Contents[0].ChopPresses,Is.Zero);
                 var old=bootstrap.Run; bootstrap.RestartShow(); yield return null;
                 Assert.That(old.Disposed,Is.True); Assert.That(State.Portions,Is.Empty);

@@ -190,12 +190,18 @@ namespace ChefShow.Tests
             var controller = player.GetComponent<CharacterController>();
             var actors = Object.FindObjectsByType<PrototypeActor>(FindObjectsSortMode.None);
             var floor = GameObject.Find("Floor").GetComponent<BoxCollider>().bounds;
-            Assert.That(floor.size.x, Is.EqualTo(28).Within(0.01f));
-            Assert.That(floor.size.z, Is.EqualTo(38).Within(0.01f));
+            Assert.That(floor.size.x, Is.EqualTo(37.4f).Within(0.01f));
+            Assert.That(floor.size.z, Is.EqualTo(53.1f).Within(0.01f));
+            Assert.That(floor.center.z,Is.EqualTo(-3.25f).Within(.01f));
+            var firstTable=GameObject.Find("Station_A1").GetComponent<BoxCollider>().bounds;var lastTable=GameObject.Find("Station_A6").GetComponent<BoxCollider>().bounds;
+            var sideWall=Object.FindObjectsByType<BoxCollider>(FindObjectsSortMode.None).Single(c=>c.name=="Side Wall" && c.transform.position.x<0).bounds;
+            Assert.That(firstTable.min.x-sideWall.max.x,Is.EqualTo(9.4f).Within(.01f));
+            Assert.That(firstTable.min.z-GameObject.Find("Arena").transform.Find("Front Wall").GetComponent<BoxCollider>().bounds.max.z,Is.EqualTo(21.6f).Within(.01f));
+            Assert.That(GameObject.Find("Arena").transform.Find("Back Wall").GetComponent<BoxCollider>().bounds.min.z-lastTable.max.z,Is.EqualTo(8.6f).Within(.01f));
             foreach(var oven in bootstrap.Cooking.Stations.Where(s=>s.Kind==ChefShow.Cooking.CookerKind.Oven))
             {
                 Assert.That(oven.transform.lossyScale.x,Is.EqualTo(2).Within(.01f));Assert.That(oven.transform.lossyScale.y,Is.EqualTo(2).Within(.01f));Assert.That(oven.transform.lossyScale.z,Is.EqualTo(2).Within(.01f));
-                Assert.That(Mathf.Abs(oven.transform.position.x),Is.EqualTo(12.86f).Within(.01f));
+                Assert.That(Mathf.Abs(oven.transform.position.x),Is.EqualTo(17.56f).Within(.01f));
                 Assert.That(Mathf.Abs(oven.transform.position.x)+.74f,Is.LessThan(floor.extents.x-.15f));
             }
             foreach (string name in new[] { "Pantry", "Judging Table" })

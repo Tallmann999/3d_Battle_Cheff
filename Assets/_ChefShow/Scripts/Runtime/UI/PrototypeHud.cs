@@ -29,6 +29,7 @@ namespace ChefShow.UI
             int seconds = Mathf.CeilToInt(run.RemainingSeconds);
             Status.text = $"CHEF SHOW · {(cooking != null ? "КУХНЯ" : inventory == null ? "ЭТАП 1" : preparation == null ? "ПРОДУКТЫ И ПЕРЕНОС" : "ПОДГОТОВКА ПРОДУКТОВ")}\nПробный таймер  {seconds / 60:00}:{seconds % 60:00}     Команда {player.GetComponent<Contestants.PrototypeActor>().Team}\n"
                 + (inventory == null ? "Арена и управление. Готовка ещё не реализована." : inventory.Summary);
+            if(serving!=null)Status.text+="\nПрезентабельность: −"+run.Inventory.PresentationPenalty+" балл.";
             if(run.Inventory.HeldDishware!=null)Status.text+="\nЛевая рука: "+run.Inventory.HeldDishware.DisplayName;
             if (tools != null) Status.text += "\n" + tools.Summary;
             if (cooking != null) Status.text += "\n" + cooking.Summary;

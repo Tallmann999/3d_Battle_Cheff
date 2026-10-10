@@ -84,11 +84,11 @@ namespace ChefShow.Editor
             }
             float side=target.StationId.StartsWith("A")?-1:1;
             station.Status=Label("ТАРЕЛКА",parent,p+new Vector3(0,.03f,-side*.31f),side,.0045f);
-            var submit=Node("Submit Dish",parent,p+new Vector3(side*.37f,.02f,0));
+            var submit=Node("Submit Dish",parent,p+new Vector3(0,.02f,-side*.43f));
             var t=Undo.AddComponent<ServingTarget>(submit.gameObject);t.Station=station;t.Submit=true;
             var interact=Undo.AddComponent<PrototypeInteractable>(submit.gameObject);interact.DisplayName="Подать блюдо";
             var col=Undo.AddComponent<BoxCollider>(submit.gameObject);col.size=new Vector3(.15f,.07f,.23f);
-            Shape("Submit Button",submit,PrimitiveType.Cube,submit.position,new Vector3(.15f,.035f,.23f),Material("Submit Button",new Color(.3f,.68f,.42f)));
+            Shape("Submit Button",submit,PrimitiveType.Cube,submit.position,new Vector3(.15f,.035f,.23f),Material("Submit Button",new Color(.5f,.015f,.008f)));
             Label("ПОДАТЬ",submit,submit.position+Vector3.up*.04f,side,.0038f);
             EditorUtility.SetDirty(station);return station;
         }
@@ -99,7 +99,7 @@ namespace ChefShow.Editor
             foreach(var text in b.Hud.GetComponentsInChildren<Text>(true).Where(t=>t.name=="Controls"))
             {Undo.RecordObject(text,"Mouse hand controls");text.text="ЛКМ — левая рука: продукты / ящик / приправы\nПКМ — правая рука: инструменты / 6 нарезок / мешать\nTab — корзина · G — уронить инструмент / корзину\nF — фокус / выход · Q — задание · Esc — пауза";EditorUtility.SetDirty(text);}
             Undo.RecordObject(b.Hud.TaskCard,"Mouse task");
-            b.Hud.TaskCard.text="ГОТОВКА ДВУМЯ РУКАМИ\nTab — взять / поставить корзину. ЛКМ — набрать / выгрузить продукты.\nЛКМ — взять продукт слева / положить. ЛКМ — открыть ящик.\nПКМ — взять нож справа / вернуть в его ячейку.\nНа доске: 6 отдельных ПКМ ножом; упаковка в лотке: ПКМ открыть.\nЛКМ по ручке — нагрев; ЛКМ — положить / снять еду.\nПКМ лопаткой — мешать. Средний огонь: готово 30 с, горит 60 с.\nЛКМ солью / маслом — доза на еду, доску или собранное блюдо.\nТарелка принимает много продуктов и повторные порции.\nЛКМ по зелёной кнопке — подать; на 00:00 подача автоматическая.";
+            b.Hud.TaskCard.text="ГОТОВКА ДВУМЯ РУКАМИ\nTab — взять / поставить корзину. ЛКМ — набрать / выгрузить продукты.\nЛКМ — взять продукт слева / положить. ЛКМ — открыть ящик.\nПКМ — взять нож справа / вернуть в его ячейку.\nНа доске: 6 отдельных ПКМ ножом; упаковка в лотке: ПКМ открыть.\nЛКМ по ручке — нагрев; ЛКМ — положить / снять еду.\nПКМ лопаткой — мешать. Средний огонь: готово 30 с, горит 60 с.\nЛКМ солью / маслом — доза на еду, доску или собранное блюдо.\nТарелка принимает много продуктов и повторные порции.\nЛКМ по красной кнопке — подать; на 00:00 подача автоматическая.";
             EditorUtility.SetDirty(b.Hud.TaskCard);
         }
         public static Transform Node(string name,Transform parent,Vector3 p)
