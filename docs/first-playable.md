@@ -171,3 +171,15 @@ F-005 завершена: инструменты/две руки, E-перено
 4. Без Play: Station_A1/Tool Drawer Contents/Sliding Tray/Cell 1…4/Cell Bottom → ToolDrawerTarget/Drawer/CompartmentIndex0…3, BoxCollider trigger/PrototypeInteractable. Preview Open показывает исходные инструменты и ячейки. Эти компоненты сохранены у всех12 участников.
 
 **EditMode 26/26 и Play Mode 27/27 PASS**; T-035. [Edit XML](../TestResults/free-cooking-editmode-final.xml), [Play XML](../TestResults/free-cooking-playmode-final.xml), [Edit proof](../TestResults/free-cooking-edit-proof.json). [Три порции Pan](../TestResults/free-cooking-pan-three.png), [возврат ножа](../TestResults/free-cooking-tool-return.png). Следующая F-006 — миска/смешивание, затем форма/духовка.
+
+## Быстрая проверка полок, кнопок и книги — D-037…D-039
+
+Откройте Assets/_ChefShow/Scenes/ChefShow_Prototype.unity и запустите Play. У каждой духовки рядом стоит полка из3 уровней с5 видами посуды; подойдите примерно на2.5м и наведитесь на нужный образец → ЛКМ взять слева → ЛКМ на своё место блюда поставить. Смена наполненной посуды удаляет оставшуюся еду и штрафует−1 по D-036; заранее снимите еду, если хотите сохранить её.
+
+На столе слева красная кнопка подаёт/загорается/блокирует блюдо. Рядом синяя «ОТМЕНА / ТЕСТ» разблокирует до00:00 без потери содержимого, приправ, штрафа и времени. Отключение помощника: Systems → ServingController → Enable Submission Reset.
+
+I открывает/закрывает книгу по центру. Зелёные стрелки листают12 страниц, жёлтая «Выбрать» выводит список в белой рамке справа сверху. Закройте I — список остаётся; выберите другой рецепт — список заменяется. Пока книга открыта, можно только пользоваться её UI; камера/ходьба/готовка заблокированы, таймер/нагрев идут. После закрытия отпустите кнопки мыши. Esc сначала закрывает книгу; Restart очищает выбор. Справочник не выдаёт новое задание.
+
+Без Play: Station_A1/Cooking/Dishware Shelf (так же A2…B6), Station_A1/Inventory/Work Surface/Plate Contents/Reset Submission, UI/Recipe Book → RecipeBookController/Catalog/Book Panel/Selected Ingredients; Systems/GameBootstrap → RecipeBook. Профили: Assets/_ChefShow/Data/Recipes/RecipeBookCatalog.asset и12 RecipeDefinition. Количества/название/ингредиенты/Steps/ProcessNote редактируются в Inspector, новый снимок применяется при Restart. Book Modal временно можно раскрыть checkbox Active в Inspector для просмотра, затем вернуть False. Canvas1280×720 масштабируется вместе с HUD. Количества помечены предложениями; настоящее тушение и перемешиваниеPan ещё недоступны, рецепты не распознаются/не оцениваются автоматически.
+
+Итог: Edit48/48 и полная Play39/39 PASS; доказательства TestResults/layout-recipe-shelves-editmode-final.xml, layout-recipe-shelves-full-playmode.xml, recipe-shelves-final-scene-proof.json, recipe-book-preservation.json. Все12 кадров recipe-page-01…12.png и вид dishware-shelves.png просмотрены. Полный B-проход/Windows build/субъективный UX не проверены.

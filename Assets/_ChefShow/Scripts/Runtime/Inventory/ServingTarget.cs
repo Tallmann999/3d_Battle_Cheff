@@ -6,5 +6,6 @@ namespace ChefShow.Inventory
         public ServingStation Station;
         public int Index = -1;
         public bool Submit;
+        public bool ResetSubmission;
     }
 }

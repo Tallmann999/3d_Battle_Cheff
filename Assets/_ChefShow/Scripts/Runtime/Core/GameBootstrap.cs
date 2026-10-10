@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using ChefShow.Data;
 using ChefShow.Contestants;
@@ -22,6 +22,8 @@ namespace ChefShow.Core
         public InventoryController Inventory;
         public ServingController Serving;
         public DishwareController Dishware;
+        public RecipeBookController RecipeBook;
+        private bool bookInputBlocked;
         public KitchenLayoutConfig Layout;
         public ChefShow.Cooking.MixingController Mixing;
         public ToolDrawerController Tools;
@@ -106,6 +108,12 @@ namespace ChefShow.Core
             if(Dishware!=null){var wareError=Dishware.Validate();if(wareError!=null){Debug.LogError(wareError,this);enabled=false;return;}Dishware.Initialize(this,input);}
             if (Serving != null)
             { var servingError=Serving.Validate(); if(servingError!=null){Debug.LogError(servingError,this);enabled=false;return;} Serving.Initialize(this,input); }
+            if(RecipeBook!=null)
+            {
+                var bookError=RecipeBook.Validate();
+                if(bookError!=null){Debug.LogError(bookError,this);enabled=false;return;}
+                RecipeBook.Initialize(this);
+            }
             Hud.Resume.onClick.AddListener(() => SetPaused(false));
             Hud.Restart.onClick.AddListener(RestartShow);
             Hud.DebugRestart.onClick.AddListener(RestartShow);
@@ -127,9 +135,11 @@ namespace ChefShow.Core
         private void Update()
         {
             if (Run == null) return;
+            if(RecipeBook!=null && input.FindAction("UI/RecipeBook",true).WasPressedThisFrame())RecipeBook.Toggle();
             if (input.FindAction("UI/Cancel", true).WasPressedThisFrame())
             {
-                if (debug) { debug = false; SetPaused(false); }
+                if(RecipeBook!=null && RecipeBook.IsOpen)RecipeBook.SetOpen(false);
+                else if (debug) { debug = false; SetPaused(false); }
                 else SetPaused(!paused);
             }
             if (DebugAvailable && input.FindAction("Debug/Toggle", true).WasPressedThisFrame())
@@ -138,7 +148,8 @@ namespace ChefShow.Core
                 SetPaused(debug);
             }
             Run.Tick(Time.unscaledDeltaTime);
-            bool gameplay = !paused && Run.RemainingSeconds > 0;
+            bookInputBlocked=RecipeBook!=null && RecipeBook.BlocksGameplay(input.FindAction("UI/Click",true).IsPressed(),input.FindAction("UI/RecipeRightHeld",true).IsPressed());
+            bool gameplay = !paused && Run.RemainingSeconds > 0 && !bookInputBlocked;
             Player.Step(Run.Clock, gameplay);
             bool toolCommand = Tools != null && Tools.Step(gameplay);
             bool dishwareCommand=Dishware!=null && Dishware.Step(gameplay,toolCommand);
@@ -148,14 +159,18 @@ namespace ChefShow.Core
             bool preparationCommand = Preparation != null && Preparation.Step(gameplay, toolCommand || cookCommand || servingCommand || mixCommand || dishwareCommand);
             if (Inventory != null) Inventory.Step(gameplay, toolCommand || cookCommand || preparationCommand || servingCommand || mixCommand || dishwareCommand);
             UpdateMaps();
-            bool task = !paused && input.FindAction((Player.Focused ? "Station" : "Gameplay") + "/Task", true).IsPressed();
+            bool task = !paused && !bookInputBlocked && input.FindAction((Player.Focused ? "Station" : "Gameplay") + "/Task", true).IsPressed();
             Hud.Present(Run, Player, paused, debug, task, Inventory, Tools, Preparation, Cooking, Serving, Mixing, Dishware);
+            bool showingBook=RecipeBook!=null && RecipeBook.IsOpen;
+            Hud.Context.enabled=!showingBook;
+            if(showingBook){Hud.InteractionKey.enabled=false;if(Hud.HandIcon!=null)Hud.HandIcon.enabled=false;}
         }
 
         public void SetPaused(bool value)
         {
             if (Run == null) return;
             paused = value;
+            if(value && RecipeBook!=null)RecipeBook.SetOpen(false);
             if (!value) debug = false;
             Run.SetPaused(value);
             UpdateMaps();
@@ -178,6 +193,8 @@ namespace ChefShow.Core
             if(Mixing!=null)Mixing.ResetPresentation();
             if(Dishware!=null)Dishware.ResetPresentation();
             Player.SetSensitivity(sensitivity);
+            bookInputBlocked=false;
+            if(RecipeBook!=null)RecipeBook.ResetRun();
             UpdateMaps();
             Run.Events.Publish(new RunStarted(Run.RunId, Run.Seed));
             Debug.Log($"Chef Show: start run={Run.RunId} seed={Run.Seed}; {(Cooking != null ? "сковорода/кастрюля" : Inventory == null ? "арена" : "продукты и перенос")}; полный выпуск ещё не реализован.", this);
@@ -185,12 +202,14 @@ namespace ChefShow.Core
 
         private void UpdateMaps()
         {
-            SetMap("Gameplay", !paused && !Player.Focused && Run.RemainingSeconds > 0);
-            SetMap("Station", !paused && Player.Focused && Run.RemainingSeconds > 0);
-            SetMap("UI", true);
+            SetMap("Gameplay", !paused && !bookInputBlocked && !Player.Focused && Run.RemainingSeconds > 0);
+            SetMap("Station", !paused && !bookInputBlocked && Player.Focused && Run.RemainingSeconds > 0);
+            // The UI module can enable individual actions; map.enabled does not imply every action is enabled.
+            input.FindActionMap("UI",true).Enable();
             SetMap("Debug", DebugAvailable);
-            Cursor.lockState = paused ? CursorLockMode.None : CursorLockMode.Locked;
-            Cursor.visible = paused;
+            bool cursorUi=paused || (RecipeBook!=null && RecipeBook.IsOpen);
+            Cursor.lockState = cursorUi ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = cursorUi;
         }
 
         private void SetMap(string name, bool active)

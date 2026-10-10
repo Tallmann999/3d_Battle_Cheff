@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 930fcbe50d9028544a0ca64c37c6dfb7, type: 3}
+  m_Name: RecipeBookCatalog
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Data.RecipeBookCatalog
+  Recipes:
+  - {fileID: 11400000, guid: e6e3f007b3cc317478f39a79cd4e62c2, type: 2}
+  - {fileID: 11400000, guid: 0362622371717a246bd997147eb695bc, type: 2}
+  - {fileID: 11400000, guid: 92a216461d9623641b784f97e0e722cc, type: 2}
+  - {fileID: 11400000, guid: 3c7d1ec35d6d66f41aa0b7968d8edd27, type: 2}
+  - {fileID: 11400000, guid: a28c40c548a9a8a45a3815dee00fc587, type: 2}
+  - {fileID: 11400000, guid: 04d14211597973144ba366efffd7e062, type: 2}
+  - {fileID: 11400000, guid: b64999cfdff47024190fed5b85af5525, type: 2}
+  - {fileID: 11400000, guid: a8533ebe50207f0499d03dc45c0e891c, type: 2}
+  - {fileID: 11400000, guid: 385afaa4a155b9749a9feb689c1d97ea, type: 2}
+  - {fileID: 11400000, guid: 22ed6e1a252638f4e9ddf958acfe20e1, type: 2}
+  - {fileID: 11400000, guid: 1d39e1f22890de745af37fad74c77383, type: 2}
+  - {fileID: 11400000, guid: f66de1d283d8dda4c91a3326f35fba46, type: 2}

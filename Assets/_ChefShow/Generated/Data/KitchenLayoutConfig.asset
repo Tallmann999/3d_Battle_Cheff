@@ -20,3 +20,8 @@ MonoBehaviour:
   DishwareTableX: 11.65
   DishwareTableDepth: 0.8
   DishwareTableHeight: 0.85
+  DishwareShelfWidth: 1.65
+  DishwareShelfDepth: 0.9
+  DishwareShelfFirstLevel: 0.55
+  DishwareShelfLevelStep: 0.55
+  DishwareShelfOvenOffset: 1.9

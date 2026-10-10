@@ -19,7 +19,7 @@ namespace ChefShow.Tests
         [TearDown] public void Cleanup(){run.Dispose();foreach(var d in new[]{beef,egg,salt,oil,package})Object.DestroyImmediate(d);}
         private IngredientDefinition Ingredient(string id){var d=ScriptableObject.CreateInstance<IngredientDefinition>();d.Id=id;d.CanUseBoard=true;return d;}
         private FoodPortion Hand(IngredientDefinition d)
-        {Assert.That(state.TryMoveBasket(BasketPlacement.Carried,out _),Is.True);Assert.That(state.TryCollect(d,out _),Is.True);Assert.That(state.TryMoveBasket(BasketPlacement.Station,out _),Is.True);Assert.That(state.TryUnload(out _),Is.True);Assert.That(state.TryTakeTray(0,out _),Is.True);return state.Held;}
+        {Assert.That(state.TryMoveBasket(BasketPlacement.Carried,out _),Is.True);Assert.That(state.TryCollect(d,out _),Is.True);Assert.That(state.TryMoveBasket(BasketPlacement.Station,out _),Is.True);Assert.That(state.TryUnload(out _),Is.True);Assert.That(state.TryTakeTray(state.Tray.Count-1,out _),Is.True);return state.Held;}
         [Test] public void RepeatedAndMixedFoodsAddWithoutReplacingAndCanBeTakenIndividually()
         {
             var a=Hand(beef);Assert.That(state.TryPlaceServing(out _),Is.True);var b=Hand(egg);state.TryPlaceServing(out _);
@@ -47,6 +47,24 @@ namespace ChefShow.Tests
             var food=Hand(beef);state.TryPlaceServing(out _);var unplated=Hand(egg);state.TryPlaceCooker(CookerKind.Pan,out _);run.SetRemaining(.1f);run.Tick(1);
             Assert.That(state.SubmittedDish.Quantity,Is.EqualTo(1));Assert.That(state.SubmittedDish.Portions.Single().Id,Is.EqualTo(food.Id));
             Assert.That(state.TryTakeServing(0,out _),Is.False);Assert.That(state.TrySubmitDish(out _),Is.False);Assert.That(unplated.Location,Is.EqualTo(PortionLocation.Appliance));
+        }
+        [Test] public void TestResetSubmissionPreservesDishDosesPenaltyAndPreviousSnapshot()
+        {
+            state.TryTakePlacedDishware(out _);state.TryPlaceDishware(out _);
+            var food=Hand(beef);state.TryPlaceServing(out _);Hand(salt);state.TrySeasonPlate(out _);state.TryPutInTray(out _);
+            state.TrySubmitDish(out _);var old=state.SubmittedDish;var remaining=run.RemainingSeconds;
+            Assert.That(state.TryResetSubmission(out _),Is.True);Assert.That(state.SubmittedDish,Is.Null);
+            Assert.That(state.Served.Single(),Is.SameAs(food));Assert.That(state.PresentationPenalty,Is.EqualTo(1));Assert.That(state.PlateSaltDoses,Is.EqualTo(1));Assert.That(run.RemainingSeconds,Is.EqualTo(remaining));
+            Assert.That(state.TryTakeServing(0,out _),Is.True);Assert.That(old.Portions.Single().Id,Is.EqualTo(food.Id));Assert.That(old.SaltDoses,Is.EqualTo(1));
+            state.TryPlaceServing(out _);Hand(egg);state.TryPlaceServing(out _);state.TrySubmitDish(out _);
+            Assert.That(state.SubmittedDish.Quantity,Is.EqualTo(2));Assert.That(old.Quantity,Is.EqualTo(1));
+        }
+        [Test] public void TestResetRejectsEmptyPauseTimeoutAndDisposedRun()
+        {
+            Assert.That(state.TryResetSubmission(out _),Is.False);Hand(beef);state.TryPlaceServing(out _);state.TrySubmitDish(out _);var snap=state.SubmittedDish;
+            run.SetPaused(true);Assert.That(state.TryResetSubmission(out _),Is.False);Assert.That(state.SubmittedDish,Is.SameAs(snap));run.SetPaused(false);
+            Assert.That(state.TryResetSubmission(out _),Is.True);run.SetRemaining(.1f);run.Tick(1);snap=state.SubmittedDish;
+            Assert.That(state.TryResetSubmission(out _),Is.False);Assert.That(state.SubmittedDish,Is.SameAs(snap));run.Dispose();Assert.That(state.TryResetSubmission(out _),Is.False);
         }
         [Test] public void RejectedPackagesPauseAndDoseOnEmptyPlateDoNotLoseAnything()
         {

@@ -95,6 +95,13 @@ namespace ChefShow.Inventory
             if(!PlateActive(out reason)) return false;
             SubmitDish(); return true;
         }
+        // Prototype-only UI calls this; the timer and all dish data remain unchanged.
+        public bool TryResetSubmission(out string reason)
+        {
+            if(!Active(out reason)) return false;
+            if(SubmittedDish==null){reason="Блюдо ещё не подано.";return false;}
+            SubmittedDish=null;Version++;run.Events.Publish(new DishChanged(run,"submission_reset",this));return true;
+        }
         internal void SubmitAtTimeup() { if(SubmittedDish==null) SubmitDish(); }
         private void SubmitDish()
         {

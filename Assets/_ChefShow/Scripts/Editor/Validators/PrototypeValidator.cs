@@ -51,6 +51,11 @@ namespace ChefShow.Editor
                 && transforms.Single(t => t.name == "FinalDishSlots").childCount == 4, "Нужны 12 обычных и 4 финальных места подачи.");
             foreach (string name in new[] { "Gameplay", "Station", "UI", "Debug" })
                 Require(bootstrap.InputDefinition.FindActionMap(name) != null, "Нет action map " + name);
+            if(bootstrap.RecipeBook!=null)
+            {
+                Require(bootstrap.RecipeBook.Validate()==null,bootstrap.RecipeBook.Validate());
+                Require(bootstrap.InputDefinition.FindAction("UI/RecipeBook")!=null && bootstrap.InputDefinition.FindAction("UI/RecipeRightHeld")!=null,"Нет ввода книги.");
+            }
             if (bootstrap.Inventory != null)
             {
                 Require(bootstrap.Inventory.Validate() == null, bootstrap.Inventory.Validate());

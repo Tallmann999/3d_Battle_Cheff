@@ -43,7 +43,7 @@ namespace ChefShow.Editor
             Undo.RecordObject(b.Hud.Status.rectTransform,"Presentation penalty status");b.Hud.Status.rectTransform.sizeDelta=new Vector2(b.Hud.Status.rectTransform.sizeDelta.x,300);
             Undo.RecordObject(b.Hud.TaskCard,"Submission rules instructions");b.Hud.TaskCard.text=b.Hud.TaskCard.text.Replace("зелёной кнопке","красной кнопке").Replace("Смена тарелки сохраняет еду и дозы.","Смена установленной посуды: еда удаляется, презентабельность −1.");
             if(!b.Hud.TaskCard.text.Contains("Снимите еду"))b.Hud.TaskCard.text+="\nСнимите еду на доску/лоток перед сменой посуды. ЛКМ по тарелке — снять.\nКрасная кнопка слева: подать и заблокировать блюдо. Restart сбрасывает штраф.";
-            EditorUtility.SetDirty(b.Hud.TaskCard);Physics.SyncTransforms();
+            EditorUtility.SetDirty(b.Hud.TaskCard);SubmissionResetInstaller.AddToScene(scene);Physics.SyncTransforms();
         }
     }
 }

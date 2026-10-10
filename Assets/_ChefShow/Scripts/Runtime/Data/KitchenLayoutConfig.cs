@@ -12,5 +12,10 @@ namespace ChefShow.Data
         [Min(10)] public float DishwareTableX=11.65f;
         public float DishwareTableDepth=.8f;
         public float DishwareTableHeight=.85f;
+        [Min(1.5f)] public float DishwareShelfWidth=1.65f;
+        [Min(.7f)] public float DishwareShelfDepth=.9f;
+        [Min(.4f)] public float DishwareShelfFirstLevel=.55f;
+        [Min(.4f)] public float DishwareShelfLevelStep=.55f;
+        public float DishwareShelfOvenOffset=1.9f;
     }
 }

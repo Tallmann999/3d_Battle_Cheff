@@ -8,6 +8,8 @@ namespace ChefShow.Inventory
     public sealed class ServingController : MonoBehaviour
     {
         public ServingStation[] Stations;
+        [Tooltip("Temporary prototype helper. Disable for ordinary show gameplay.")]
+        public bool EnableSubmissionReset = true;
         private GameBootstrap bootstrap;
         private InputActionAsset input;
         private string message; private PrototypeInteractable messageTarget; private float messageUntil;
@@ -34,6 +36,8 @@ namespace ChefShow.Inventory
                         string station=serving!=null?serving.Station.StationId:socket.StationId;
                         if(station!=bootstrap.Inventory.PlayerStationId) reason="Это станция другого участника.";
                         else if(board) success=State.TrySeasonBoard(out reason);
+                        else if(serving.ResetSubmission)
+                        {if(EnableSubmissionReset)success=State.TryResetSubmission(out reason);else reason="Тестовая отмена отключена.";}
                         else if(serving.Submit) success=State.TrySubmitDish(out reason);
                         else if(State.HeldDishware!=null)success=State.TryPlaceDishware(out reason);
                         else if(dose) success=State.TrySeasonPlate(out reason);
@@ -58,6 +62,7 @@ namespace ChefShow.Inventory
             string station=target!=null?target.Station.StationId:socket.StationId;
             if(station!=bootstrap.Inventory.PlayerStationId)return "Станция другого участника";
             if(message!=null && messageTarget==aimed && bootstrap.Run.Clock.SimulationTime<messageUntil)return message;
+            if(target!=null && target.ResetSubmission)return !EnableSubmissionReset?"Тестовая отмена отключена":bootstrap.Run.RemainingSeconds<=0?"Время вышло · отмена недоступна":State.SubmittedDish==null?"ТЕСТ · блюдо ещё не подано":"ЛКМ — Отменить подачу (тест)";
             if(target!=null && State.SubmittedDish!=null)return "Блюдо подано · "+State.SubmittedDish.Quantity+" порций";
             if(target!=null && target.Submit)return "ЛКМ — Подать блюдо · "+State.Served.Count+" порций";
             if(State.HeldDishware!=null)return "ЛКМ — Поставить "+State.HeldDishware.DisplayName+(State.CurrentDishware==null?"":" · оставшаяся еда удалится · −1 балл");

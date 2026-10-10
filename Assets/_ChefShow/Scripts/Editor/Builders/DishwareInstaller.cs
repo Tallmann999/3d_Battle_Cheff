@@ -14,6 +14,9 @@ namespace ChefShow.Editor
         public static void Install()=>HandServingInstaller.UpdateScenes(AddToScene,"dishware-compact");
         public static void AddToScene(Scene scene)
         {
+            var existing=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<GameBootstrap>(true)).Single();
+            if(existing.Dishware!=null && existing.Dishware.Supply!=null && existing.Dishware.Supply.Length==60)
+            {DishwareShelfInstaller.AddToScene(scene);SubmissionResetInstaller.AddToScene(scene);return;}
             CompactKitchenInstaller.AddToScene(scene);
             var roots=scene.GetRootGameObjects();var b=roots.SelectMany(r=>r.GetComponentsInChildren<GameBootstrap>(true)).Single();var arena=roots.Single(r=>r.name=="Arena").transform;
             const string folder="Assets/_ChefShow/Generated/Data/Dishware";
@@ -86,7 +89,7 @@ namespace ChefShow.Editor
             Undo.RecordObject(b.Hud.Status.rectTransform,"Dishware hand status");b.Hud.Status.rectTransform.sizeDelta=new Vector2(b.Hud.Status.rectTransform.sizeDelta.x,250);
             Undo.RecordObject(b.Hud.TaskCard,"Dishware instructions");
             if(!b.Hud.TaskCard.text.Contains("ПОСУДА"))b.Hud.TaskCard.text+="\nПОСУДА: длинный стол за участниками. ЛКМ взять слева / поставить на блюдо.\nСмена установленной посуды: еда удаляется, презентабельность −1. Переполнение — горка.\nЛКМ по общему столу / Backspace возвращает посуду; цвет не даёт очков.";
-            EditorUtility.SetDirty(b.Hud.TaskCard);EditorUtility.SetDirty(b);EditorUtility.SetDirty(controller);SubmissionRulesInstaller.AddButtonsToScene(scene);Physics.SyncTransforms();
+            EditorUtility.SetDirty(b.Hud.TaskCard);EditorUtility.SetDirty(b);EditorUtility.SetDirty(controller);SubmissionRulesInstaller.AddButtonsToScene(scene);DishwareShelfInstaller.AddToScene(scene);SubmissionResetInstaller.AddToScene(scene);Physics.SyncTransforms();
         }
         private static DishwareDefinition Definition(string folder,string id,string name,int capacity,float diameter,float depth,bool liquid,Color color)
         {

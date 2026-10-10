@@ -21,7 +21,7 @@ namespace ChefShow.Inventory
         public bool TryPlaceDishware(out string reason)
         {
             if(!PlateActive(out reason))return false;
-            if(HeldDishware==null){reason="Возьмите посуду на длинном столе.";return false;}
+            if(HeldDishware==null){reason="Возьмите посуду на полке рядом с духовкой.";return false;}
             if(CurrentDishware!=null) RemoveInstalledDishware();
             CurrentDishware=HeldDishware;HeldDishware=null;Version++;
             run.Events.Publish(new DishChanged(run,"dishware_selected",this));return true;

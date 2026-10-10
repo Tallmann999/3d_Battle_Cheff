@@ -18,7 +18,7 @@ namespace ChefShow.Inventory
         public string Validate()
         {
             if(Config==null || Config.Validate()!=null)return "Не настроен каталог посуды.";
-            if(Supply==null || Supply.Length!=60 || HeldView==null || HeldView.Base==null || HeldView.Rim==null || HeldView.Rim.Length!=12)return "Не сохранены столы посуды и визуал левой руки.";
+            if(Supply==null || Supply.Length!=60 || HeldView==null || HeldView.Base==null || HeldView.Rim==null || HeldView.Rim.Length!=12)return "Не сохранены полки посуды и визуал левой руки.";
             foreach(var t in Supply)if(t==null || t.Definition==null)return "Не заполнена цель посуды.";
             return null;
         }
@@ -43,7 +43,7 @@ namespace ChefShow.Inventory
                 if(target!=null)
                 {
                     handled=true;string reason;bool success=false;
-                    if(target.Team!=bootstrap.Run.PlayerTeam)reason="Это стол посуды другой команды.";
+                    if(target.Team!=bootstrap.Run.PlayerTeam)reason="Это полка посуды другой команды.";
                     else if(State.HeldDishware!=null)success=State.TryReturnDishware(out reason);
                     else success=State.TryTakeDishware(profiles[target].Id,out reason);
                     message=success?null:reason;messageTarget=aimed;until=bootstrap.Run.Clock.SimulationTime+2.5f;
@@ -57,7 +57,7 @@ namespace ChefShow.Inventory
             var target=aimed==null?null:aimed.GetComponent<DishwareTarget>();if(target==null)return null;
             if(target.Team!=bootstrap.Run.PlayerTeam)return "Посуда другой команды";
             if(message!=null && messageTarget==aimed && bootstrap.Run.Clock.SimulationTime<until)return message;
-            if(State.HeldDishware!=null)return "ЛКМ — Вернуть посуду на общий стол";
+            if(State.HeldDishware!=null)return "ЛКМ — Вернуть посуду на полку";
             if(State.SubmittedDish!=null)return "Блюдо подано · посуда заблокирована";
             var p=profiles[target];return "ЛКМ — Взять "+p.DisplayName+"\nНоминал "+p.NominalCapacity+" · "+(p.SupportsLiquid?"глубокая":"плоская")+" · переполнение с горкой";
         }
