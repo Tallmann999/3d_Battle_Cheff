@@ -23,6 +23,7 @@ namespace ChefShow.Core
         public ServingController Serving;
         public DishwareController Dishware;
         public RecipeBookController RecipeBook;
+        public ChefShow.Recipes.RecipeRecognitionController Recipes;
         private bool bookInputBlocked;
         public KitchenLayoutConfig Layout;
         public ChefShow.Cooking.MixingController Mixing;
@@ -114,6 +115,7 @@ namespace ChefShow.Core
                 if(bookError!=null){Debug.LogError(bookError,this);enabled=false;return;}
                 RecipeBook.Initialize(this);
             }
+            if(Recipes!=null){var recipeError=Recipes.Validate();if(recipeError!=null){Debug.LogError(recipeError,this);enabled=false;return;}Recipes.Initialize(this);}
             Hud.Resume.onClick.AddListener(() => SetPaused(false));
             Hud.Restart.onClick.AddListener(RestartShow);
             Hud.DebugRestart.onClick.AddListener(RestartShow);
@@ -163,6 +165,7 @@ namespace ChefShow.Core
             Hud.Present(Run, Player, paused, debug, task, Inventory, Tools, Preparation, Cooking, Serving, Mixing, Dishware);
             bool showingBook=RecipeBook!=null && RecipeBook.IsOpen;
             Hud.Context.enabled=!showingBook;
+            Recipes?.Present();
             if(showingBook){Hud.InteractionKey.enabled=false;if(Hud.HandIcon!=null)Hud.HandIcon.enabled=false;}
         }
 
@@ -182,7 +185,7 @@ namespace ChefShow.Core
         {
             Run?.Dispose();
             Run = new PrototypeRun(Config.RoundDurationSeconds, Config.RunSeed,
-                (type, error) => Debug.LogError($"Chef Show event {type.Name}: {error}"), Config.BasketCapacity, Config.TrayCapacity, Config.PlayerTeam, Cooking == null ? null : Cooking.Config.Capture(),Dishware==null?null:Dishware.Config.Capture());
+                (type, error) => Debug.LogError($"Chef Show event {type.Name}: {error}"), Config.BasketCapacity, Config.TrayCapacity, Config.PlayerTeam, Cooking == null ? null : Cooking.Config.Capture(),Dishware==null?null:Dishware.Config.Capture(),Recipes==null?null:Recipes.Config.Capture());
             paused = debug = false;
             Player.ResetRig();
             if (Inventory != null) Inventory.ResetPresentation();

@@ -17,12 +17,21 @@ namespace ChefShow.Inventory
 
     public readonly struct FoodOperation
     {
-        public readonly string Action;
+        public readonly string Action, SourcePortionId;
         public readonly float SimulationTime;
         public readonly PortionLocation Location;
         public readonly PreparationState Preparation;
-        public FoodOperation(string action, float time, PortionLocation location, PreparationState preparation)
-        { Action = action; SimulationTime = time; Location = location; Preparation = preparation; }
+        public readonly ChefShow.Cooking.CookerKind? Cooker;
+        public readonly CookState Cooking;
+        public readonly float HeatProgress;
+        public FoodOperation(string action, float time, PortionLocation location, PreparationState preparation,
+            ChefShow.Cooking.CookerKind? cooker = null, CookState cooking = CookState.Raw,
+            float heatProgress = 0, string sourcePortionId = null)
+        {
+            Action = action; SourcePortionId = sourcePortionId; SimulationTime = time;
+            Location = location; Preparation = preparation; Cooker = cooker;
+            Cooking = cooking; HeatProgress = heatProgress;
+        }
     }
 
     // Snapshot owns copies of values. Presentation and later transfers cannot alter it.
@@ -108,8 +117,8 @@ namespace ChefShow.Inventory
             Quantity=inputs.Sum(p=>p.Quantity);SaltDoses=inputs.Sum(p=>p.SaltDoses);OilDoses=inputs.Sum(p=>p.OilDoses);Preparation=PreparationState.Mixed;
             if(inputs.Any(p=>p.Cooking==CookState.Burned))Cooking=CookState.Burned;
         }
-        internal void RecordOperation(string action, float time)
-            => operations.Add(new FoodOperation(action, time, Location, Preparation));
+        internal void RecordOperation(string action, float time, ChefShow.Cooking.CookerKind? cooker = null)
+            => operations.Add(new FoodOperation(action, time, Location, Preparation, cooker, Cooking, HeatProgress, Id));
         public FoodPortionSnapshot Snapshot() => new FoodPortionSnapshot(this);
     }
 }

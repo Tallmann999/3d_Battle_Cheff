@@ -8,6 +8,7 @@ namespace ChefShow.Inventory
 {
     public sealed class DishSnapshot
     {
+        public ChefShow.Recipes.DishRecognition Recognition {get;}
         public IReadOnlyList<FoodPortionSnapshot> Portions { get; }
         public ChefShow.Data.DishwareSnapshot Dishware {get;}
         public float FillRatio=>Dishware==null?0:Quantity/(float)Dishware.NominalCapacity;
@@ -21,6 +22,7 @@ namespace ChefShow.Inventory
             Dishware=state.CurrentDishware;PresentationPenalty=state.PresentationPenalty;
             Portions = Array.AsReadOnly(state.Served.Select(p => p.Snapshot()).ToArray());
             SaltDoses = state.PlateSaltDoses; OilDoses = state.PlateOilDoses; Contaminated = state.PlateContaminated;
+            Recognition=state.RecognitionRules?.Resolve(this);
         }
     }
     public readonly struct DishChanged

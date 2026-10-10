@@ -38,6 +38,7 @@ namespace ChefShow.Inventory
         private readonly PrototypeRun run;
         private int serial, originIndex;
         private PortionLocation origin;
+        public ChefShow.Recipes.RecipeIdentitySettings RecognitionRules {get;}
         public int BasketCapacity { get; }
         public int TrayCapacity { get; }
         public BasketPlacement Placement { get; private set; } = BasketPlacement.Pantry;
@@ -47,11 +48,11 @@ namespace ChefShow.Inventory
         public IReadOnlyList<FoodPortion> Portions => portions.AsReadOnly();
         public FoodPortion Held { get; private set; }
         public FoodPortion Socket(int index) => index == 1 ? served.LastOrDefault() : index >= 0 && index < sockets.Length ? sockets[index] : null;
-        public InventoryState(PrototypeRun owner, int basketCapacity, int trayCapacity, ChefShow.Cooking.CookingSettings cookingSettings = null, DishwareSettings dishwareSettings = null)
+        public InventoryState(PrototypeRun owner, int basketCapacity, int trayCapacity, ChefShow.Cooking.CookingSettings cookingSettings = null, DishwareSettings dishwareSettings = null, ChefShow.Recipes.RecipeIdentitySettings recognitionSettings = null)
         {
             if (basketCapacity < 1 || trayCapacity < 1) throw new ArgumentOutOfRangeException(nameof(basketCapacity));
             run = owner ?? throw new ArgumentNullException(nameof(owner));
-            BasketCapacity = basketCapacity; TrayCapacity = trayCapacity; cooking = cookingSettings;
+            BasketCapacity = basketCapacity; TrayCapacity = trayCapacity; cooking = cookingSettings;RecognitionRules=recognitionSettings;
             dishware=dishwareSettings;CurrentDishware=dishware==null?DishwareSnapshot.Default:dishware.Starting;
         }
 

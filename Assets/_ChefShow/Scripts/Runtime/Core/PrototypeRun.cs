@@ -30,7 +30,7 @@ namespace ChefShow.Core
         public bool Disposed { get; private set; }
 
         public PrototypeRun(float duration, int seed, Action<Type, Exception> reportError, int basketCapacity = 10, int trayCapacity = 24, TeamId playerTeam = TeamId.A,
-            ChefShow.Cooking.CookingSettings cooking = null, DishwareSettings dishware = null)
+            ChefShow.Cooking.CookingSettings cooking = null, DishwareSettings dishware = null, ChefShow.Recipes.RecipeIdentitySettings recognition = null)
         {
             if (duration <= 0 || float.IsNaN(duration) || float.IsInfinity(duration))
                 throw new ArgumentOutOfRangeException(nameof(duration));
@@ -38,7 +38,7 @@ namespace ChefShow.Core
             Seed = seed;
             PlayerTeam = playerTeam;
             Events = new GameEventBus(reportError);
-            Inventory = new InventoryState(this, basketCapacity, trayCapacity, cooking, dishware);
+            Inventory = new InventoryState(this, basketCapacity, trayCapacity, cooking, dishware,recognition);
         }
 
         public void Tick(float realDelta)

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0eab18bd08834346bf7e94db4d9e18b, type: 3}
+  m_Name: fried_egg
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Data.RecipeRecognitionDefinition
+  Reference: {fileID: 11400000, guid: 92a216461d9623641b784f97e0e722cc, type: 2}
+  Core:
+  - Alternatives:
+    - {fileID: 11400000, guid: 57079eed6150046428068964d1147d9d, type: 2}
+    Preparation: 1
+    AllowedCookers: 00000000
+    MixedGroup: 0
+    AddedAfterIngredient: 
+  Optional:
+  - {fileID: 11400000, guid: 4b21e5a4347a0974c9c564d7e72a1794, type: 2}
+  - {fileID: 11400000, guid: d4e4e5ff61f261f46a5e5cf594162851, type: 2}
+  UnavailableProcess: 

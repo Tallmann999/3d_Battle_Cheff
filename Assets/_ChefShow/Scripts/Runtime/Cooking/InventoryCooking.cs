@@ -77,7 +77,7 @@ namespace ChefShow.Inventory
             if (seasoning == SeasoningKind.Salt) food.SaltDoses += cooking.DosesPerPress;
             else food.OilDoses += cooking.DosesPerPress;
             food.Contaminated |= source.Contaminated;
-            food.RecordOperation("seasoning_applied", run.Clock.SimulationTime);
+            food.RecordOperation("seasoning_applied", run.Clock.SimulationTime, kind);
             source.RecordOperation("seasoning_dispensed", run.Clock.SimulationTime);
             Version++;
             // Commit first; callbacks cannot alter the independent fact.
@@ -97,9 +97,13 @@ namespace ChefShow.Inventory
                 int required = kind == CookerKind.Pot ? cooking.PotStirs : 1;
                 if (food.Cooking == CookState.Burned || food.StirPresses >= required) continue;
                 var previous = food.Cooking; food.StirPresses++;
-                Recalculate(food, kind); food.RecordOperation("food_stirred", run.Clock.SimulationTime);
+                Recalculate(food, kind); food.RecordOperation("food_stirred", run.Clock.SimulationTime, kind);
                 facts.Add(new CookingChanged(run, "food_stirred", kind, Heat(kind), food, previous));
-                if (food.Cooking != previous) facts.Add(new CookingChanged(run, "food_state_changed", kind, Heat(kind), food, previous));
+                if (food.Cooking != previous)
+                {
+                    food.RecordOperation("food_state_changed", run.Clock.SimulationTime, kind);
+                    facts.Add(new CookingChanged(run, "food_state_changed", kind, Heat(kind), food, previous));
+                }
             }
             if (facts.Count == 0) { reason = "Перемешивание не требуется или прибор пуст."; return false; }
             Version++; foreach (var fact in facts) run.Events.Publish(fact); return true;
@@ -114,14 +118,14 @@ namespace ChefShow.Inventory
                 foreach (var food in cookers[i])
                 {
                     if (food.Cooking == CookState.Burned) continue;
-                    var previous = food.Cooking; bool start = food.HeatProgress == 0;
+                    var previous = food.Cooking; bool start = food.HeatProgress == 0 || food.LastCooker != kind;
                     food.HeatProgress = Math.Min(kind==CookerKind.Oven?cooking.OvenBurned:cooking.Burned, food.HeatProgress + delta * rate);
                     food.LastCooker = kind; Recalculate(food, kind); changed = true;
-                    if (start) { food.RecordOperation("cook_started", run.Clock.SimulationTime); facts.Add(new CookingChanged(run, "cook_started", kind, heat[i], food, previous)); }
+                    if (start) { food.RecordOperation("cook_started", run.Clock.SimulationTime, kind); facts.Add(new CookingChanged(run, "cook_started", kind, heat[i], food, previous)); }
                     if (food.Cooking != previous)
                     {
                         string action = food.Cooking == CookState.Burned ? "food_burned" : "food_state_changed";
-                        food.RecordOperation(action, run.Clock.SimulationTime); facts.Add(new CookingChanged(run, action, kind, heat[i], food, previous));
+                        food.RecordOperation(action, run.Clock.SimulationTime, kind); facts.Add(new CookingChanged(run, action, kind, heat[i], food, previous));
                     }
                 }
             }
