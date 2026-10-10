@@ -193,3 +193,12 @@ Inspector: Systems/GameBootstrap.Recipes → RecipeRecognitionController.Config/
 D-040 / T-044 реализован через Unity MCP: название фактического блюда по составу, нарезке, настоящей смеси и истории приборов. Количества/дозы не влияют на название. **EditMode 77/77, полная Play Mode 42/42 PASS**. 12 сохранённых профилей, 10 доступных схем; тушение и перемешивание Pan остаются явно неподдержанными. Обе сцены Validate PASS, dirty=False/hidden=0, 9961 GameObjects; все9959 прежних объектов/записей/поз/GUID сохранены. Камеры working2.20/generated1.65, AutoPause=True, EditorOptions=0. F-007 остаётся in_progress до очистки и оставшихся критериев; judging F-010 впереди.
 
 Edit job `ec529e17b2ef46fcb08a032ff5bbe2e8`; Play job `157b88ea15ed439589911d3090621740`. XML: TestResults/layout-recognition-editmode.xml / layout-recognition-full-playmode.xml. Native proof: TestResults/recognition-final-proof.json; сохранность: recognition-preservation.json; кадры recognition-raw-beef.png, recognition-steak.png, recognition-omelet.png, recognition-apple-tart.png просмотрены. Foundation/rebuild не запускались. Служба MCP/Editor/packages не переустанавливались. Полный игровой B-проход, Windows build, субъективный UX и judging вне проверки. Локальный main, push только по новому прямому запросу.
+
+## Судейство — D-041 / T-045
+
+1. Приготовьте одну целую говядину на Pan на среднем огне, перенесите ЛКМ на тарелку и нажмите красную кнопку. Справа снизу появится итог до100, категории и причины. При попадании в диапазон готовности этот стартовый стейк даёт100.
+2. До00:00 нажмите синюю кнопку, возьмите соль слева, восемь отдельных ЛКМ по тарелке, Backspace верните контейнер и подайте снова: название сохраняется, вкус/итог снижаются, указано «Избыток соли».
+3. Синяя кнопка → добавьте повторные готовые порции → красная: количество снижает подачу. Сырая обязательная говядина ограничивает итог45; сгоревший главный продукт50; пустая тарелка0. На00:00 оценка появляется автоматически по фактической тарелке.
+4. I/перелистывание/жёлтый выбор не меняют оценку или задачу; при книге/паузе карточка скрывается. Restart очищает результат и захватывает обновлённый баланс.
+
+Без Play: Systems/JudgingController (ссылка GameBootstrap.Judging), UI/Judging Result, Assets/_ChefShow/Data/Judging/JudgingConfig.asset и12 профилей. Подача5quantity+5ware, дозовые нормы книги и пропорции пока временные; край посуды baseline2/2 до реализации очистки. NPC/дегустация/ничьи/выбывание ещё не добавлены. Edit98/98, полная Play44/44 PASS; итоговые XML/proof в implementation-log.

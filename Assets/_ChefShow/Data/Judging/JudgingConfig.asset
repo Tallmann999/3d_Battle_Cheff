@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a9231fc3791dae4e951f9ba02d8b448, type: 3}
+  m_Name: JudgingConfig
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Data.JudgingConfig
+  Profiles:
+  - {fileID: 11400000, guid: 179a9b7b4158767479df3a8e71dc12a6, type: 2}
+  - {fileID: 11400000, guid: 5c7f90be8b0d031418aab9fcb991ba02, type: 2}
+  - {fileID: 11400000, guid: 573e0b2710cfceb448c0338a2faf1d5b, type: 2}
+  - {fileID: 11400000, guid: 3618992e5545ed24b8a31bac9969b818, type: 2}
+  - {fileID: 11400000, guid: a3ef97683fc9728498e5f4ace557c96a, type: 2}
+  - {fileID: 11400000, guid: e17463f46353e564aaaed85e944f4632, type: 2}
+  - {fileID: 11400000, guid: 8756f077c64a7864198f15c0e8fe67a5, type: 2}
+  - {fileID: 11400000, guid: 3c88f2dc02b99174e8064719f3a5217d, type: 2}
+  - {fileID: 11400000, guid: 65c4678568402624b9c7dfad8d909c4d, type: 2}
+  - {fileID: 11400000, guid: f848ffcc8912de24e9714a4e6eb11df2, type: 2}
+  - {fileID: 11400000, guid: f08e283bec316fb41bf2940e56160ade, type: 2}
+  - {fileID: 11400000, guid: 8c3812af41a3b884e88f32a681c63a79, type: 2}
+  Composition: 25
+  ProcessTaste: 30
+  Doneness: 20
+  Preparation: 10
+  Plating: 10
+  Cleanliness: 5
+  MethodMaximum: 15
+  SeasoningMaximum: 10
+  CompletionMaximum: 5
+  QuantityMaximum: 5
+  DishwareMaximum: 5
+  RawProteinCap: 45
+  BurnedMainCap: 50
+  IncompatibleExtraPenalty: 0.15
+  ExperimentalIngredientMaximum: 0.5
+  MainRoleWeight: 0.6
+  GarnishRoleWeight: 0.25
+  VegetableRoleWeight: 0.15

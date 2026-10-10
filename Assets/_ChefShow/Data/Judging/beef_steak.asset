@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d61861487ea306f48bba4a7b3ace39c2, type: 3}
+  m_Name: beef_steak
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Data.JudgingRecipeProfile
+  Reference: {fileID: 11400000, guid: 1d39e1f22890de745af37fad74c77383, type: 2}
+  Core:
+  - RecognitionCoreIndex: 0
+    ReferenceQuantity: 1
+    Role: 0
+    MandatoryProtein: 1
+    MainComponent: 1
+    UseApplianceHeatDefaults: 1
+    Heat:
+      ZeroBelow: 0
+      IdealMinimum: 30
+      IdealMaximum: 45
+      ZeroAbove: 60
+  Salt:
+    ZeroBelow: 0
+    IdealMinimum: 0
+    IdealMaximum: 1
+    ZeroAbove: 2
+  Oil:
+    ZeroBelow: 0
+    IdealMinimum: 0
+    IdealMaximum: 1
+    ZeroAbove: 2
+  LiquidFood: 0
+  IdealFillMinimum: 0
+  IdealFillMaximum: 1
+  ZeroFillAt: 2.5

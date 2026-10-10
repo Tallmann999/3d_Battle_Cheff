@@ -9,6 +9,7 @@ namespace ChefShow.Inventory
     public sealed class DishSnapshot
     {
         public ChefShow.Recipes.DishRecognition Recognition {get;}
+        public bool IsSubmitted {get;}
         public IReadOnlyList<FoodPortionSnapshot> Portions { get; }
         public ChefShow.Data.DishwareSnapshot Dishware {get;}
         public float FillRatio=>Dishware==null?0:Quantity/(float)Dishware.NominalCapacity;
@@ -17,8 +18,9 @@ namespace ChefShow.Inventory
         public int OilDoses { get; }
         public int Quantity => Portions.Sum(p => p.Quantity);
         public bool Contaminated { get; }
-        internal DishSnapshot(InventoryState state)
+        internal DishSnapshot(InventoryState state, bool submitted=false)
         {
+            IsSubmitted=submitted;
             Dishware=state.CurrentDishware;PresentationPenalty=state.PresentationPenalty;
             Portions = Array.AsReadOnly(state.Served.Select(p => p.Snapshot()).ToArray());
             SaltDoses = state.PlateSaltDoses; OilDoses = state.PlateOilDoses; Contaminated = state.PlateContaminated;
@@ -31,7 +33,7 @@ namespace ChefShow.Inventory
         public readonly float SimulationTime;
         public readonly DishSnapshot Dish;
         internal DishChanged(PrototypeRun run, string action, InventoryState state)
-        { RunId=run.RunId; ActorId=run.PlayerTeam+"1"; Action=action; SimulationTime=run.Clock.SimulationTime; Dish=new DishSnapshot(state); }
+        { RunId=run.RunId; ActorId=run.PlayerTeam+"1"; Action=action; SimulationTime=run.Clock.SimulationTime; Dish=state.SubmittedDish??new DishSnapshot(state); }
     }
     public sealed partial class InventoryState
     {
@@ -107,7 +109,7 @@ namespace ChefShow.Inventory
         internal void SubmitAtTimeup() { if(SubmittedDish==null) SubmitDish(); }
         private void SubmitDish()
         {
-            SubmittedDish=CaptureDish(); Version++; run.Events.Publish(new DishChanged(run,"dish_submitted",this));
+            SubmittedDish=new DishSnapshot(this,true); Version++; run.Events.Publish(new DishChanged(run,"dish_submitted",this));
         }
     }
 }

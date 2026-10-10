@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ChefShow.Data;
 using ChefShow.Contestants;
@@ -24,6 +24,7 @@ namespace ChefShow.Core
         public DishwareController Dishware;
         public RecipeBookController RecipeBook;
         public ChefShow.Recipes.RecipeRecognitionController Recipes;
+        public ChefShow.Judging.JudgingController Judging;
         private bool bookInputBlocked;
         public KitchenLayoutConfig Layout;
         public ChefShow.Cooking.MixingController Mixing;
@@ -116,6 +117,12 @@ namespace ChefShow.Core
                 RecipeBook.Initialize(this);
             }
             if(Recipes!=null){var recipeError=Recipes.Validate();if(recipeError!=null){Debug.LogError(recipeError,this);enabled=false;return;}Recipes.Initialize(this);}
+            if(Judging!=null)
+            {
+                var judgingError=Judging.Validate();
+                if(judgingError!=null){Debug.LogError(judgingError,this);enabled=false;return;}
+                Judging.Initialize(this);
+            }
             Hud.Resume.onClick.AddListener(() => SetPaused(false));
             Hud.Restart.onClick.AddListener(RestartShow);
             Hud.DebugRestart.onClick.AddListener(RestartShow);
@@ -166,6 +173,7 @@ namespace ChefShow.Core
             bool showingBook=RecipeBook!=null && RecipeBook.IsOpen;
             Hud.Context.enabled=!showingBook;
             Recipes?.Present();
+            Judging?.Present();
             if(showingBook){Hud.InteractionKey.enabled=false;if(Hud.HandIcon!=null)Hud.HandIcon.enabled=false;}
         }
 
@@ -198,6 +206,7 @@ namespace ChefShow.Core
             Player.SetSensitivity(sensitivity);
             bookInputBlocked=false;
             if(RecipeBook!=null)RecipeBook.ResetRun();
+            Judging?.ResetRun();
             UpdateMaps();
             Run.Events.Publish(new RunStarted(Run.RunId, Run.Seed));
             Debug.Log($"Chef Show: start run={Run.RunId} seed={Run.Seed}; {(Cooking != null ? "сковорода/кастрюля" : Inventory == null ? "арена" : "продукты и перенос")}; полный выпуск ещё не реализован.", this);
