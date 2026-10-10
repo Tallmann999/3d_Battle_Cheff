@@ -21,6 +21,8 @@ namespace ChefShow.Core
         public PrototypeHud Hud;
         public InventoryController Inventory;
         public ServingController Serving;
+        public DishwareController Dishware;
+        public KitchenLayoutConfig Layout;
         public ChefShow.Cooking.MixingController Mixing;
         public ToolDrawerController Tools;
         public PreparationController Preparation;
@@ -101,6 +103,7 @@ namespace ChefShow.Core
             }
             if(Mixing!=null)
             {var mixError=Mixing.Validate();if(mixError!=null){Debug.LogError(mixError,this);enabled=false;return;}Mixing.Initialize(this,input);}
+            if(Dishware!=null){var wareError=Dishware.Validate();if(wareError!=null){Debug.LogError(wareError,this);enabled=false;return;}Dishware.Initialize(this,input);}
             if (Serving != null)
             { var servingError=Serving.Validate(); if(servingError!=null){Debug.LogError(servingError,this);enabled=false;return;} Serving.Initialize(this,input); }
             Hud.Resume.onClick.AddListener(() => SetPaused(false));
@@ -138,14 +141,15 @@ namespace ChefShow.Core
             bool gameplay = !paused && Run.RemainingSeconds > 0;
             Player.Step(Run.Clock, gameplay);
             bool toolCommand = Tools != null && Tools.Step(gameplay);
-            bool cookCommand = Cooking != null && Cooking.Step(gameplay, toolCommand);
-            bool mixCommand=Mixing!=null && Mixing.Step(gameplay,toolCommand || cookCommand);
-            bool servingCommand = Serving != null && Serving.Step(gameplay, toolCommand || cookCommand || mixCommand);
-            bool preparationCommand = Preparation != null && Preparation.Step(gameplay, toolCommand || cookCommand || servingCommand || mixCommand);
-            if (Inventory != null) Inventory.Step(gameplay, toolCommand || cookCommand || preparationCommand || servingCommand || mixCommand);
+            bool dishwareCommand=Dishware!=null && Dishware.Step(gameplay,toolCommand);
+            bool cookCommand = Cooking != null && Cooking.Step(gameplay, toolCommand || dishwareCommand);
+            bool mixCommand=Mixing!=null && Mixing.Step(gameplay,toolCommand || cookCommand || dishwareCommand);
+            bool servingCommand = Serving != null && Serving.Step(gameplay, toolCommand || cookCommand || mixCommand || dishwareCommand);
+            bool preparationCommand = Preparation != null && Preparation.Step(gameplay, toolCommand || cookCommand || servingCommand || mixCommand || dishwareCommand);
+            if (Inventory != null) Inventory.Step(gameplay, toolCommand || cookCommand || preparationCommand || servingCommand || mixCommand || dishwareCommand);
             UpdateMaps();
             bool task = !paused && input.FindAction((Player.Focused ? "Station" : "Gameplay") + "/Task", true).IsPressed();
-            Hud.Present(Run, Player, paused, debug, task, Inventory, Tools, Preparation, Cooking, Serving, Mixing);
+            Hud.Present(Run, Player, paused, debug, task, Inventory, Tools, Preparation, Cooking, Serving, Mixing, Dishware);
         }
 
         public void SetPaused(bool value)
@@ -163,7 +167,7 @@ namespace ChefShow.Core
         {
             Run?.Dispose();
             Run = new PrototypeRun(Config.RoundDurationSeconds, Config.RunSeed,
-                (type, error) => Debug.LogError($"Chef Show event {type.Name}: {error}"), Config.BasketCapacity, Config.TrayCapacity, Config.PlayerTeam, Cooking == null ? null : Cooking.Config.Capture());
+                (type, error) => Debug.LogError($"Chef Show event {type.Name}: {error}"), Config.BasketCapacity, Config.TrayCapacity, Config.PlayerTeam, Cooking == null ? null : Cooking.Config.Capture(),Dishware==null?null:Dishware.Config.Capture());
             paused = debug = false;
             Player.ResetRig();
             if (Inventory != null) Inventory.ResetPresentation();
@@ -172,6 +176,7 @@ namespace ChefShow.Core
             if (Cooking != null) Cooking.ResetPresentation();
             if (Serving != null) Serving.ResetPresentation();
             if(Mixing!=null)Mixing.ResetPresentation();
+            if(Dishware!=null)Dishware.ResetPresentation();
             Player.SetSensitivity(sensitivity);
             UpdateMaps();
             Run.Events.Publish(new RunStarted(Run.RunId, Run.Seed));

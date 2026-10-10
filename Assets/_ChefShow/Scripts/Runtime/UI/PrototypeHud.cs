@@ -24,11 +24,12 @@ namespace ChefShow.UI
         public Button Timer240;
         public Slider Sensitivity;
 
-        public void Present(PrototypeRun run, FirstPersonRig player, bool paused, bool debug, bool taskVisible, InventoryController inventory = null, ToolDrawerController tools = null, PreparationController preparation = null, ChefShow.Cooking.CookingController cooking = null, ServingController serving = null, ChefShow.Cooking.MixingController mixing = null)
+        public void Present(PrototypeRun run, FirstPersonRig player, bool paused, bool debug, bool taskVisible, InventoryController inventory = null, ToolDrawerController tools = null, PreparationController preparation = null, ChefShow.Cooking.CookingController cooking = null, ServingController serving = null, ChefShow.Cooking.MixingController mixing = null, DishwareController dishware = null)
         {
             int seconds = Mathf.CeilToInt(run.RemainingSeconds);
             Status.text = $"CHEF SHOW · {(cooking != null ? "КУХНЯ" : inventory == null ? "ЭТАП 1" : preparation == null ? "ПРОДУКТЫ И ПЕРЕНОС" : "ПОДГОТОВКА ПРОДУКТОВ")}\nПробный таймер  {seconds / 60:00}:{seconds % 60:00}     Команда {player.GetComponent<Contestants.PrototypeActor>().Team}\n"
                 + (inventory == null ? "Арена и управление. Готовка ещё не реализована." : inventory.Summary);
+            if(run.Inventory.HeldDishware!=null)Status.text+="\nЛевая рука: "+run.Inventory.HeldDishware.DisplayName;
             if (tools != null) Status.text += "\n" + tools.Summary;
             if (cooking != null) Status.text += "\n" + cooking.Summary;
             PausePanel.SetActive(paused && !debug);
@@ -53,6 +54,7 @@ namespace ChefShow.UI
             if (cooking != null)
             { string appliance = cooking.Describe(player.Target); if (appliance != null) Context.text = appliance; }
             if(mixing!=null){string bowl=mixing.Describe(player.Target);if(bowl!=null)Context.text=bowl;}
+            if(dishware!=null){string supply=dishware.Describe(player.Target);if(supply!=null)Context.text=supply;}
             if (serving != null) { string plate=serving.Describe(player.Target); if(plate!=null) Context.text=plate; }
             if (run.RemainingSeconds <= 0 && !paused)
                 Context.text = "Пробный таймер завершён. Esc → Начать выпуск заново.";

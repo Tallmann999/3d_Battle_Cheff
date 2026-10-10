@@ -47,11 +47,12 @@ namespace ChefShow.Inventory
         public IReadOnlyList<FoodPortion> Portions => portions.AsReadOnly();
         public FoodPortion Held { get; private set; }
         public FoodPortion Socket(int index) => index == 1 ? served.LastOrDefault() : index >= 0 && index < sockets.Length ? sockets[index] : null;
-        public InventoryState(PrototypeRun owner, int basketCapacity, int trayCapacity, ChefShow.Cooking.CookingSettings cookingSettings = null)
+        public InventoryState(PrototypeRun owner, int basketCapacity, int trayCapacity, ChefShow.Cooking.CookingSettings cookingSettings = null, DishwareSettings dishwareSettings = null)
         {
             if (basketCapacity < 1 || trayCapacity < 1) throw new ArgumentOutOfRangeException(nameof(basketCapacity));
             run = owner ?? throw new ArgumentNullException(nameof(owner));
             BasketCapacity = basketCapacity; TrayCapacity = trayCapacity; cooking = cookingSettings;
+            dishware=dishwareSettings;CurrentDishware=dishware==null?DishwareSnapshot.Default:dishware.Starting;
         }
 
         private bool Active(out string reason)
@@ -63,6 +64,7 @@ namespace ChefShow.Inventory
         private bool FreeHand(out string reason)
         {
             if (!Active(out reason)) return false;
+            if(HeldDishware!=null){reason="Левая рука занята посудой. Поставьте или верните её.";return false;}
             if (Held == null) return true;
             reason = "Сначала положите или верните продукт из руки."; return false;
         }

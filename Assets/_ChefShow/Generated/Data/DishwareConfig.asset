@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2471e0dbd20791f4b93f7d8bbc026384, type: 3}
+  m_Name: DishwareConfig
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Data.DishwareConfig
+  Types:
+  - {fileID: 11400000, guid: 8ab725d2a8721c3418d386abbf0d046b, type: 2}
+  - {fileID: 11400000, guid: 405cb36cc277c42448a2c2e1413bf8d8, type: 2}
+  - {fileID: 11400000, guid: 82c946248b93857418693ff5e94c7d1d, type: 2}
+  - {fileID: 11400000, guid: 0dbd276067bb57e4ca7ad98c06813190, type: 2}
+  - {fileID: 11400000, guid: 78b222b16fae9b844b06a4b53d3efade, type: 2}
+  StartingId: small_flat

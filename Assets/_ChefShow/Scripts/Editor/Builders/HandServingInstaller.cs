@@ -20,7 +20,7 @@ namespace ChefShow.Editor
         public static void Install() => UpdateScenes(AddToScene,"hands-plates");
         public static void UpdateScenes(Action<Scene> action,string tag)
         {
-            if(EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling || EditorApplication.isUpdating || Selection.activeObject!=null)
+            if(EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling || EditorApplication.isUpdating || (Selection.activeObject!=null && (Selection.activeGameObject==null || Selection.activeGameObject.transform.root.name!="Lighting")))
                 throw new InvalidOperationException("Нужна сохранённая сцена в Edit Mode без активного выделения.");
             var working=SceneManager.GetActiveScene();
             if(working.path!=PrototypeSceneBuilder.EditableScene || working.isDirty)throw new InvalidOperationException("Сохраните рабочую сцену.");

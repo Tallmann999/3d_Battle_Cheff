@@ -44,7 +44,7 @@ namespace ChefShow.Editor
             EditorUtility.SetDirty(b.Cooking.Config);EditorUtility.SetDirty(b.Cooking);EditorUtility.SetDirty(mixing);EditorUtility.SetDirty(b);
             HandServingInstaller.UpdateHud(b);Undo.RecordObject(b.Hud.TaskCard,"Bowl oven task");
             b.Hud.TaskCard.text+="\nМиска: ЛКМ добавить продукты, ПКМ удерживать 3 с ложкой/лопаткой.\nСмесь: ЛКМ взять, отнести в духовку у стены за участником.\nЛКМ открыть / положить в форму / закрыть; нагрев отдельной ручкой.\nСредний: выпечка 45 с, переготовка 60 с, сгорание 75 с.\nОткрытая дверца останавливает нагрев. Снять еду — ЛКМ при открытой дверце.";
-            EditorUtility.SetDirty(b.Hud.TaskCard);Physics.SyncTransforms();
+            EditorUtility.SetDirty(b.Hud.TaskCard);CompactKitchenInstaller.AddToScene(scene);Physics.SyncTransforms();
             var error=mixing.Validate()??b.Cooking.Validate(b.Inventory);if(error!=null)throw new System.InvalidOperationException(error);
         }
         private static MixingStation BuildBowl(Transform parent,Vector3 p,string id,float side,GameBootstrap b)

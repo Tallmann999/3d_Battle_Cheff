@@ -9,12 +9,15 @@ namespace ChefShow.Inventory
     public sealed class DishSnapshot
     {
         public IReadOnlyList<FoodPortionSnapshot> Portions { get; }
+        public ChefShow.Data.DishwareSnapshot Dishware {get;}
+        public float FillRatio=>Quantity/(float)Dishware.NominalCapacity;
         public int SaltDoses { get; }
         public int OilDoses { get; }
         public int Quantity => Portions.Sum(p => p.Quantity);
         public bool Contaminated { get; }
         internal DishSnapshot(InventoryState state)
         {
+            Dishware=state.CurrentDishware;
             Portions = Array.AsReadOnly(state.Served.Select(p => p.Snapshot()).ToArray());
             SaltDoses = state.PlateSaltDoses; OilDoses = state.PlateOilDoses; Contaminated = state.PlateContaminated;
         }

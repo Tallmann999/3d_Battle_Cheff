@@ -190,8 +190,14 @@ namespace ChefShow.Tests
             var controller = player.GetComponent<CharacterController>();
             var actors = Object.FindObjectsByType<PrototypeActor>(FindObjectsSortMode.None);
             var floor = GameObject.Find("Floor").GetComponent<BoxCollider>().bounds;
-            Assert.That(floor.size.x, Is.EqualTo(60).Within(0.01f));
-            Assert.That(floor.size.z, Is.EqualTo(44).Within(0.01f));
+            Assert.That(floor.size.x, Is.EqualTo(28).Within(0.01f));
+            Assert.That(floor.size.z, Is.EqualTo(38).Within(0.01f));
+            foreach(var oven in bootstrap.Cooking.Stations.Where(s=>s.Kind==ChefShow.Cooking.CookerKind.Oven))
+            {
+                Assert.That(oven.transform.lossyScale.x,Is.EqualTo(2).Within(.01f));Assert.That(oven.transform.lossyScale.y,Is.EqualTo(2).Within(.01f));Assert.That(oven.transform.lossyScale.z,Is.EqualTo(2).Within(.01f));
+                Assert.That(Mathf.Abs(oven.transform.position.x),Is.EqualTo(12.86f).Within(.01f));
+                Assert.That(Mathf.Abs(oven.transform.position.x)+.74f,Is.LessThan(floor.extents.x-.15f));
+            }
             foreach (string name in new[] { "Pantry", "Judging Table" })
                 Assert.That(GameObject.Find(name).GetComponent<BoxCollider>().bounds.max.y - floor.max.y,
                     Is.EqualTo(0.9f).Within(0.01f), name + " worktop height");
@@ -240,9 +246,9 @@ namespace ChefShow.Tests
                     var firstEnd=GameObject.Find("Station_"+team+"1").GetComponent<BoxCollider>().bounds;
                     var lastEnd=GameObject.Find("Station_"+team+"6").GetComponent<BoxCollider>().bounds;
                     float bypassZ=end<0?firstEnd.min.z-1.3f:lastEnd.max.z+1.3f;
-                    Teleport(new Vector3(sign * 11.5f, 0.05f, end<0?lastEnd.center.z:firstEnd.center.z));
+                    Teleport(new Vector3(sign * 10.7f, 0.05f, end<0?lastEnd.center.z:firstEnd.center.z));
                     var targets = new[] {
-                        new Vector3(sign * 11.5f, 0.05f, bypassZ),
+                        new Vector3(sign * 10.7f, 0.05f, bypassZ),
                         new Vector3(sign * 6, 0.05f, bypassZ),
                         new Vector3(sign * 6, 0.05f, end == 1 ? 10.6f : -10.6f),
                         new Vector3(0, 0.05f, end == 1 ? 10.6f : -10.6f)

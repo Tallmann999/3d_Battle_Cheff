@@ -35,6 +35,7 @@ namespace ChefShow.Inventory
                         if(station!=bootstrap.Inventory.PlayerStationId) reason="Это станция другого участника.";
                         else if(board) success=State.TrySeasonBoard(out reason);
                         else if(serving.Submit) success=State.TrySubmitDish(out reason);
+                        else if(State.HeldDishware!=null)success=State.TryPlaceDishware(out reason);
                         else if(dose) success=State.TrySeasonPlate(out reason);
                         else if(State.Held!=null) success=State.TryPlaceServing(out reason);
                         else if(State.Placement==BasketPlacement.Carried) reason="Сначала поставьте корзину Tab.";
@@ -58,6 +59,7 @@ namespace ChefShow.Inventory
             if(message!=null && messageTarget==aimed && bootstrap.Run.Clock.SimulationTime<messageUntil)return message;
             if(target!=null && State.SubmittedDish!=null)return "Блюдо подано · "+State.SubmittedDish.Quantity+" порций";
             if(target!=null && target.Submit)return "ЛКМ — Подать блюдо · "+State.Served.Count+" порций";
+            if(State.HeldDishware!=null)return "ЛКМ — Поставить "+State.HeldDishware.DisplayName+" · еда сохранится";
             if(dose)return "ЛКМ — Добавить дозу "+(State.Held.Ingredient.Id==State.CookingRules.SaltIngredientId?"соли":"масла")+(board?" на продукт":" на блюдо");
             if(State.Held!=null)return "ЛКМ — Положить "+InventoryController.FoodName(State.Held.Ingredient)+" на тарелку";
             int index=target.Index<0?State.Served.Count-1:target.Index;

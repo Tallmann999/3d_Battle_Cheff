@@ -97,6 +97,7 @@ namespace ChefShow.Editor
             InstallHud(bootstrap);
             EditorUtility.SetDirty(cooking); EditorUtility.SetDirty(bootstrap);
             HandServingInstaller.AddToScene(scene); MixingOvenInstaller.AddToScene(scene);
+            DishwareInstaller.AddToScene(scene);
             Physics.SyncTransforms(); error=cooking.Validate(bootstrap.Inventory); if(error!=null) throw new InvalidOperationException(error);
         }
         public static void InstallHud(GameBootstrap bootstrap)

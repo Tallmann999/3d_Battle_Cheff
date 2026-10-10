@@ -87,6 +87,7 @@ namespace ChefShow.Inventory
 
         public bool CancelHeld()
         {
+            if(State.HeldDishware!=null){if(!State.TryReturnDishware(out var error))Notify(error);return true;}
             if (State.Held == null) return false;
             if (!State.TryCancelHeld(out string reason)) Notify(reason);
             Sync(); return true;
@@ -268,6 +269,7 @@ namespace ChefShow.Inventory
             if (target != null && !Own(target)) return "Станция другого участника";
             if (State.Placement == BasketPlacement.Carried && ((target != null && !string.IsNullOrEmpty(target.StationId)) || aimed.CanFocus(bootstrap.Config.PlayerTeam)))
                 return "Tab — поставить корзину на свой стол";
+            if(State.HeldDishware!=null && target!=null)return "Левая рука занята посудой · поставьте её на место блюда";
             if (target == null) return aimed.CanFocus(bootstrap.Config.PlayerTeam) ? "F — фокус станции · мышь — выбор предмета" : aimed.DisplayName;
             switch (target.Kind)
             {
