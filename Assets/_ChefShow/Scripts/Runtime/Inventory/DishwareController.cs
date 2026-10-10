@@ -44,7 +44,7 @@ namespace ChefShow.Inventory
                 {
                     handled=true;string reason;bool success=false;
                     if(target.Team!=bootstrap.Run.PlayerTeam)reason="Это полка посуды другой команды.";
-                    else if(State.HeldDishware!=null)success=State.TryReturnDishware(out reason);
+                    else if(State.HeldDishware!=null)success=State.TryReturnDishware(out reason,true);
                     else success=State.TryTakeDishware(profiles[target].Id,out reason);
                     message=success?null:reason;messageTarget=aimed;until=bootstrap.Run.Clock.SimulationTime+2.5f;
                 }
@@ -57,7 +57,7 @@ namespace ChefShow.Inventory
             var target=aimed==null?null:aimed.GetComponent<DishwareTarget>();if(target==null)return null;
             if(target.Team!=bootstrap.Run.PlayerTeam)return "Посуда другой команды";
             if(message!=null && messageTarget==aimed && bootstrap.Run.Clock.SimulationTime<until)return message;
-            if(State.HeldDishware!=null)return "ЛКМ — Вернуть посуду на полку";
+            if(State.HeldDishware!=null)return State.HeldDishwareFromStation?"Тарелка остаётся с едой · верните на своё место блюда ЛКМ или Backspace":"ЛКМ — Вернуть посуду на полку";
             if(State.SubmittedDish!=null)return "Блюдо подано · посуда заблокирована";
             var p=profiles[target];return "ЛКМ — Взять "+p.DisplayName+"\nНоминал "+p.NominalCapacity+" · "+(p.SupportsLiquid?"глубокая":"плоская")+" · переполнение с горкой";
         }

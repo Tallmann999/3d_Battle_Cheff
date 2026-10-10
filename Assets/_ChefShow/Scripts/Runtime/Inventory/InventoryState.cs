@@ -7,7 +7,7 @@ using ChefShow.Ingredients;
 
 namespace ChefShow.Inventory
 {
-    public enum PortionLocation { Basket, Tray, Hand, Station, Returned, Trash, Unpacked, Appliance, MixingBowl, Mixed }
+    public enum PortionLocation { Basket, Tray, Hand, Station, Returned, Trash, Unpacked, Appliance, MixingBowl, Mixed, HeldDishware }
     public enum StationSocketKind { Board, WorkSurface }
     public enum BasketPlacement { Pantry, Carried, Station, Floor }
 
@@ -92,14 +92,17 @@ namespace ChefShow.Inventory
         {
             if (!FreeHand(out reason)) return false;
             if (ingredient == null || string.IsNullOrWhiteSpace(ingredient.Id)) { reason = "Продукт не настроен."; return false; }
-            if (Placement != BasketPlacement.Carried) { reason = "Сначала возьмите корзину: Tab."; return false; }
-            if (basket.Count >= BasketCapacity)
+            if (Placement == BasketPlacement.Carried && basket.Count >= BasketCapacity)
             { reason = "Корзина заполнена: " + BasketCapacity + "/" + BasketCapacity + "."; Fact("basket_overloaded", count: 0); return false; }
             if (ingredient.Contents != null && (ingredient.ContentsQuantity < 1 || ingredient.Contents == ingredient
                 || ingredient.Contents.Contents != null || ingredient.CanUseBoard || ingredient.IsDoseContainer))
             { reason = "Упаковка не настроена."; return false; }
-            var portion = new FoodPortion(run.RunId + "_p" + ++serial, ingredient) { Location = PortionLocation.Basket };
-            basket.Add(portion); portions.Add(portion); Fact("ingredient_taken", portion); return true;
+            bool toBasket = Placement == BasketPlacement.Carried;
+            var portion = new FoodPortion(run.RunId + "_p" + ++serial, ingredient)
+                { Location = toBasket ? PortionLocation.Basket : PortionLocation.Hand };
+            if (toBasket) basket.Add(portion);
+            else { Held = portion; origin = PortionLocation.Returned; originIndex = -1; }
+            portions.Add(portion); Fact("ingredient_taken", portion); return true;
         }
 
         public bool TryUnload(out string reason)
@@ -221,6 +224,7 @@ namespace ChefShow.Inventory
             if (!Active(out reason)) return false;
             if (Held == null) { reason = "В руке нет продукта."; return false; }
             var portion = Held;
+            if(origin==PortionLocation.Returned) return TryRemove(true,out reason);
             if(origin==PortionLocation.MixingBowl)
             { if(bowl.Count>=cooking.MixingCapacity){reason="Миска заполнена.";return false;} bowl.Insert(Math.Min(originIndex,bowl.Count),portion);MixProgress=0; }
             else if (origin == PortionLocation.Appliance)

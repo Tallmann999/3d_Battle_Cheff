@@ -158,11 +158,16 @@ namespace ChefShow.Inventory
             switch (target.Kind)
             {
                 case InventoryTargetKind.Pickup:
-                    if (State.Held != null) success = State.TryRemove(true, out reason);
+                    if (State.Held != null)
+                    {
+                        if (target.Ingredient != null && State.Held.Ingredient.Id == target.Ingredient.Id)
+                            success = State.TryRemove(true, out reason);
+                        else reason = "Левая рука занята продуктом. Положите его или верните Backspace.";
+                    }
                     else
                     {
                         success = State.TryCollect(target.Ingredient, out reason);
-                        if (success) Fly(target.Ingredient, target.transform.position);
+                        if (success && State.Placement == BasketPlacement.Carried) Fly(target.Ingredient, target.transform.position);
                     }
                     break;
                 case InventoryTargetKind.Basket:
@@ -273,9 +278,11 @@ namespace ChefShow.Inventory
             if (target == null) return aimed.CanFocus(bootstrap.Config.PlayerTeam) ? "F — фокус станции · мышь — выбор предмета" : aimed.DisplayName;
             switch (target.Kind)
             {
-                case InventoryTargetKind.Pickup: return State.Held != null ? "ЛКМ — Вернуть продукт в кладовую"
+                case InventoryTargetKind.Pickup: return State.Held != null
+                    ? State.Held.Ingredient.Id == target.Ingredient.Id ? "ЛКМ — Вернуть продукт в кладовую"
+                        : "Левая рука занята продуктом · Backspace — вернуть"
                     : State.Placement == BasketPlacement.Carried ? "ЛКМ — Взять " + FoodName(target.Ingredient) + " в корзину"
-                    : target.Ingredient.DisplayName + " · сначала возьмите корзину Tab";
+                    : "ЛКМ — Взять " + FoodName(target.Ingredient) + " в левую руку · один предмет";
                 case InventoryTargetKind.Basket: return State.Placement == BasketPlacement.Station
                     ? "ЛКМ — Выгрузить всё в лоток · Tab — взять корзину" : "Tab — взять корзину";
                 case InventoryTargetKind.BasketDock: return "Место корзины · Tab — поставить";

@@ -59,19 +59,20 @@ namespace ChefShow.Tests
             Capture("submission-blue-reset.png");yield return Aim(button.position);bootstrap.Run.SetRemaining(.01f);yield return null;yield return null;
             yield return HandClick();Assert.That(State.SubmittedDish,Is.Not.Null);
         }
-        [UnityTest] public IEnumerator MouseCanSaveFoodToBoardRemovePlateAndSubmitWithRedButtonOnLeft()
+        [UnityTest] public IEnumerator MouseCanSaveBoardFoodCarryRestorePlateReplaceAndSubmitWithRedButtonOnLeft()
         {
             yield return MouseTrip("beef","salt");yield return Aim(TrayPoint(0));yield return HandClick();var food=State.Held;yield return Aim(Socket(1));yield return HandClick();
             var station=bootstrap.Serving.Stations.Single(t=>t.StationId=="A1");
             yield return Aim(station.Food[0].Visual.bounds.center);yield return HandClick();Assert.That(State.Held,Is.SameAs(food));yield return Aim(Socket(0));yield return HandClick();
             yield return Aim(Socket(1));yield return HandClick();Assert.That(State.CurrentDishware,Is.Null);Assert.That(State.HeldDishware,Is.Not.Null);Assert.That(State.PresentationPenalty,Is.EqualTo(1));Assert.That(station.PlateView.Base.enabled,Is.False);Assert.That(bootstrap.Hud.Status.text,Does.Contain("Презентабельность: −1"));
-            yield return Press(UnityEngine.InputSystem.Key.Backspace);var source=bootstrap.Dishware.Supply.First(t=>t.Team==TeamId.A && t.Definition.Id=="bowl");
+            yield return Press(UnityEngine.InputSystem.Key.Backspace);Assert.That(State.CurrentDishware.Id,Is.EqualTo("small_flat"));Assert.That(State.HeldDishware,Is.Null);
+            var source=bootstrap.Dishware.Supply.First(t=>t.Team==TeamId.A && t.Definition.Id=="bowl");
             ApproachShelf(source);yield return Aim(source.GetComponent<BoxCollider>().bounds.center);yield return HandClick();
-            Teleport(new Vector3(-9.7f,.05f,-6.25f));yield return Aim(Socket(1));yield return HandClick();Assert.That(State.PresentationPenalty,Is.EqualTo(1));
+            Teleport(new Vector3(-9.7f,.05f,-6.25f));yield return Aim(Socket(1));yield return HandClick();Assert.That(State.PresentationPenalty,Is.EqualTo(2));
             yield return Aim(Socket(0));yield return HandClick();yield return Aim(Socket(1));yield return HandClick();Assert.That(State.Served.Single(),Is.SameAs(food));
             var button=station.transform.Find("Plate Contents/Submit Dish");Assert.That(button.position.z,Is.GreaterThan(station.PlateView.transform.position.z));Assert.That(station.SubmitLight.enabled,Is.False);Assert.That(station.SubmitButton.sharedMaterial.IsKeywordEnabled("_EMISSION"),Is.True);
             yield return Aim(button.position);bootstrap.SetPaused(true);yield return HandClick();Assert.That(State.SubmittedDish,Is.Null);bootstrap.SetPaused(false);
-            yield return Aim(button.position);Assert.That(bootstrap.Player.Target.GetComponent<ServingTarget>().Submit,Is.True);yield return HandClick();Assert.That(State.SubmittedDish.PresentationPenalty,Is.EqualTo(1));Assert.That(station.SubmitLight.enabled,Is.True);Capture("submission-red-locked.png");
+            yield return Aim(button.position);Assert.That(bootstrap.Player.Target.GetComponent<ServingTarget>().Submit,Is.True);yield return HandClick();Assert.That(State.SubmittedDish.PresentationPenalty,Is.EqualTo(2));Assert.That(station.SubmitLight.enabled,Is.True);Capture("submission-red-locked.png");
             yield return Aim(station.Food[0].Visual.bounds.center);yield return HandClick();Assert.That(State.Served.Single(),Is.SameAs(food));Assert.That(State.Held,Is.Null);
             yield return Aim(TrayPoint(0));yield return HandClick();yield return Aim(Socket(1));yield return HandClick();Assert.That(State.PlateSaltDoses,Is.Zero);
             yield return Press(UnityEngine.InputSystem.Key.Backspace);Assert.That(State.SubmittedDish.Portions.Single().Id,Is.EqualTo(food.Id));

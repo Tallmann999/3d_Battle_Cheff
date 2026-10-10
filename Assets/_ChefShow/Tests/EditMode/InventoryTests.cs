@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using ChefShow.Core;
 using ChefShow.Data;
@@ -265,7 +265,8 @@ namespace ChefShow.Tests
         [Test]
         public void TenItemsIncludeRepeatedPotatoesAndOneWholePackage()
         {
-            Assert.That(state.TryCollect(potato, out _), Is.False);
+            Assert.That(state.TryCollect(potato, out _), Is.True); Assert.That(state.Held.Ingredient, Is.SameAs(potato));
+            Assert.That(state.TryCancelHeld(out _), Is.True);
             Move(BasketPlacement.Carried); Fill(potato, 5); Fill(sack, 1); Fill(flour, 4);
             var ids = state.Basket.Select(p => p.Id).ToArray();
             Assert.That(state.TryCollect(potato, out _), Is.False);
@@ -289,7 +290,8 @@ namespace ChefShow.Tests
             var ids = state.Basket.Select(p => p.Id).ToArray();
             Move(BasketPlacement.Floor); Assert.That(state.TryUnload(out _), Is.False);
             Move(BasketPlacement.Carried); Move(BasketPlacement.Pantry);
-            Assert.That(state.TryCollect(potato, out _), Is.False);
+            Assert.That(state.TryCollect(potato, out _), Is.True); Assert.That(state.Basket.Select(p => p.Id), Is.EqualTo(ids));
+            Assert.That(state.TryCancelHeld(out _), Is.True);
             Move(BasketPlacement.Carried); Move(BasketPlacement.Station);
             CollectionAssert.AreEqual(ids, state.Basket.Select(p => p.Id)); Unload(); Conserved();
         }

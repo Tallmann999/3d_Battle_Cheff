@@ -51,7 +51,11 @@ namespace ChefShow.Inventory
             }
             Present();return consumed;
         }
-        private void Present() {foreach(var s in Stations)s.Present(State,s.StationId==bootstrap.Inventory.PlayerStationId);}
+        private void Present()
+        {
+            var heldMount=bootstrap.Dishware==null || bootstrap.Dishware.HeldView==null?null:bootstrap.Dishware.HeldView.transform;
+            foreach(var s in Stations)s.Present(State,s.StationId==bootstrap.Inventory.PlayerStationId,heldMount);
+        }
         public string Describe(PrototypeInteractable aimed)
         {
             var target=aimed==null?null:aimed.GetComponent<ServingTarget>();
@@ -65,8 +69,12 @@ namespace ChefShow.Inventory
             if(target!=null && target.ResetSubmission)return !EnableSubmissionReset?"Тестовая отмена отключена":bootstrap.Run.RemainingSeconds<=0?"Время вышло · отмена недоступна":State.SubmittedDish==null?"ТЕСТ · блюдо ещё не подано":"ЛКМ — Отменить подачу (тест)";
             if(target!=null && State.SubmittedDish!=null)return "Блюдо подано · "+State.SubmittedDish.Quantity+" порций";
             if(target!=null && target.Submit)return "ЛКМ — Подать блюдо · "+State.Served.Count+" порций";
-            if(State.HeldDishware!=null)return "ЛКМ — Поставить "+State.HeldDishware.DisplayName+(State.CurrentDishware==null?"":" · оставшаяся еда удалится · −1 балл");
-            if(target!=null && target.Index<0 && !dose && State.Held==null)return State.CurrentDishware==null?"Место блюда · сначала поставьте посуду":"ЛКМ — Снять "+State.CurrentDishware.DisplayName+" · оставшаяся еда удалится · −1 балл";
+            if(State.HeldDishware!=null)
+            {
+                if(State.HeldDishwareFromStation)return State.CurrentDishware==null?"ЛКМ — Вернуть "+State.HeldDishware.DisplayName+" вместе с едой · "+State.HeldServed.Count+" порций":"Место блюда занято · возврат тарелки недоступен";
+                return "ЛКМ — Поставить "+State.HeldDishware.DisplayName+(State.CurrentDishware==null?"":" · оставшаяся еда удалится · −1 балл");
+            }
+            if(target!=null && target.Index<0 && !dose && State.Held==null)return State.CurrentDishware==null?"Место блюда · сначала поставьте посуду":"ЛКМ — Взять "+State.CurrentDishware.DisplayName+" вместе с едой · −1 балл";
             if(dose)return "ЛКМ — Добавить дозу "+(State.Held.Ingredient.Id==State.CookingRules.SaltIngredientId?"соли":"масла")+(board?" на продукт":" на блюдо");
             if(State.Held!=null)return "ЛКМ — Положить "+InventoryController.FoodName(State.Held.Ingredient)+" на тарелку";
             int index=target.Index<0?State.Served.Count-1:target.Index;

@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using ChefShow.Core;
 using ChefShow.Data;
 using ChefShow.Inventory;
@@ -51,24 +51,28 @@ namespace ChefShow.Tests
             Assert.That(state.SubmittedDish.Dishware.Id,Is.EqualTo("bowl"));Assert.That(state.SubmittedDish.Quantity,Is.Zero);
             run.SetRemaining(.01f);run.Tick(1);Assert.That(state.TryPlaceDishware(out _),Is.False);
         }
-        [Test] public void RemovingPlateThenReplacingItChargesOnceAndPreservesFoodOnBoard()
+        [Test] public void CarryingPlateThenReplacingItChargesOnceForEachDistinctActionAndPreservesBoardFood()
         {
             var food=Hand(beef);state.TryPlaceServing(out _);state.TryTakeServing(0,out _);state.TryPlaceSocket(0,out _);
             Assert.That(state.TryTakePlacedDishware(out _),Is.True);Assert.That(state.CurrentDishware,Is.Null);Assert.That(state.PresentationPenalty,Is.EqualTo(1));
             var empty=state.CaptureDish();Assert.That(empty.Dishware,Is.Null);Assert.That(empty.FillRatio,Is.Zero);Assert.That(state.Socket(0),Is.SameAs(food));
-            state.TryReturnDishware(out _);state.TryTakeSocket(0,out _);Assert.That(state.TryPlaceServing(out _),Is.False);Assert.That(state.Held,Is.SameAs(food));state.TryPlaceSocket(0,out _);
-            state.TryTakeDishware("bowl",out _);Assert.That(state.TryPlaceDishware(out _),Is.True);Assert.That(state.PresentationPenalty,Is.EqualTo(1));
+            Assert.That(state.TryTakeSocket(0,out _),Is.False);Assert.That(state.Socket(0),Is.SameAs(food));
+            Assert.That(state.TryReturnDishware(out _),Is.True);Assert.That(state.CurrentDishware.Id,Is.EqualTo("small_flat"));Assert.That(state.PresentationPenalty,Is.EqualTo(1));
+            state.TryTakeSocket(0,out _);Assert.That(state.TryPlaceServing(out _),Is.True);Assert.That(state.Served.Single(),Is.SameAs(food));
+            state.TryTakeServing(0,out _);state.TryPlaceSocket(0,out _);
+            state.TryTakeDishware("bowl",out _);Assert.That(state.TryPlaceDishware(out _),Is.True);Assert.That(state.PresentationPenalty,Is.EqualTo(2));
             state.TryTakeSocket(0,out _);state.TryPlaceServing(out _);Assert.That(state.Served.Single(),Is.SameAs(food));
-            state.TrySubmitDish(out _);Assert.That(state.SubmittedDish.PresentationPenalty,Is.EqualTo(1));Assert.That(state.TryTakePlacedDishware(out _),Is.False);
-            Assert.That(state.TryTakeServing(0,out _),Is.False);Assert.That(state.TryTakeDishware("bowl",out _),Is.False);Assert.That(state.PresentationPenalty,Is.EqualTo(1));
+            state.TrySubmitDish(out _);Assert.That(state.SubmittedDish.PresentationPenalty,Is.EqualTo(2));Assert.That(state.TryTakePlacedDishware(out _),Is.False);
+            Assert.That(state.TryTakeServing(0,out _),Is.False);Assert.That(state.TryTakeDishware("bowl",out _),Is.False);Assert.That(state.PresentationPenalty,Is.EqualTo(2));
         }
-        [Test] public void EmptyPlateRemovalCountsButSupplyPickupAndFailedOrPausedChangesDoNot()
+        [Test] public void EmptyPlateCarryRestoreCountsOnceButSupplyPickupAndFailedCommandsDoNot()
         {
             state.TryTakeDishware("bowl",out _);state.TryReturnDishware(out _);Assert.That(state.PresentationPenalty,Is.Zero);
             run.SetPaused(true);Assert.That(state.TryTakePlacedDishware(out _),Is.False);run.SetPaused(false);
-            state.TryTakePlacedDishware(out _);Assert.That(state.PresentationPenalty,Is.EqualTo(1));state.TryReturnDishware(out _);
+            state.TryTakePlacedDishware(out _);Assert.That(state.PresentationPenalty,Is.EqualTo(1));
             Assert.That(state.TryTakePlacedDishware(out _),Is.False);Assert.That(state.PresentationPenalty,Is.EqualTo(1));
-            run.SetRemaining(.01f);run.Tick(1);Assert.That(state.SubmittedDish.Dishware,Is.Null);Assert.That(state.SubmittedDish.Quantity,Is.Zero);Assert.That(state.SubmittedDish.PresentationPenalty,Is.EqualTo(1));
+            Assert.That(state.TryReturnDishware(out _),Is.True);Assert.That(state.CurrentDishware.Id,Is.EqualTo("small_flat"));Assert.That(state.PresentationPenalty,Is.EqualTo(1));
+            run.SetRemaining(.01f);run.Tick(1);Assert.That(state.SubmittedDish.Dishware.Id,Is.EqualTo("small_flat"));Assert.That(state.SubmittedDish.Quantity,Is.Zero);Assert.That(state.SubmittedDish.PresentationPenalty,Is.EqualTo(1));
             using(var fresh=NewRun()){Assert.That(fresh.Inventory.PresentationPenalty,Is.Zero);Assert.That(fresh.Inventory.CurrentDishware.Id,Is.EqualTo("small_flat"));}
         }
         [Test] public void ProfilesAreCapturedAndNewRunRestoresStartingDish()
