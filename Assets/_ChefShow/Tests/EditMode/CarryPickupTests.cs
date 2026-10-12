@@ -83,7 +83,7 @@ namespace ChefShow.Tests
         }
         private void Conserved()
         {
-            var active = state.Basket.Concat(state.Tray).Concat(state.Served).Concat(state.HeldServed)
+            var active = state.Basket.Concat(state.Tray).Concat(state.Served).Concat(state.HeldServed).Concat(state.TastingServed)
                 .Concat(state.Bowl).Concat(state.Cooker(CookerKind.Pan)).Concat(state.Cooker(CookerKind.Pot)).Concat(state.Cooker(CookerKind.Oven))
                 .Concat(new[] { state.Held, state.Socket(0) }.Where(p => p != null)).ToArray();
             var archived = state.Portions.Where(p => p.Location == PortionLocation.Returned || p.Location == PortionLocation.Trash
@@ -103,12 +103,12 @@ namespace ChefShow.Tests
             Assert.That(state.HeldServed.Select(p => p.Id), Is.EqualTo(food.Select(p => p.Id)));
             Assert.That(state.HeldPlateSaltDoses, Is.EqualTo(2)); Assert.That(state.HeldPlateOilDoses, Is.EqualTo(1)); Assert.That(state.HeldPlateContaminated, Is.True);
             Assert.That(state.PlateSaltDoses + state.PlateOilDoses, Is.Zero); Assert.That(state.PlateContaminated, Is.False);
-            Assert.That(state.CaptureDish().Quantity, Is.Zero); Assert.That(state.PresentationPenalty, Is.EqualTo(1)); Conserved();
+            Assert.That(state.CaptureDish().Quantity, Is.Zero); Assert.That(state.PresentationPenalty, Is.Zero); Conserved();
             Assert.That(state.TryPlaceDishware(out _), Is.True);
             Assert.That(state.HeldDishware, Is.Null); Assert.That(state.HeldServed, Is.Empty);
             Assert.That(state.Served.Select(p => p.Id), Is.EqualTo(food.Select(p => p.Id)));
             Assert.That(state.PlateSaltDoses, Is.EqualTo(2)); Assert.That(state.PlateOilDoses, Is.EqualTo(1)); Assert.That(state.PlateContaminated, Is.True);
-            Assert.That(state.PresentationPenalty, Is.EqualTo(1)); Assert.That(state.Portions.Count, Is.EqualTo(count));
+            Assert.That(state.PresentationPenalty, Is.Zero); Assert.That(state.Portions.Count, Is.EqualTo(count));
             Assert.That(state.Served[0].Cooking, Is.EqualTo(CookState.Cooked)); Assert.That(state.Served[1].Cooking, Is.EqualTo(CookState.Burned));
             Assert.That(state.Served[0].SaltDoses, Is.EqualTo(1));
             for (int i = 0; i < food.Length; i++)
@@ -137,7 +137,7 @@ namespace ChefShow.Tests
             Assert.That(state.Version, Is.EqualTo(version)); Assert.That(state.HeldServed.Select(p => p.Id), Is.EqualTo(food.Select(p => p.Id)));
             Assert.That(state.TryReturnDishware(out _), Is.True);
             Assert.That(state.CurrentDishware.Id, Is.EqualTo("small_flat")); Assert.That(state.HeldDishware, Is.Null);
-            Assert.That(state.Served.Select(p => p.Id), Is.EqualTo(food.Select(p => p.Id))); Assert.That(state.PresentationPenalty, Is.EqualTo(1));
+            Assert.That(state.Served.Select(p => p.Id), Is.EqualTo(food.Select(p => p.Id))); Assert.That(state.PresentationPenalty, Is.Zero);
             Assert.That(state.PlateSaltDoses, Is.EqualTo(2)); Assert.That(state.PlateOilDoses, Is.EqualTo(1));
             Assert.That(state.TryReturnDishware(out _), Is.False); Assert.That(state.TryPlaceDishware(out _), Is.False); Conserved();
         }

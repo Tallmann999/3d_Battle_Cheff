@@ -40,43 +40,40 @@ namespace ChefShow.Tests
             Assert.That(bootstrap.Hud.Context.text,Does.Contain("другой команды"));bootstrap.SetPaused(true);yield return HandClick();Assert.That(State.HeldDishware,Is.Null);bootstrap.SetPaused(false);
             Assert.That(bootstrap.Dishware.Supply.Length,Is.EqualTo(60));Assert.That(bootstrap.Dishware.Config.Types.Length,Is.EqualTo(5));
         }
-        [UnityTest] public IEnumerator MouseBlueButtonUnlocksDishAndKeepsFoodPenaltyAndDoses()
+        [UnityTest] public IEnumerator MouseTastingRetakeKeepsFoodPenaltyAndDosesAndGuardsForeignPauseAndTimeout()
         {
             yield return MouseTrip("beef","salt");yield return Aim(TrayPoint(0));yield return HandClick();var food=State.Held;yield return Aim(Socket(1));yield return HandClick();
             yield return Aim(TrayPoint(0));yield return HandClick();yield return Aim(Socket(1));yield return HandClick();yield return Press(UnityEngine.InputSystem.Key.Backspace);
-            var station=bootstrap.Serving.Stations.Single(s=>s.StationId=="A1");var button=station.transform.Find("Plate Contents/Reset Submission");
-            yield return Aim(station.transform.Find("Plate Contents/Submit Dish").position);yield return HandClick();var snapshot=State.SubmittedDish;
-            float remaining=bootstrap.Run.RemainingSeconds;
-            var foreign=bootstrap.Serving.Stations.Single(s=>s.StationId=="B1").transform.Find("Plate Contents/Reset Submission");
-            Teleport(new Vector3(9.7f,.05f,-6.25f));yield return Aim(foreign.position);yield return HandClick();Assert.That(State.SubmittedDish,Is.SameAs(snapshot));
-            Teleport(new Vector3(-9.7f,.05f,-6.25f));
-            yield return Aim(button.position);Assert.That(bootstrap.Player.Target.GetComponent<ServingTarget>().ResetSubmission,Is.True);
+            yield return JudgingSubmit();var snapshot=State.SubmittedDish;float remaining=bootstrap.Run.RemainingSeconds;
+            var foreign=bootstrap.Serving.Stations.Single(s=>s.StationId=="B1");ApproachTasting(foreign);yield return Aim(foreign.TastingTarget.transform.position);yield return HandClick();Assert.That(State.SubmittedDish,Is.SameAs(snapshot));
+            ApproachTasting(OwnServing);yield return Aim(OwnServing.TastingTarget.transform.position);
             bootstrap.SetPaused(true);yield return HandClick();Assert.That(State.SubmittedDish,Is.SameAs(snapshot));bootstrap.SetPaused(false);
-            bootstrap.Serving.EnableSubmissionReset=false;yield return HandClick();Assert.That(State.SubmittedDish,Is.SameAs(snapshot));bootstrap.Serving.EnableSubmissionReset=true;
-            yield return HandClick();Assert.That(State.SubmittedDish,Is.Null);Assert.That(station.SubmitLight.enabled,Is.False);Assert.That(State.PlateSaltDoses,Is.EqualTo(1));Assert.That(bootstrap.Run.RemainingSeconds,Is.LessThan(remaining));Assert.That(State.Served.Single(),Is.SameAs(food));
+            yield return JudgingReset();Assert.That(State.SubmittedDish,Is.Null);Assert.That(State.PlateSaltDoses,Is.EqualTo(1));Assert.That(State.PresentationPenalty,Is.Zero);
+            Assert.That(bootstrap.Run.RemainingSeconds,Is.LessThan(remaining));Assert.That(State.Served.Single(),Is.SameAs(food));
             yield return Aim(ServingFoodPoint());yield return HandClick();Assert.That(State.Held,Is.SameAs(food));Assert.That(snapshot.Quantity,Is.EqualTo(1));
-            yield return Aim(Socket(1));yield return HandClick();yield return Aim(station.transform.Find("Plate Contents/Submit Dish").position);yield return HandClick();
-            Capture("submission-blue-reset.png");yield return Aim(button.position);bootstrap.Run.SetRemaining(.01f);yield return null;yield return null;
-            yield return HandClick();Assert.That(State.SubmittedDish,Is.Not.Null);
+            yield return Aim(Socket(1));yield return HandClick();yield return JudgingSubmit();Capture("submission-tasting-retake.png");
+            var current=State.SubmittedDish;bootstrap.Run.SetRemaining(.01f);yield return null;yield return null;yield return HandClick();
+            Assert.That(State.SubmittedDish,Is.SameAs(current));Assert.That(State.TastingServed.Single(),Is.SameAs(food));Assert.That(State.HeldDishware,Is.Null);
         }
-        [UnityTest] public IEnumerator MouseCanSaveBoardFoodCarryRestorePlateReplaceAndSubmitWithRedButtonOnLeft()
+        [UnityTest] public IEnumerator MouseCanSaveBoardFoodCarryRestorePlateReplaceAndTransportToTastingStand()
         {
             yield return MouseTrip("beef","salt");yield return Aim(TrayPoint(0));yield return HandClick();var food=State.Held;yield return Aim(Socket(1));yield return HandClick();
             var station=bootstrap.Serving.Stations.Single(t=>t.StationId=="A1");
             yield return Aim(station.Food[0].Visual.bounds.center);yield return HandClick();Assert.That(State.Held,Is.SameAs(food));yield return Aim(Socket(0));yield return HandClick();
-            yield return Aim(Socket(1));yield return HandClick();Assert.That(State.CurrentDishware,Is.Null);Assert.That(State.HeldDishware,Is.Not.Null);Assert.That(State.PresentationPenalty,Is.EqualTo(1));Assert.That(station.PlateView.Base.enabled,Is.False);Assert.That(bootstrap.Hud.Status.text,Does.Contain("Презентабельность: −1"));
+            yield return Aim(Socket(1));yield return HandClick();Assert.That(State.CurrentDishware,Is.Null);Assert.That(State.HeldDishware,Is.Not.Null);Assert.That(State.PresentationPenalty,Is.Zero);Assert.That(station.PlateView.Base.enabled,Is.False);
             yield return Press(UnityEngine.InputSystem.Key.Backspace);Assert.That(State.CurrentDishware.Id,Is.EqualTo("small_flat"));Assert.That(State.HeldDishware,Is.Null);
             var source=bootstrap.Dishware.Supply.First(t=>t.Team==TeamId.A && t.Definition.Id=="bowl");
             ApproachShelf(source);yield return Aim(source.GetComponent<BoxCollider>().bounds.center);yield return HandClick();
-            Teleport(new Vector3(-9.7f,.05f,-6.25f));yield return Aim(Socket(1));yield return HandClick();Assert.That(State.PresentationPenalty,Is.EqualTo(2));
+            Teleport(new Vector3(-9.7f,.05f,-6.25f));yield return Aim(Socket(1));yield return HandClick();Assert.That(State.PresentationPenalty,Is.EqualTo(1));
             yield return Aim(Socket(0));yield return HandClick();yield return Aim(Socket(1));yield return HandClick();Assert.That(State.Served.Single(),Is.SameAs(food));
-            var button=station.transform.Find("Plate Contents/Submit Dish");Assert.That(button.position.z,Is.GreaterThan(station.PlateView.transform.position.z));Assert.That(station.SubmitLight.enabled,Is.False);Assert.That(station.SubmitButton.sharedMaterial.IsKeywordEnabled("_EMISSION"),Is.True);
-            yield return Aim(button.position);bootstrap.SetPaused(true);yield return HandClick();Assert.That(State.SubmittedDish,Is.Null);bootstrap.SetPaused(false);
-            yield return Aim(button.position);Assert.That(bootstrap.Player.Target.GetComponent<ServingTarget>().Submit,Is.True);yield return HandClick();Assert.That(State.SubmittedDish.PresentationPenalty,Is.EqualTo(2));Assert.That(station.SubmitLight.enabled,Is.True);Capture("submission-red-locked.png");
-            yield return Aim(station.Food[0].Visual.bounds.center);yield return HandClick();Assert.That(State.Served.Single(),Is.SameAs(food));Assert.That(State.Held,Is.Null);
-            yield return Aim(TrayPoint(0));yield return HandClick();yield return Aim(Socket(1));yield return HandClick();Assert.That(State.PlateSaltDoses,Is.Zero);
-            yield return Press(UnityEngine.InputSystem.Key.Backspace);Assert.That(State.SubmittedDish.Portions.Single().Id,Is.EqualTo(food.Id));
-            bootstrap.RestartShow();yield return null;Assert.That(station.SubmitLight.enabled,Is.False);Assert.That(State.PresentationPenalty,Is.Zero);Assert.That(State.CurrentDishware.Id,Is.EqualTo("small_flat"));
+            Assert.That(station.TastingTarget.gameObject.activeInHierarchy,Is.True);
+            Assert.That(station.transform.Find("Plate Contents/Submit Dish").gameObject.activeInHierarchy,Is.False);
+            yield return JudgingSubmit();Assert.That(State.SubmittedDish.PresentationPenalty,Is.EqualTo(1));Capture("submission-tasting-locked.png");
+            var submitted=State.SubmittedDish;
+            Teleport(new Vector3(-9.7f,.05f,-6.25f));yield return Aim(Socket(1));yield return HandClick();Assert.That(State.TastingServed.Single(),Is.SameAs(food));Assert.That(State.Held,Is.Null);
+            yield return Aim(TrayPoint(0));yield return HandClick();ApproachTasting(station);yield return Aim(station.TastingTarget.transform.position);yield return HandClick();Assert.That(State.TastingSaltDoses,Is.Zero);
+            Assert.That(State.SubmittedDish,Is.SameAs(submitted));yield return Press(UnityEngine.InputSystem.Key.Backspace);Assert.That(State.SubmittedDish.Portions.Single().Id,Is.EqualTo(food.Id));
+            bootstrap.RestartShow();yield return null;Assert.That(State.TastingDishware,Is.Null);Assert.That(State.PresentationPenalty,Is.Zero);Assert.That(State.CurrentDishware.Id,Is.EqualTo("small_flat"));
         }
     }
 }

@@ -36,6 +36,12 @@ namespace ChefShow.Inventory
                         string station=serving!=null?serving.Station.StationId:socket.StationId;
                         if(station!=bootstrap.Inventory.PlayerStationId) reason="Это станция другого участника.";
                         else if(board) success=State.TrySeasonBoard(out reason);
+                        else if(serving==serving.Station.TastingTarget)
+                        {
+                            if(State.TastingDishware!=null)
+                            {if(EnableSubmissionReset)success=State.TryTakeTastingDish(out reason);else reason="Забрать оценённую тарелку в обычном шоу нельзя.";}
+                            else success=State.TryPlaceTastingDish(out reason);
+                        }
                         else if(serving.ResetSubmission)
                         {if(EnableSubmissionReset)success=State.TryResetSubmission(out reason);else reason="Тестовая отмена отключена.";}
                         else if(serving.Submit) success=State.TrySubmitDish(out reason);
@@ -53,6 +59,7 @@ namespace ChefShow.Inventory
         }
         private void Present()
         {
+            bootstrap.Dishware?.RefreshHeldPresentation();
             var heldMount=bootstrap.Dishware==null || bootstrap.Dishware.HeldView==null?null:bootstrap.Dishware.HeldView.transform;
             foreach(var s in Stations)s.Present(State,s.StationId==bootstrap.Inventory.PlayerStationId,heldMount);
         }
@@ -66,6 +73,12 @@ namespace ChefShow.Inventory
             string station=target!=null?target.Station.StationId:socket.StationId;
             if(station!=bootstrap.Inventory.PlayerStationId)return "Станция другого участника";
             if(message!=null && messageTarget==aimed && bootstrap.Run.Clock.SimulationTime<messageUntil)return message;
+            if(target!=null && target==target.Station.TastingTarget)
+            {
+                if(bootstrap.Run.RemainingSeconds<=0)return "Время вышло · дегустация завершена";
+                if(State.TastingDishware!=null)return EnableSubmissionReset?"ЛКМ — Забрать оценённую тарелку вместе с едой":"Оценённая тарелка · возврат в обычном шоу отключён";
+                return State.HeldDishware==null?"Дегустационная подставка · принесите тарелку с едой":"ЛКМ — Поставить тарелку на дегустацию · "+State.HeldServed.Count+" порций";
+            }
             if(target!=null && target.ResetSubmission)return !EnableSubmissionReset?"Тестовая отмена отключена":bootstrap.Run.RemainingSeconds<=0?"Время вышло · отмена недоступна":State.SubmittedDish==null?"ТЕСТ · блюдо ещё не подано":"ЛКМ — Отменить подачу (тест)";
             if(target!=null && State.SubmittedDish!=null)return "Блюдо подано · "+State.SubmittedDish.Quantity+" порций";
             if(target!=null && target.Submit)return "ЛКМ — Подать блюдо · "+State.Served.Count+" порций";
@@ -74,7 +87,7 @@ namespace ChefShow.Inventory
                 if(State.HeldDishwareFromStation)return State.CurrentDishware==null?"ЛКМ — Вернуть "+State.HeldDishware.DisplayName+" вместе с едой · "+State.HeldServed.Count+" порций":"Место блюда занято · возврат тарелки недоступен";
                 return "ЛКМ — Поставить "+State.HeldDishware.DisplayName+(State.CurrentDishware==null?"":" · оставшаяся еда удалится · −1 балл");
             }
-            if(target!=null && target.Index<0 && !dose && State.Held==null)return State.CurrentDishware==null?"Место блюда · сначала поставьте посуду":"ЛКМ — Взять "+State.CurrentDishware.DisplayName+" вместе с едой · −1 балл";
+            if(target!=null && target.Index<0 && !dose && State.Held==null)return State.CurrentDishware==null?"Место блюда · сначала поставьте посуду":"ЛКМ — Взять "+State.CurrentDishware.DisplayName+" вместе с едой";
             if(dose)return "ЛКМ — Добавить дозу "+(State.Held.Ingredient.Id==State.CookingRules.SaltIngredientId?"соли":"масла")+(board?" на продукт":" на блюдо");
             if(State.Held!=null)return "ЛКМ — Положить "+InventoryController.FoodName(State.Held.Ingredient)+" на тарелку";
             int index=target.Index<0?State.Served.Count-1:target.Index;

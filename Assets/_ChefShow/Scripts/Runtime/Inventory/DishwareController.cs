@@ -14,6 +14,8 @@ namespace ChefShow.Inventory
         private GameBootstrap bootstrap;private InputActionAsset input;
         private readonly Dictionary<DishwareTarget,DishwareSnapshot> profiles=new Dictionary<DishwareTarget,DishwareSnapshot>();
         private string message;private PrototypeInteractable messageTarget;private float until;
+        private DishwareSnapshot presentedHeld;
+        private bool heldPresentationReady;
         private InventoryState State=>bootstrap.Run.Inventory;
         public string Validate()
         {
@@ -25,7 +27,7 @@ namespace ChefShow.Inventory
         public void Initialize(GameBootstrap b,InputActionAsset actions){bootstrap=b;input=actions;}
         public void ResetPresentation()
         {
-            message=null;profiles.Clear();
+            message=null;profiles.Clear();heldPresentationReady=false;
             foreach(var source in Supply)
             {
                 var profile=State.FindDishware(source.Definition.Id);profiles[source]=profile;
@@ -51,7 +53,12 @@ namespace ChefShow.Inventory
             }
             Present();return handled;
         }
-        private void Present(){HeldView.Present(State.HeldDishware);}
+        public void RefreshHeldPresentation(){Present();}
+        private void Present()
+        {
+            if(heldPresentationReady && ReferenceEquals(presentedHeld,State.HeldDishware))return;
+            presentedHeld=State.HeldDishware;heldPresentationReady=true;HeldView.Present(presentedHeld);
+        }
         public string Describe(PrototypeInteractable aimed)
         {
             var target=aimed==null?null:aimed.GetComponent<DishwareTarget>();if(target==null)return null;

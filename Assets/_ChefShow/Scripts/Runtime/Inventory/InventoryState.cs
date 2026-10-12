@@ -7,7 +7,7 @@ using ChefShow.Ingredients;
 
 namespace ChefShow.Inventory
 {
-    public enum PortionLocation { Basket, Tray, Hand, Station, Returned, Trash, Unpacked, Appliance, MixingBowl, Mixed, HeldDishware }
+    public enum PortionLocation { Basket, Tray, Hand, Station, Returned, Trash, Unpacked, Appliance, MixingBowl, Mixed, HeldDishware, TastingStand }
     public enum StationSocketKind { Board, WorkSurface }
     public enum BasketPlacement { Pantry, Carried, Station, Floor }
 

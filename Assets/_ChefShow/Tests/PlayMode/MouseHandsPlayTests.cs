@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Linq;
 using ChefShow.Core;
 using ChefShow.Cooking;
@@ -49,7 +49,7 @@ namespace ChefShow.Tests
             yield return Aim(Socket(1));yield return HandClick();Assert.That(State.PlateOilDoses,Is.EqualTo(1));Assert.That(State.Served.Count,Is.EqualTo(3));
             Capture("mouse-plate-components.png");
             var snapshot=State.CaptureDish();bootstrap.SetPaused(true);yield return HandClick();Assert.That(State.PlateOilDoses,Is.EqualTo(1));bootstrap.SetPaused(false);
-            yield return Aim(dish.GetComponentsInChildren<ServingTarget>().Single(t=>t.Submit).transform.position);yield return HandClick();
+            yield return JudgingSubmit();
             Assert.That(State.SubmittedDish.Quantity,Is.EqualTo(3));Assert.That(snapshot.OilDoses,Is.EqualTo(1));
         }
 

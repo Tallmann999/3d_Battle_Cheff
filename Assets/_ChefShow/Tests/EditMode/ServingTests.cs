@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using ChefShow.Core;
 using ChefShow.Data;
 using ChefShow.Inventory;
@@ -54,7 +54,7 @@ namespace ChefShow.Tests
             var food=Hand(beef);state.TryPlaceServing(out _);Hand(salt);state.TrySeasonPlate(out _);state.TryPutInTray(out _);
             state.TrySubmitDish(out _);var old=state.SubmittedDish;var remaining=run.RemainingSeconds;
             Assert.That(state.TryResetSubmission(out _),Is.True);Assert.That(state.SubmittedDish,Is.Null);
-            Assert.That(state.Served.Single(),Is.SameAs(food));Assert.That(state.PresentationPenalty,Is.EqualTo(1));Assert.That(state.PlateSaltDoses,Is.EqualTo(1));Assert.That(run.RemainingSeconds,Is.EqualTo(remaining));
+            Assert.That(state.Served.Single(),Is.SameAs(food));Assert.That(state.PresentationPenalty,Is.Zero);Assert.That(state.PlateSaltDoses,Is.EqualTo(1));Assert.That(run.RemainingSeconds,Is.EqualTo(remaining));
             Assert.That(state.TryTakeServing(0,out _),Is.True);Assert.That(old.Portions.Single().Id,Is.EqualTo(food.Id));Assert.That(old.SaltDoses,Is.EqualTo(1));
             state.TryPlaceServing(out _);Hand(egg);state.TryPlaceServing(out _);state.TrySubmitDish(out _);
             Assert.That(state.SubmittedDish.Quantity,Is.EqualTo(2));Assert.That(old.Quantity,Is.EqualTo(1));

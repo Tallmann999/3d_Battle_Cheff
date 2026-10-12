@@ -114,14 +114,16 @@ namespace ChefShow.Player
             foreach (var hit in Physics.RaycastAll(ray, Mathf.Max(config.InteractionDistance, ExtendedInteractionDistance), Physics.DefaultRaycastLayers, QueryTriggerInteraction.Collide))
             {
                 if (hit.collider.transform == transform || hit.collider.transform.IsChildOf(transform) || hit.distance >= nearest) continue;
-                // Только игровые цели ящика/инструмента доступны через trigger;
-                // остальные trigger-зоны не закрывают прицел и не становятся стенами.
+                // Only saved interaction targets use triggers; unrelated trigger zones
+                // cannot hide a nearer wall or become a player interaction.
                 var interactable = hit.collider.GetComponentInParent<PrototypeInteractable>();
                 if (interactable != null && hit.distance > Mathf.Max(config.InteractionDistance, interactable.InteractionDistanceOverride)) continue;
+                var tastingTarget = hit.collider.isTrigger && interactable != null ? interactable.GetComponent<ServingTarget>() : null;
+                bool tastingStand = tastingTarget != null && tastingTarget.Station != null && tastingTarget == tastingTarget.Station.TastingTarget;
                 if (hit.collider.isTrigger && (interactable == null ||
                     (interactable.GetComponent<ChefShow.Ingredients.ToolDrawer>() == null
                     && interactable.GetComponent<ChefShow.Ingredients.KitchenTool>() == null
-                    && interactable.GetComponent<ChefShow.Ingredients.ToolDrawerTarget>() == null))) continue;
+                    && interactable.GetComponent<ChefShow.Ingredients.ToolDrawerTarget>() == null && !tastingStand))) continue;
                 nearest = hit.distance;
                 Target = interactable;
             }

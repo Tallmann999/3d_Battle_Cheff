@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Linq;
 using ChefShow.Cooking;
 using ChefShow.Inventory;
@@ -36,7 +36,7 @@ namespace ChefShow.Tests
             Assert.That(State.CaptureDish().Recognition.RecipeId,Is.EqualTo(id));Assert.That(bootstrap.Recipes.Current.RecipeId,Is.EqualTo(id));
             Canvas.ForceUpdateCanvases();Assert.That(bootstrap.Recipes.Label.preferredHeight,Is.LessThanOrEqualTo(bootstrap.Recipes.Label.rectTransform.rect.height),bootstrap.Recipes.Label.text+" clipped");
         }
-        [UnityTest] public IEnumerator MouseRecognitionSteakKeepsBookTaskSeparateAndSubmitResetSnapshot()
+        [UnityTest] public IEnumerator MouseRecognitionSteakKeepsBookTaskSeparateAndTastingRetakeSnapshot()
         {
             yield return MouseTrip("beef");yield return Aim(TrayPoint(0));yield return HandClick();var beef=State.Held;yield return Aim(Socket(1));yield return HandClick();
             AssertRecognition("experimental");Assert.That(bootstrap.Recipes.Label.text,Does.Contain("Нужен нагрев"));Capture("recognition-raw-beef.png");
@@ -45,9 +45,9 @@ namespace ChefShow.Tests
             string task=bootstrap.Hud.TaskCard.text;yield return Press(Key.I);Assert.That(bootstrap.Recipes.Panel.activeInHierarchy,Is.False);
             yield return BookClick(bootstrap.RecipeBook.Choose);Assert.That(bootstrap.RecipeBook.SelectedRecipeId,Is.EqualTo("fried_potatoes"));yield return Press(Key.I);
             AssertRecognition("beef_steak");Assert.That(bootstrap.Hud.TaskCard.text,Is.EqualTo(task));Assert.That(bootstrap.Recipes.Panel.activeInHierarchy,Is.True);
-            var station=bootstrap.Serving.Stations.Single(s=>s.StationId=="A1");yield return Aim(station.transform.Find("Plate Contents/Submit Dish").position);yield return HandClick();var snapshot=State.SubmittedDish;
+            yield return JudgingSubmit();var snapshot=State.SubmittedDish;
             Assert.That(snapshot.Recognition.RecipeId,Is.EqualTo("beef_steak"));Assert.That(bootstrap.Recipes.Label.text,Does.StartWith("Подано: "));
-            yield return Aim(station.transform.Find("Plate Contents/Reset Submission").position);yield return HandClick();yield return Aim(ServingFoodPoint());yield return HandClick();AssertRecognition("no_dish");
+            yield return JudgingReset();yield return Aim(ServingFoodPoint());yield return HandClick();AssertRecognition("no_dish");
             Assert.That(snapshot.Recognition.RecipeId,Is.EqualTo("beef_steak"));yield return Aim(Socket(1));yield return HandClick();bootstrap.Run.SetRemaining(.01f);yield return null;yield return null;
             Assert.That(State.SubmittedDish.Recognition.RecipeId,Is.EqualTo("beef_steak"));AssertRecognition("beef_steak");
         }

@@ -51,7 +51,6 @@ namespace ChefShow.Inventory
             foreach(var food in heldServed){food.Location=PortionLocation.HeldDishware;food.SocketIndex=-1;}
             HeldPlateSaltDoses=PlateSaltDoses;HeldPlateOilDoses=PlateOilDoses;HeldPlateContaminated=PlateContaminated;
             ClearInstalledDishware();
-            if(PresentationPenalty<int.MaxValue)PresentationPenalty++;
             Version++;run.Events.Publish(new DishChanged(run,"dishware_removed",this));return true;
         }
         private void ClearInstalledDishware()

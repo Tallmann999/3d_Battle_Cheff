@@ -179,7 +179,7 @@ namespace ChefShow.Inventory
                     success = State.TryPutInTray(out reason); break;
                 case InventoryTargetKind.Socket:
                     success = State.Held == null ? State.TryTakeSocket(target.Index, out reason) : State.TryPlaceSocket(target.Index, out reason); break;
-                case InventoryTargetKind.Trash: success = State.TryRemove(false, out reason); break;
+                case InventoryTargetKind.Trash: success = State.HeldDishware!=null?State.TryDiscardHeldDishware(out reason):State.TryRemove(false, out reason); break;
                 case InventoryTargetKind.PantryReturn: success = State.TryRemove(true, out reason); break;
             }
             if (!success && reason != null) Notify(reason);
@@ -274,7 +274,7 @@ namespace ChefShow.Inventory
             if (target != null && !Own(target)) return "Станция другого участника";
             if (State.Placement == BasketPlacement.Carried && ((target != null && !string.IsNullOrEmpty(target.StationId)) || aimed.CanFocus(bootstrap.Config.PlayerTeam)))
                 return "Tab — поставить корзину на свой стол";
-            if(State.HeldDishware!=null && target!=null)return "Левая рука занята посудой · поставьте её на место блюда";
+            if(State.HeldDishware!=null && target!=null && target.Kind!=InventoryTargetKind.Trash)return "Левая рука занята посудой · поставьте её на место блюда";
             if (target == null) return aimed.CanFocus(bootstrap.Config.PlayerTeam) ? "F — фокус станции · мышь — выбор предмета" : aimed.DisplayName;
             switch (target.Kind)
             {
@@ -300,7 +300,7 @@ namespace ChefShow.Inventory
                         return "Готовое блюдо · можно собрать экспериментальное блюдо";
                     return State.Held != null ? "ЛКМ — Положить " + FoodName(State.Held.Ingredient) + " · " + aimed.DisplayName
                     : State.Socket(target.Index) != null ? "ЛКМ — Взять " + FoodName(State.Socket(target.Index).Ingredient) : aimed.DisplayName + " · пусто";
-                case InventoryTargetKind.Trash: return "ЛКМ — выбросить продукт из руки";
+                case InventoryTargetKind.Trash: return State.HeldDishware!=null?"ЛКМ — Выбросить тарелку вместе с едой · "+State.HeldServed.Count+" порций":"ЛКМ — выбросить продукт из руки";
                 case InventoryTargetKind.PantryReturn: return "ЛКМ — вернуть продукт из руки в кладовую";
                 default: return "";
             }

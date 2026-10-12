@@ -322,7 +322,7 @@ namespace ChefShow.Tests
         {
             CookAndPlate("beef"); var beforeDish = state.CaptureDish(); var before = Evaluate(snapshot: beforeDish);
             state.TryTakeServing(0, out _); state.TryPlaceSocket(0, out _);
-            Assert.That(state.TryTakePlacedDishware(out _), Is.True); Assert.That(state.TryPlaceDishware(out _), Is.True);
+            Assert.That(state.TryTakeDishware(state.CurrentDishware.Id, out _), Is.True); Assert.That(state.TryPlaceDishware(out _), Is.True);
             state.TryTakeSocket(0, out _); state.TryPlaceServing(out _); var afterDish = state.CaptureDish(); var after = Evaluate(snapshot: afterDish);
             Assert.That(afterDish.PresentationPenalty, Is.EqualTo(1)); Assert.That(beforeDish.PresentationPenalty, Is.Zero);
             Assert.That(Points(before, ScoreCategoryId.Plating) - Points(after, ScoreCategoryId.Plating), Is.EqualTo(1).Within(.000001));

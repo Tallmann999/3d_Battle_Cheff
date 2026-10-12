@@ -19,7 +19,7 @@ namespace ChefShow.Recipes
             if(runId!=run.RunId||version!=run.Inventory.Version)
             {
                 runId=run.RunId;version=run.Inventory.Version;
-                Current=(run.Inventory.SubmittedDish??run.Inventory.CaptureDish()).Recognition;
+                Current=(run.Inventory.SubmittedDish??run.Inventory.CaptureDisplayedDish()).Recognition;
                 Label.text=(run.Inventory.SubmittedDish==null?"Блюдо: ":"Подано: ")+Current.Name;
                 if(!string.IsNullOrEmpty(Current.Reason))Label.text+="\n"+Current.Reason;
                 if(Current.Issues.Count>0)Label.text+="\n"+string.Join(" · ",Current.Issues);

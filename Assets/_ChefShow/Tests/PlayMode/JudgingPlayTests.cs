@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Linq;
 using ChefShow.Cooking;
 using ChefShow.Inventory;
@@ -11,15 +11,34 @@ namespace ChefShow.Tests
 {
     public sealed partial class InventoryPlayTests
     {
+        private ServingStation OwnServing => bootstrap.Serving.Stations.Single(s => s.StationId == inventory.PlayerStationId);
+        private void ApproachTasting(ServingStation station)
+        {
+            var position = station.TastingMount.position;
+            position.x += station.StationId.StartsWith("A") ? 2 : -2; position.y = .05f;
+            Teleport(position);
+        }
         private IEnumerator JudgingSubmit()
         {
-            var station=bootstrap.Serving.Stations.Single(s=>s.StationId=="A1");yield return Aim(station.transform.Find("Plate Contents/Submit Dish").position);yield return HandClick();
-            Assert.That(bootstrap.Judging.Current,Is.Not.Null);Assert.That(bootstrap.Judging.JudgedDish,Is.SameAs(State.SubmittedDish));
+            if (State.Held != null) yield return Press(Key.Backspace);
+            Teleport(new Vector3(-9.7f, .05f, -6.25f)); yield return Aim(Socket(1)); yield return HandClick();
+            Assert.That(State.HeldDishware, Is.Not.Null); Assert.That(State.CurrentDishware, Is.Null);
+            ApproachTasting(OwnServing); yield return Aim(OwnServing.TastingTarget.GetComponent<BoxCollider>().bounds.center);
+            Assert.That(bootstrap.Player.Target.GetComponent<ServingTarget>(), Is.SameAs(OwnServing.TastingTarget)); yield return HandClick();
+            Assert.That(State.TastingDishware, Is.Not.Null); Assert.That(State.HeldDishware, Is.Null);
+            Assert.That(bootstrap.Judging.Current, Is.Not.Null); Assert.That(bootstrap.Judging.JudgedDish, Is.SameAs(State.SubmittedDish));
+        }
+        private IEnumerator TastingRetrieve()
+        {
+            ApproachTasting(OwnServing); yield return Aim(OwnServing.TastingTarget.GetComponent<BoxCollider>().bounds.center); yield return HandClick();
+            Assert.That(State.HeldDishware, Is.Not.Null); Assert.That(State.TastingDishware, Is.Null);
+            Assert.That(bootstrap.Judging.Current, Is.Null); Assert.That(bootstrap.Judging.Panel.activeInHierarchy, Is.False);
         }
         private IEnumerator JudgingReset()
         {
-            var station=bootstrap.Serving.Stations.Single(s=>s.StationId=="A1");yield return Aim(station.transform.Find("Plate Contents/Reset Submission").position);yield return HandClick();
-            Assert.That(bootstrap.Judging.Current,Is.Null);Assert.That(bootstrap.Judging.Panel.activeInHierarchy,Is.False);
+            yield return TastingRetrieve();
+            Teleport(new Vector3(-9.7f, .05f, -6.25f)); yield return Aim(Socket(1)); yield return HandClick();
+            Assert.That(State.HeldDishware, Is.Null); Assert.That(State.CurrentDishware, Is.Not.Null);
         }
         private void JudgingTextFits()
         {

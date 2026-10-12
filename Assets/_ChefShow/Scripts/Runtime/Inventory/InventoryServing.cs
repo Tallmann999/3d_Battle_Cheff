@@ -18,12 +18,15 @@ namespace ChefShow.Inventory
         public int OilDoses { get; }
         public int Quantity => Portions.Sum(p => p.Quantity);
         public bool Contaminated { get; }
-        internal DishSnapshot(InventoryState state, bool submitted=false)
+        internal DishSnapshot(InventoryState state, bool submitted=false, bool tasting=false, bool held=false)
         {
             IsSubmitted=submitted;
-            Dishware=state.CurrentDishware;PresentationPenalty=state.PresentationPenalty;
-            Portions = Array.AsReadOnly(state.Served.Select(p => p.Snapshot()).ToArray());
-            SaltDoses = state.PlateSaltDoses; OilDoses = state.PlateOilDoses; Contaminated = state.PlateContaminated;
+            Dishware=held?state.HeldDishware:tasting?state.TastingDishware:state.CurrentDishware;PresentationPenalty=state.PresentationPenalty;
+            var food=held?state.HeldServed:tasting?state.TastingServed:state.Served;
+            Portions = Array.AsReadOnly(food.Select(p => p.Snapshot()).ToArray());
+            SaltDoses = held?state.HeldPlateSaltDoses:tasting?state.TastingSaltDoses:state.PlateSaltDoses;
+            OilDoses = held?state.HeldPlateOilDoses:tasting?state.TastingOilDoses:state.PlateOilDoses;
+            Contaminated = held?state.HeldPlateContaminated:tasting?state.TastingContaminated:state.PlateContaminated;
             Recognition=state.RecognitionRules?.Resolve(this);
         }
     }
@@ -103,6 +106,7 @@ namespace ChefShow.Inventory
         public bool TryResetSubmission(out string reason)
         {
             if(!Active(out reason)) return false;
+            if(TastingDishware!=null){reason="Заберите тарелку с дегустационной подставки.";return false;}
             if(SubmittedDish==null){reason="Блюдо ещё не подано.";return false;}
             SubmittedDish=null;Version++;run.Events.Publish(new DishChanged(run,"submission_reset",this));return true;
         }
