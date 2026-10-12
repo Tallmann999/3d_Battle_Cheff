@@ -6,6 +6,8 @@ using ChefShow.Inventory;
 namespace ChefShow.Judging
 {
     public enum ScoreCategoryId { Composition, ProcessTaste, Doneness, Preparation, Plating, Cleanliness }
+    [Flags]
+    public enum ScoreSafetyIssues { None = 0, RawMandatoryProtein = 1, BurnedMainComponent = 2, EmptyDish = 4 }
     public sealed class ScoreCategory
     {
         public ScoreCategoryId Id { get; }
@@ -31,10 +33,12 @@ namespace ChefShow.Judging
         public string RecipeId { get; } public string RecipeName { get; }
         public string EvaluatedRecipeId { get; } public string EvaluatedRecipeName { get; }
         public bool IsExperimental { get; }
+        public ScoreSafetyIssues SafetyIssues { get; }
         public IReadOnlyList<ScoreCategory> Categories { get; }
         public IReadOnlyList<string> Reasons { get; }
         public ScoreBreakdown(string recipeId, string recipeName, string evaluatedRecipeId, string evaluatedRecipeName,
-            bool experimental, IEnumerable<ScoreCategory> categories, IEnumerable<string> reasons, double applicableCap)
+            bool experimental, IEnumerable<ScoreCategory> categories, IEnumerable<string> reasons, double applicableCap,
+            ScoreSafetyIssues safetyIssues = ScoreSafetyIssues.None)
         {
             if (categories == null) throw new ArgumentException("Не назначены категории оценки.");
             var unsorted = categories.ToArray();
@@ -45,6 +49,7 @@ namespace ChefShow.Judging
             RecipeId = recipeId; RecipeName = recipeName; EvaluatedRecipeId = evaluatedRecipeId;
             EvaluatedRecipeName = evaluatedRecipeName; IsExperimental = experimental;
             Categories = Array.AsReadOnly(copy);
+            SafetyIssues = safetyIssues;
             Reasons = Array.AsReadOnly((reasons ?? Enumerable.Empty<string>()).Where(r => !string.IsNullOrWhiteSpace(r)).Distinct().ToArray());
         }
         // The production evaluator and ranking share this exact sum/cap; rounding is only for display.

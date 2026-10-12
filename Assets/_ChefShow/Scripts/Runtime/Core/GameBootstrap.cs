@@ -25,6 +25,7 @@ namespace ChefShow.Core
         public RecipeBookController RecipeBook;
         public ChefShow.Recipes.RecipeRecognitionController Recipes;
         public ChefShow.Judging.JudgingController Judging;
+        public ChefShow.Chefs.ReactionController Reactions;
         private bool bookInputBlocked;
         public KitchenLayoutConfig Layout;
         public ChefShow.Cooking.MixingController Mixing;
@@ -123,6 +124,12 @@ namespace ChefShow.Core
                 if(judgingError!=null){Debug.LogError(judgingError,this);enabled=false;return;}
                 Judging.Initialize(this);
             }
+            if(Reactions!=null)
+            {
+                var reactionError=Reactions.Validate();
+                if(reactionError!=null){Debug.LogError(reactionError,this);enabled=false;return;}
+                Reactions.Initialize(this);
+            }
             Hud.Resume.onClick.AddListener(() => SetPaused(false));
             Hud.Restart.onClick.AddListener(RestartShow);
             Hud.DebugRestart.onClick.AddListener(RestartShow);
@@ -174,6 +181,7 @@ namespace ChefShow.Core
             Hud.Context.enabled=!showingBook;
             Recipes?.Present();
             Judging?.Present();
+            Reactions?.Step(Time.unscaledDeltaTime);
             if(showingBook){Hud.InteractionKey.enabled=false;if(Hud.HandIcon!=null)Hud.HandIcon.enabled=false;}
         }
 
@@ -207,6 +215,7 @@ namespace ChefShow.Core
             bookInputBlocked=false;
             if(RecipeBook!=null)RecipeBook.ResetRun();
             Judging?.ResetRun();
+            Reactions?.ResetRun();
             UpdateMaps();
             Run.Events.Publish(new RunStarted(Run.RunId, Run.Seed));
             Debug.Log($"Chef Show: start run={Run.RunId} seed={Run.Seed}; {(Cooking != null ? "сковорода/кастрюля" : Inventory == null ? "арена" : "продукты и перенос")}; полный выпуск ещё не реализован.", this);

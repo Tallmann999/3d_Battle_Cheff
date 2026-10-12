@@ -1,0 +1,463 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28c65f1c2edc2b7459a05abff1dfa3c3, type: 3}
+  m_Name: ReactionConfig
+  m_EditorClassIdentifier: ChefShow.Runtime::ChefShow.Data.ReactionConfig
+  SavoryName: "\u0428\u0435\u0444 \u0433\u043E\u0440\u044F\u0447\u0435\u0439 \u043A\u0443\u0445\u043D\u0438"
+  PastryName: "\u0428\u0435\u0444-\u043A\u043E\u043D\u0434\u0438\u0442\u0435\u0440"
+  GlobalCooldown: 7
+  PersonalCooldown: 15
+  RepeatCooldown: 60
+  QueueCapacity: 6
+  HistoryCapacity: 128
+  AmbientTtl: 5
+  NormalTtl: 8
+  HighTtl: 12
+  WordsPerSecond: 2.8
+  MinimumDuration: 2
+  MaximumDuration: 6
+  ReplyGap: 0.35
+  GoodScoreThreshold: 80
+  Definitions:
+  - Id: ready_savory_a
+    Cue: 0
+    Priority: 1
+    PrimaryChef: 0
+    Lines:
+    - Id: ready_savory_a_line
+      Chef: 0
+      Text: "\u041F\u043E\u0440\u043E\u0433 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438:
+        {food}. \u0421\u043D\u0438\u043C\u0430\u0439\u0442\u0435, \u043F\u043E\u043A\u0430
+        \u043E\u0433\u043E\u043D\u044C \u043D\u0435 \u0443\u0432\u043B\u0451\u043A\u0441\u044F."
+      Clip: {fileID: 0}
+  - Id: ready_savory_b
+    Cue: 0
+    Priority: 1
+    PrimaryChef: 0
+    Lines:
+    - Id: ready_savory_b_line
+      Chef: 0
+      Text: "\u0413\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u0434\u043E\u0441\u0442\u0438\u0433\u043D\u0443\u0442\u0430.
+        \u0414\u0430\u043B\u044C\u0448\u0435 \u043D\u0430\u0433\u0440\u0435\u0432
+        \u0443\u0436\u0435 \u043D\u0435 \u0440\u0430\u0431\u043E\u0442\u0430\u0435\u0442
+        \u043D\u0430 \u043F\u043E\u043B\u044C\u0437\u0443 \u043F\u043E\u0440\u0446\u0438\u0438."
+      Clip: {fileID: 0}
+  - Id: ready_pastry_a
+    Cue: 0
+    Priority: 1
+    PrimaryChef: 1
+    Lines:
+    - Id: ready_pastry_a_line
+      Chef: 1
+      Text: "\u041F\u043E\u0440\u0446\u0438\u044F \u0433\u043E\u0442\u043E\u0432\u0430:
+        {food}. \u0421\u043B\u0435\u0434\u0443\u044E\u0449\u0438\u0439 \u0448\u0430\u0433
+        \u2014 \u0432\u043E\u0432\u0440\u0435\u043C\u044F \u0441\u043D\u044F\u0442\u044C
+        \u0435\u0451."
+      Clip: {fileID: 0}
+  - Id: ready_pastry_b
+    Cue: 0
+    Priority: 1
+    PrimaryChef: 1
+    Lines:
+    - Id: ready_pastry_b_line
+      Chef: 1
+      Text: "\u041F\u043E\u0440\u043E\u0433 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438
+        \u043F\u0440\u043E\u0439\u0434\u0435\u043D. \u0423 \u043F\u0435\u0440\u0435\u0434\u0435\u0440\u0436\u043A\u0438
+        \u0442\u0435\u043F\u0435\u0440\u044C \u0441\u043B\u0438\u0448\u043A\u043E\u043C
+        \u0443\u0434\u043E\u0431\u043D\u044B\u0439 \u0432\u0445\u043E\u0434."
+      Clip: {fileID: 0}
+  - Id: burn_savory_a
+    Cue: 1
+    Priority: 2
+    PrimaryChef: 0
+    Lines:
+    - Id: burn_savory_a_line
+      Chef: 0
+      Text: "{food}: \u043F\u043E\u0440\u0446\u0438\u044F \u0441\u0433\u043E\u0440\u0435\u043B\u0430.
+        \u041E\u0433\u043E\u043D\u044C \u0432\u0437\u044F\u043B \u043B\u0438\u0448\u043D\u044E\u044E
+        \u0441\u043C\u0435\u043D\u0443."
+      Clip: {fileID: 0}
+  - Id: burn_savory_b
+    Cue: 1
+    Priority: 2
+    PrimaryChef: 0
+    Lines:
+    - Id: burn_savory_b_line
+      Chef: 0
+      Text: "\u0421\u0433\u043E\u0440\u0430\u043D\u0438\u0435 \u043F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u043E.
+        \u0423 \u044D\u0442\u043E\u0439 \u043F\u043E\u0440\u0446\u0438\u0438 \u0443\u0436\u0435
+        \u0441\u043B\u0438\u0448\u043A\u043E\u043C \u0434\u044B\u043C\u043D\u0430\u044F
+        \u0431\u0438\u043E\u0433\u0440\u0430\u0444\u0438\u044F."
+      Clip: {fileID: 0}
+  - Id: burn_pastry_a
+    Cue: 1
+    Priority: 2
+    PrimaryChef: 1
+    Lines:
+    - Id: burn_pastry_a_line
+      Chef: 1
+      Text: "{food}: \u0433\u0440\u0430\u043D\u0438\u0446\u0430 \u0441\u0433\u043E\u0440\u0430\u043D\u0438\u044F
+        \u043F\u0440\u043E\u0439\u0434\u0435\u043D\u0430. \u0420\u0443\u043C\u044F\u043D\u0435\u0446
+        \u0437\u0430\u043A\u043E\u043D\u0447\u0438\u043B\u0441\u044F \u0440\u0430\u043D\u044C\u0448\u0435."
+      Clip: {fileID: 0}
+  - Id: burn_pastry_b
+    Cue: 1
+    Priority: 2
+    PrimaryChef: 1
+    Lines:
+    - Id: burn_pastry_b_line
+      Chef: 1
+      Text: "\u041F\u043E\u0440\u0446\u0438\u044F \u0441\u0433\u043E\u0440\u0435\u043B\u0430.
+        \u042D\u0442\u043E \u0443\u0436\u0435 \u0434\u0435\u043A\u043E\u0440\u0430\u0446\u0438\u044F
+        \u043A \u043F\u043E\u0436\u0430\u0440\u0443, \u0430 \u043D\u0435 \u043A \u0443\u0436\u0438\u043D\u0443."
+      Clip: {fileID: 0}
+  - Id: submit_savory
+    Cue: 2
+    Priority: 1
+    PrimaryChef: 0
+    Lines:
+    - Id: submit_savory_line
+      Chef: 0
+      Text: "\u0411\u043B\u044E\u0434\u043E \u0432\u044B\u0441\u0442\u0430\u0432\u043B\u0435\u043D\u043E.
+        \u0422\u0435\u043F\u0435\u0440\u044C \u0433\u043E\u0432\u043E\u0440\u0438\u0442
+        \u0442\u043E, \u0447\u0442\u043E \u043D\u0430 \u0442\u0430\u0440\u0435\u043B\u043A\u0435."
+      Clip: {fileID: 0}
+  - Id: submit_pastry
+    Cue: 2
+    Priority: 1
+    PrimaryChef: 1
+    Lines:
+    - Id: submit_pastry_line
+      Chef: 1
+      Text: "\u041F\u043E\u0434\u0430\u0447\u0430 \u0437\u0430\u0444\u0438\u043A\u0441\u0438\u0440\u043E\u0432\u0430\u043D\u0430.
+        \u041E\u0446\u0435\u043D\u0438\u043C \u0438\u043C\u0435\u043D\u043D\u043E
+        \u0442\u043E, \u0447\u0442\u043E \u043F\u043E\u0434\u0430\u043D\u043E."
+      Clip: {fileID: 0}
+  - Id: raw_savory_a
+    Cue: 3
+    Priority: 4
+    PrimaryChef: 0
+    Lines:
+    - Id: raw_savory_a_line
+      Chef: 0
+      Text: "\u041E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B\u0439
+        \u0431\u0435\u043B\u043A\u043E\u0432\u044B\u0439 \u043F\u0440\u043E\u0434\u0443\u043A\u0442
+        \u043E\u0441\u0442\u0430\u043B\u0441\u044F \u0441\u044B\u0440\u044B\u043C.
+        {detail}"
+      Clip: {fileID: 0}
+  - Id: raw_savory_b
+    Cue: 3
+    Priority: 4
+    PrimaryChef: 0
+    Lines:
+    - Id: raw_savory_b_line
+      Chef: 0
+      Text: "\u0411\u0435\u043B\u043A\u043E\u0432\u044B\u0439 \u043F\u0440\u043E\u0434\u0443\u043A\u0442
+        \u043D\u0435 \u0434\u043E\u0448\u0451\u043B \u0434\u043E \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438.
+        \u041F\u043E\u0434\u0430\u0447\u0430 \u044D\u0442\u043E\u0433\u043E \u043D\u0435
+        \u0438\u0441\u043F\u0440\u0430\u0432\u043B\u044F\u0435\u0442. {detail}"
+      Clip: {fileID: 0}
+  - Id: raw_pastry_a
+    Cue: 3
+    Priority: 4
+    PrimaryChef: 1
+    Lines:
+    - Id: raw_pastry_a_line
+      Chef: 1
+      Text: "\u0412\u0438\u0434 \u0431\u043B\u044E\u0434\u0430 \u043D\u0435 \u0437\u0430\u043C\u0435\u043D\u044F\u0435\u0442
+        \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C: \u043E\u0431\u044F\u0437\u0430\u0442\u0435\u043B\u044C\u043D\u044B\u0439
+        \u0431\u0435\u043B\u043A\u043E\u0432\u044B\u0439 \u043F\u0440\u043E\u0434\u0443\u043A\u0442
+        \u0441\u044B\u0440\u043E\u0439. {detail}"
+      Clip: {fileID: 0}
+  - Id: raw_pastry_b
+    Cue: 3
+    Priority: 4
+    PrimaryChef: 1
+    Lines:
+    - Id: raw_pastry_b_line
+      Chef: 1
+      Text: "\u0421\u044B\u0440\u043E\u0439 \u0431\u0435\u043B\u043A\u043E\u0432\u044B\u0439
+        \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442 \u043E\u0441\u0442\u0430\u043B\u0441\u044F
+        \u0432 \u043F\u043E\u0434\u0430\u0447\u0435. \u042D\u0442\u043E \u0443\u0436\u0435
+        \u0432\u043E\u043F\u0440\u043E\u0441 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438.
+        {detail}"
+      Clip: {fileID: 0}
+  - Id: judged_burn_savory_a
+    Cue: 4
+    Priority: 4
+    PrimaryChef: 0
+    Lines:
+    - Id: judged_burn_savory_a_line
+      Chef: 0
+      Text: "\u0413\u043B\u0430\u0432\u043D\u044B\u0439 \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442
+        \u0441\u0433\u043E\u0440\u0435\u043B. \u0422\u0451\u043C\u043D\u0430\u044F
+        \u043A\u043E\u0440\u043E\u0447\u043A\u0430 \u0437\u0434\u0435\u0441\u044C
+        \u0443\u0436\u0435 \u043D\u0435 \u0431\u043E\u043D\u0443\u0441. {detail}"
+      Clip: {fileID: 0}
+  - Id: judged_burn_savory_b
+    Cue: 4
+    Priority: 4
+    PrimaryChef: 0
+    Lines:
+    - Id: judged_burn_savory_b_line
+      Chef: 0
+      Text: "\u0421\u0433\u043E\u0440\u0435\u0432\u0448\u0438\u0439 \u0433\u043B\u0430\u0432\u043D\u044B\u0439
+        \u043F\u0440\u043E\u0434\u0443\u043A\u0442 \u043F\u043E\u043F\u0430\u043B
+        \u0432 \u043F\u043E\u0434\u0430\u0447\u0443. \u0414\u044B\u043C \u043D\u0435
+        \u0437\u0430\u043C\u0435\u043D\u044F\u0435\u0442 \u0432\u043A\u0443\u0441.
+        {detail}"
+      Clip: {fileID: 0}
+  - Id: judged_burn_pastry_a
+    Cue: 4
+    Priority: 4
+    PrimaryChef: 1
+    Lines:
+    - Id: judged_burn_pastry_a_line
+      Chef: 1
+      Text: "\u0413\u043B\u0430\u0432\u043D\u043E\u0435 \u0432 \u0431\u043B\u044E\u0434\u0435
+        \u0441\u0433\u043E\u0440\u0435\u043B\u043E. \u041F\u043E\u0434\u043F\u0438\u0441\u044C
+        \xAB\u0440\u0443\u043C\u044F\u043D\u043E\u0435\xBB \u0443\u0436\u0435 \u043D\u0435
+        \u043F\u043E\u043C\u043E\u0436\u0435\u0442. {detail}"
+      Clip: {fileID: 0}
+  - Id: judged_burn_pastry_b
+    Cue: 4
+    Priority: 4
+    PrimaryChef: 1
+    Lines:
+    - Id: judged_burn_pastry_b_line
+      Chef: 1
+      Text: "\u0421\u0433\u043E\u0440\u0435\u0432\u0448\u0438\u0439 \u0433\u043B\u0430\u0432\u043D\u044B\u0439
+        \u043A\u043E\u043C\u043F\u043E\u043D\u0435\u043D\u0442 \u043E\u0441\u0442\u0430\u043B\u0441\u044F
+        \u043D\u0430 \u0442\u0430\u0440\u0435\u043B\u043A\u0435. \u041E\u0446\u0435\u043D\u043A\u0430
+        \u044D\u0442\u043E \u0443\u0447\u0438\u0442\u044B\u0432\u0430\u0435\u0442.
+        {detail}"
+      Clip: {fileID: 0}
+  - Id: good_savory_a
+    Cue: 5
+    Priority: 4
+    PrimaryChef: 0
+    Lines:
+    - Id: good_savory_a_line
+      Chef: 0
+      Text: "\u0412\u043E\u0442 \u0431\u043B\u044E\u0434\u043E, \u0443 \u043A\u043E\u0442\u043E\u0440\u043E\u0433\u043E
+        \u0433\u043E\u0442\u043E\u0432\u043A\u0430 \u0438 \u043F\u043E\u0434\u0430\u0447\u0430
+        \u0434\u043E\u0433\u043E\u0432\u043E\u0440\u0438\u043B\u0438\u0441\u044C.
+        {detail}"
+      Clip: {fileID: 0}
+  - Id: good_savory_b
+    Cue: 5
+    Priority: 4
+    PrimaryChef: 0
+    Lines:
+    - Id: good_savory_b_line
+      Chef: 0
+      Text: "\u0423 \u044D\u0442\u043E\u0439 \u043F\u043E\u0434\u0430\u0447\u0438
+        \u0435\u0441\u0442\u044C \u0430\u0440\u0433\u0443\u043C\u0435\u043D\u0442\u044B.
+        \u042F \u0431\u044B \u043D\u0430\u0447\u0430\u043B \u0441 \u0432\u0438\u043B\u043A\u0438.
+        {detail}"
+      Clip: {fileID: 0}
+  - Id: good_pastry_a
+    Cue: 5
+    Priority: 4
+    PrimaryChef: 1
+    Lines:
+    - Id: good_pastry_a_line
+      Chef: 1
+      Text: "\u0425\u043E\u0440\u043E\u0448\u0430\u044F \u0440\u0430\u0431\u043E\u0442\u0430
+        \u0441 \u0431\u043B\u044E\u0434\u043E\u043C. \u0420\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442
+        \u0443\u0432\u0435\u0440\u0435\u043D\u043D\u043E \u0434\u0435\u0440\u0436\u0438\u0442\u0441\u044F
+        \u043D\u0430 \u0442\u0430\u0440\u0435\u043B\u043A\u0435. {detail}"
+      Clip: {fileID: 0}
+  - Id: good_pastry_b
+    Cue: 5
+    Priority: 4
+    PrimaryChef: 1
+    Lines:
+    - Id: good_pastry_b_line
+      Chef: 1
+      Text: "\u041F\u043E\u0434\u0430\u0447\u0430 \u043F\u043E\u043B\u0443\u0447\u0438\u043B\u0430\u0441\u044C
+        \u0443\u0431\u0435\u0434\u0438\u0442\u0435\u043B\u044C\u043D\u043E\u0439.
+        \u041C\u043E\u0436\u043D\u043E \u043E\u0431\u043E\u0439\u0442\u0438\u0441\u044C
+        \u0431\u0435\u0437 \u043E\u043F\u0440\u0430\u0432\u0434\u0430\u0442\u0435\u043B\u044C\u043D\u043E\u0433\u043E
+        \u0433\u0430\u0440\u043D\u0438\u0440\u0430. {detail}"
+      Clip: {fileID: 0}
+  - Id: weak_savory
+    Cue: 6
+    Priority: 4
+    PrimaryChef: 0
+    Lines:
+    - Id: weak_savory_line
+      Chef: 0
+      Text: "\u042D\u0442\u0430 \u043F\u043E\u0434\u0430\u0447\u0430 \u043F\u043E\u043A\u0430
+        \u043D\u0435 \u0443\u0431\u0435\u0434\u0438\u043B\u0430. \u0411\u043B\u044E\u0434\u0443
+        \u043D\u0435 \u0445\u0432\u0430\u0442\u0438\u043B\u043E \u0430\u0440\u0433\u0443\u043C\u0435\u043D\u0442\u043E\u0432.
+        {detail}"
+      Clip: {fileID: 0}
+  - Id: weak_pastry
+    Cue: 6
+    Priority: 4
+    PrimaryChef: 1
+    Lines:
+    - Id: weak_pastry_line
+      Chef: 1
+      Text: "\u041A \u044D\u0442\u043E\u0439 \u043F\u043E\u0434\u0430\u0447\u0435
+        \u0441\u0442\u043E\u0438\u0442 \u0432\u0435\u0440\u043D\u0443\u0442\u044C\u0441\u044F
+        \u043F\u043E\u0441\u043B\u0435 \u0440\u0430\u0431\u043E\u0442\u044B \u043D\u0430\u0434
+        \u043E\u0448\u0438\u0431\u043A\u0430\u043C\u0438. {detail}"
+      Clip: {fileID: 0}
+  - Id: experiment_savory
+    Cue: 7
+    Priority: 4
+    PrimaryChef: 0
+    Lines:
+    - Id: experiment_savory_line
+      Chef: 0
+      Text: "\u0417\u043D\u0430\u043A\u043E\u043C\u043E\u0435 \u044F\u0434\u0440\u043E
+        \u0440\u0435\u0446\u0435\u043F\u0442\u0430 \u0437\u0434\u0435\u0441\u044C
+        \u043D\u0435 \u0441\u043B\u043E\u0436\u0438\u043B\u043E\u0441\u044C. \u042D\u043A\u0441\u043F\u0435\u0440\u0438\u043C\u0435\u043D\u0442
+        \u0437\u0430\u0441\u0447\u0438\u0442\u0430\u043D. {detail}"
+      Clip: {fileID: 0}
+  - Id: experiment_pastry
+    Cue: 7
+    Priority: 4
+    PrimaryChef: 1
+    Lines:
+    - Id: experiment_pastry_line
+      Chef: 1
+      Text: "\u041F\u043E\u043B\u0443\u0447\u0438\u043B\u043E\u0441\u044C \u044D\u043A\u0441\u043F\u0435\u0440\u0438\u043C\u0435\u043D\u0442\u0430\u043B\u044C\u043D\u043E\u0435
+        \u0431\u043B\u044E\u0434\u043E. \u042D\u0442\u0430\u043B\u043E\u043D \u043F\u043E\u043A\u0430
+        \u0441\u043C\u043E\u0442\u0440\u0438\u0442 \u0438\u0437\u0434\u0430\u043B\u0435\u043A\u0430.
+        {detail}"
+      Clip: {fileID: 0}
+  - Id: time60_savory
+    Cue: 8
+    Priority: 4
+    PrimaryChef: 0
+    Lines:
+    - Id: time60_savory_line
+      Chef: 0
+      Text: "\u041E\u0441\u0442\u0430\u043B\u043E\u0441\u044C 60 \u0441\u0435\u043A\u0443\u043D\u0434.
+        \u041F\u043E\u0440\u0430 \u0441\u043E\u0431\u0438\u0440\u0430\u0442\u044C
+        \u043F\u043E\u0434\u0430\u0447\u0443!"
+      Clip: {fileID: 0}
+  - Id: time60_pastry
+    Cue: 8
+    Priority: 4
+    PrimaryChef: 1
+    Lines:
+    - Id: time60_pastry_line
+      Chef: 1
+      Text: "60 \u0441\u0435\u043A\u0443\u043D\u0434. \u041F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435
+        \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u044C \u0438 \u043D\u0430\u0447\u0438\u043D\u0430\u0439\u0442\u0435
+        \u043F\u043E\u0434\u0430\u0447\u0443."
+      Clip: {fileID: 0}
+  - Id: time30_savory
+    Cue: 9
+    Priority: 4
+    PrimaryChef: 0
+    Lines:
+    - Id: time30_savory_line
+      Chef: 0
+      Text: "30 \u0441\u0435\u043A\u0443\u043D\u0434. \u041D\u0430 \u0444\u0438\u043D\u0438\u0448
+        \u0438\u0434\u0451\u0442 \u0431\u043B\u044E\u0434\u043E, \u0430 \u043D\u0435
+        \u0441\u043F\u0438\u0441\u043E\u043A \u043F\u043B\u0430\u043D\u043E\u0432."
+      Clip: {fileID: 0}
+  - Id: time30_pastry
+    Cue: 9
+    Priority: 4
+    PrimaryChef: 1
+    Lines:
+    - Id: time30_pastry_line
+      Chef: 1
+      Text: "\u041E\u0441\u0442\u0430\u043B\u043E\u0441\u044C 30 \u0441\u0435\u043A\u0443\u043D\u0434.
+        \u041F\u0440\u043E\u0432\u0435\u0440\u044C\u0442\u0435, \u0447\u0442\u043E
+        \u0440\u0435\u0430\u043B\u044C\u043D\u043E \u043B\u0435\u0436\u0438\u0442
+        \u043D\u0430 \u0442\u0430\u0440\u0435\u043B\u043A\u0435."
+      Clip: {fileID: 0}
+  - Id: time10_savory
+    Cue: 10
+    Priority: 4
+    PrimaryChef: 0
+    Lines:
+    - Id: time10_savory_line
+      Chef: 0
+      Text: "10 \u0441\u0435\u043A\u0443\u043D\u0434. \u0424\u0438\u043D\u0430\u043B\u044C\u043D\u044B\u0439
+        \u0445\u043E\u0434 \u2014 \u043F\u043E\u0434\u0430\u0447\u0430!"
+      Clip: {fileID: 0}
+  - Id: time10_pastry
+    Cue: 10
+    Priority: 4
+    PrimaryChef: 1
+    Lines:
+    - Id: time10_pastry_line
+      Chef: 1
+      Text: "\u041E\u0441\u0442\u0430\u043B\u043E\u0441\u044C 10 \u0441\u0435\u043A\u0443\u043D\u0434.
+        \u0417\u0430\u0432\u0435\u0440\u0448\u0430\u0439\u0442\u0435 \u043F\u043E\u0434\u0430\u0447\u0443."
+      Clip: {fileID: 0}
+  - Id: timeup_savory
+    Cue: 11
+    Priority: 4
+    PrimaryChef: 0
+    Lines:
+    - Id: timeup_savory_line
+      Chef: 0
+      Text: "\u0412\u0440\u0435\u043C\u044F! \u0413\u043E\u0442\u043E\u0432\u043A\u0430
+        \u0437\u0430\u043A\u0440\u044B\u0442\u0430. \u041E\u0446\u0435\u043D\u0438\u0432\u0430\u0435\u043C
+        \u0444\u0430\u043A\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0435 \u0431\u043B\u044E\u0434\u043E."
+      Clip: {fileID: 0}
+  - Id: timeup_pastry
+    Cue: 11
+    Priority: 4
+    PrimaryChef: 1
+    Lines:
+    - Id: timeup_pastry_line
+      Chef: 1
+      Text: "\u0412\u0440\u0435\u043C\u044F \u0432\u044B\u0448\u043B\u043E. \u041D\u043E\u0432\u044B\u0435
+        \u0434\u0435\u0439\u0441\u0442\u0432\u0438\u044F \u0437\u0430\u043A\u043E\u043D\u0447\u0435\u043D\u044B,
+        \u0440\u0435\u0437\u0443\u043B\u044C\u0442\u0430\u0442 \u043E\u0441\u0442\u0430\u0451\u0442\u0441\u044F
+        \u043D\u0430 \u043E\u0446\u0435\u043D\u043A\u0435."
+      Clip: {fileID: 0}
+  - Id: burn_bicker
+    Cue: 1
+    Priority: 2
+    PrimaryChef: 0
+    Lines:
+    - Id: burn_bicker_first
+      Chef: 0
+      Text: "\u042D\u0442\u0430 \u043F\u043E\u0440\u0446\u0438\u044F \u0442\u0435\u043F\u0435\u0440\u044C
+        \u043F\u0440\u0435\u0442\u0435\u043D\u0434\u0443\u0435\u0442 \u043D\u0430
+        \u0437\u0432\u0430\u043D\u0438\u0435 \u0443\u0433\u043B\u044F."
+      Clip: {fileID: 0}
+    - Id: burn_bicker_reply
+      Chef: 1
+      Text: "\u0422\u0438\u0442\u0443\u043B \u0435\u0439 \u0443\u0436\u0435 \u0434\u0430\u043B\u0438.
+        \u0414\u043B\u044F \u0443\u0436\u0438\u043D\u0430 \u043F\u0440\u0438\u0434\u0451\u0442\u0441\u044F
+        \u043F\u043E\u0438\u0441\u043A\u0430\u0442\u044C \u0434\u0440\u0443\u0433\u043E\u0435."
+      Clip: {fileID: 0}
+  - Id: ready_bicker
+    Cue: 0
+    Priority: 1
+    PrimaryChef: 1
+    Lines:
+    - Id: ready_bicker_first
+      Chef: 1
+      Text: "\u041F\u043E\u0440\u043E\u0433 \u0433\u043E\u0442\u043E\u0432\u043D\u043E\u0441\u0442\u0438
+        \u0435\u0441\u0442\u044C. \u0414\u0430\u043B\u044C\u0448\u0435 \u043D\u0443\u0436\u0435\u043D
+        \u0432\u043E\u0432\u0440\u0435\u043C\u044F \u0432\u044B\u043A\u043B\u044E\u0447\u0435\u043D\u043D\u044B\u0439
+        \u043E\u0433\u043E\u043D\u044C."
+      Clip: {fileID: 0}
+    - Id: ready_bicker_reply
+      Chef: 0
+      Text: "\u0421\u043E\u0433\u043B\u0430\u0441\u0435\u043D. \u041F\u0435\u0440\u0435\u0434\u0435\u0440\u0436\u043A\u0430
+        \u0442\u043E\u0436\u0435 \u043B\u044E\u0431\u0438\u0442 \u044D\u0444\u0444\u0435\u043A\u0442\u043D\u044B\u0439
+        \u0432\u044B\u0445\u043E\u0434."
+      Clip: {fileID: 0}

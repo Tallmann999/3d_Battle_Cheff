@@ -191,7 +191,7 @@ namespace ChefShow.Judging
             var identity = dish.Recognition ?? settings.Recognition.Resolve(dish);
             if (leaves.Count == 0)
                 return new ScoreBreakdown("no_dish", "Нет блюда", "no_dish", "Нет блюда", false,
-                    Categories(settings, 0, 0, 0, 0, 0, 0), new[] { "На тарелке нет еды: 0 баллов." }, 0);
+                    Categories(settings, 0, 0, 0, 0, 0, 0), new[] { "На тарелке нет еды: 0 баллов." }, 0, ScoreSafetyIssues.EmptyDish);
             bool assigned = !string.IsNullOrEmpty(assignedRecipeId);
             string target = assigned ? assignedRecipeId : identity.Recognized ? identity.RecipeId : identity.SuggestedRecipeId;
             var profile = settings.Profiles.FirstOrDefault(p => p.RecipeId == target);
@@ -202,13 +202,14 @@ namespace ChefShow.Judging
             }
             var reasons = new List<string>();
             double cap = 100;
+            var safety = ScoreSafetyIssues.None;
             foreach (var core in profile.Core)
             {
                 var actual = Matches(core, leaves);
                 if (core.MandatoryProtein && actual.Any(e => !e.Ready && !e.Burned))
-                { cap = Math.Min(cap, settings.RawProteinCap); reasons.Add("Сырой обязательный белковый продукт: предел 45."); }
+                { cap = Math.Min(cap, settings.RawProteinCap); safety |= ScoreSafetyIssues.RawMandatoryProtein; reasons.Add("Сырой обязательный белковый продукт: предел 45."); }
                 if (core.MainComponent && actual.Any(e => e.Burned))
-                { cap = Math.Min(cap, settings.BurnedMainCap); reasons.Add("Сгоревший главный продукт: предел 50."); }
+                { cap = Math.Min(cap, settings.BurnedMainCap); safety |= ScoreSafetyIssues.BurnedMainComponent; reasons.Add("Сгоревший главный продукт: предел 50."); }
             }
             double coverage = profile.Core.Count(c => Matches(c, leaves).Length > 0) / (double)profile.Core.Count;
             var allowed = profile.Identity.Core.SelectMany(c => c.Alternatives).Concat(profile.Identity.Optional).ToArray();
@@ -250,7 +251,7 @@ namespace ChefShow.Judging
             return new ScoreBreakdown(identity.RecipeId, identity.Name, profile.RecipeId, profile.Name, !identity.Recognized,
                 Categories(settings, settings.Composition * ingredientFit,
                     settings.MethodMaximum * method + settings.SeasoningMaximum * seasoning + settings.CompletionMaximum * completion,
-                    settings.Doneness * doneness, settings.Preparation * preparation, plating, cleanliness), reasons, cap);
+                    settings.Doneness * doneness, settings.Preparation * preparation, plating, cleanliness), reasons, cap, safety);
         }
     }
 }
